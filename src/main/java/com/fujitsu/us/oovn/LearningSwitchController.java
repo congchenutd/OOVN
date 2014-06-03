@@ -1,20 +1,20 @@
 package com.fujitsu.us.oovn;
 
 import java.io.IOException;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
-import org.openflow.io.OFMessageAsyncStream;
-import org.openflow.protocol.OFEchoReply;
-import org.openflow.protocol.OFMessage;
+import org.openflow.protocol.OFFlowMod;
+import org.openflow.protocol.OFMatch;
 import org.openflow.protocol.OFPacketIn;
 import org.openflow.protocol.OFPacketOut;
 import org.openflow.protocol.OFPort;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
+import org.openflow.util.U16;
 
 public class LearningSwitchController extends Controller
 {
@@ -24,110 +24,97 @@ public class LearningSwitchController extends Controller
     }
     
     @Override
-    protected void handleAcceptEvent(SelectionKey key) throws IOException
-    {
-        // ask the server to accept the connection, and register the selector for READ
-        SocketChannel switchChannel = _server.accept();
-        switchChannel.configureBlocking(false);
-        _server.register(switchChannel, SelectionKey.OP_READ);
-
-        // create a switch object
-        OFSwitch sw = new OFSwitch(switchChannel, _factory);
-        _channel2Switch.put(switchChannel, sw);
-        
-        // greet the switch
-        System.out.println("Got new connection from " + sw);
-        List<OFMessage> messages = new ArrayList<OFMessage>();
-        messages.add(_factory.getMessage(OFType.HELLO));
-        messages.add(_factory.getMessage(OFType.FEATURES_REQUEST));
-        sw.getStream().write(messages);
-
-        // register for WRITE
-        int ops = SelectionKey.OP_READ;
-        if (sw.getStream().needsFlush())
-            ops |= SelectionKey.OP_WRITE;
-
-        _server.register(switchChannel, ops);
-    }
-
-    @Override
-    protected void handleSwitchEvent(SelectionKey key)
-    {
-        SocketChannel channel = (SocketChannel) key.channel();
-        OFSwitch sw = _channel2Switch.get(channel);
-        OFMessageAsyncStream stream = sw.getStream();
-        try
-        {
-            if(key.isReadable())
-            {
-                List<OFMessage> messages = stream.read();
-                if (messages == null)
-                {
-                    key.cancel();
-                    _channel2Switch.remove(channel);
-                    return;
-                }
-
-                for (OFMessage message : messages)
-                {
-                    switch (message.getType())
-                    {
-                        case PACKET_IN:
-                            handlePacketIn(sw, (OFPacketIn) message);
-                            break;
-                        case HELLO:
-                            System.out.println("GOT HELLO from " + sw);
-                            break;
-                        case ECHO_REQUEST:
-                            OFEchoReply reply = (OFEchoReply) stream.getMessageFactory()
-                                                                        .getMessage(OFType.ECHO_REPLY);
-                            reply.setXid(message.getXid());
-                            stream.write(reply);
-                            break;
-                        default:
-                            System.out.println("Unhandled OF message: " +
-                                                message.getType() + " from " +
-                                                channel.socket().getInetAddress());
-                    }
-                }
-            }
-            if (key.isWritable()) {
-                stream.flush();
-            }
-
-            // Only register for R OR W, not both, to avoid stream deadlock
-            key.interestOps(stream.needsFlush() ? SelectionKey.OP_WRITE 
-                                                : SelectionKey.OP_READ);
-        }
-        catch (IOException e)
-        {
-            // if we have an exception, disconnect the switch
-            key.cancel();
-            _channel2Switch.remove(channel);
-        }
-    }
-    
-    @Override
     protected void handlePacketIn(OFSwitch sw, OFPacketIn packetIn)
     {
+        // Build the Match
+        OFMatch match = new OFMatch();
+        match.loadFromPacket(packetIn.getPacketData(), packetIn.getInPort());
+        byte[] dlDst = match.getDataLayerDestination();
+        Integer dlDstKey = Arrays.hashCode(dlDst);
+        byte[] dlSrc = match.getDataLayerSource();
+        Integer dlSrcKey = Arrays.hashCode(dlSrc);
+        int bufferId = packetIn.getBufferId();
+
+        // if the src is not multicast, learn it
+        Map<Integer, Short> macTable = sw.getMacTable();
+        if ((dlSrc[0] & 0x1) == 0)
+        {
+            if (!macTable.containsKey(dlSrcKey) ||                        // no entry
+                !macTable.get(dlSrcKey).equals(packetIn.getInPort())) {   // wrong port
+                macTable.put(dlSrcKey, packetIn.getInPort());             // update entry
+            }
+        }
+
+        Short outPort = null;
+        // if the destination is not multicast, look it up
+        if ((dlDst[0] & 0x1) == 0) {
+            outPort = macTable.get(dlDstKey);
+        }
+
+        // push a flow mod if we know where the packet should be going
+        if (outPort != null)
+        {
+            OFFlowMod flowMod = (OFFlowMod) _factory.getMessage(OFType.FLOW_MOD);
+            flowMod.setBufferId(bufferId);
+            flowMod.setCommand((short) 0);
+            flowMod.setCookie(0);
+            flowMod.setFlags((short) 0);
+            flowMod.setHardTimeout((short) 0);
+            flowMod.setIdleTimeout((short) 5);
+            match.setInputPort(packetIn.getInPort());
+            match.setWildcards(0);
+            flowMod.setMatch(match);
+            flowMod.setOutPort(OFPort.OFPP_NONE.getValue());
+            flowMod.setPriority((short) 0);
+            OFActionOutput action = new OFActionOutput();
+            action.setMaxLength((short) 0);
+            action.setPort(outPort);
+            List<OFAction> actions = new ArrayList<OFAction>();
+            actions.add(action);
+            flowMod.setActions(actions);
+            flowMod.setLength(U16.t(OFFlowMod.MINIMUM_LENGTH + 
+                                    OFActionOutput.MINIMUM_LENGTH));
+            try {
+                sw.getStream().write(flowMod);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         // Send a packet out
-        OFPacketOut packetOut = new OFPacketOut();
-        packetOut.setBufferId(packetIn.getBufferId());
-        packetOut.setInPort(packetIn.getInPort());
+        if (outPort == null || packetIn.getBufferId() == 0xffffffff)
+        {
+            OFPacketOut packetOut = new OFPacketOut();
+            packetOut.setBufferId(bufferId);
+            packetOut.setInPort(packetIn.getInPort());
 
-        // set actions
-        OFActionOutput action = new OFActionOutput();
-        action.setMaxLength((short) 0);
-        action.setPort(OFPort.OFPP_FLOOD.getValue());
-        List<OFAction> actions = new ArrayList<OFAction>();
-        actions.add(action);
-        packetOut.setActions(actions);
-        packetOut.setActionsLength((short) OFActionOutput.MINIMUM_LENGTH);
+            // set actions
+            OFActionOutput action = new OFActionOutput();
+            action.setMaxLength((short) 0);
+            action.setPort(outPort == null ? OFPort.OFPP_FLOOD.getValue() 
+                                           : outPort);
+            List<OFAction> actions = new ArrayList<OFAction>();
+            actions.add(action);
+            packetOut.setActions(actions);
+            packetOut.setActionsLength((short) OFActionOutput.MINIMUM_LENGTH);
 
-        try {
-            sw.getStream().write(packetOut);
-        } catch (IOException e) {
-            e.printStackTrace();
+            // set data if needed
+            if (bufferId == 0xffffffff)
+            {
+                byte[] packetData = packetIn.getPacketData();
+                packetOut.setLength(U16.t(OFPacketOut.MINIMUM_LENGTH + 
+                                          packetOut.getActionsLength() + 
+                                          packetData.length));
+                packetOut.setPacketData(packetData);
+            } else {
+                packetOut.setLength(U16.t(OFPacketOut.MINIMUM_LENGTH + 
+                                          packetOut.getActionsLength()));
+            }
+            try {
+                sw.getStream().write(packetOut);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
     
