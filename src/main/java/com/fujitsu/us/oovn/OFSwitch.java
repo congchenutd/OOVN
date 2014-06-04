@@ -3,8 +3,11 @@ package com.fujitsu.us.oovn;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.channels.SocketChannel;
+import java.util.Map;
+
 import org.openflow.io.OFMessageAsyncStream;
 import org.openflow.protocol.factory.OFMessageFactory;
+import org.openflow.util.LRULinkedHashMap;
 
 /**
  * Encapsulate a virtual switch, which corresponds to a physical switch
@@ -19,11 +22,15 @@ public class OFSwitch
     
     /** An encapsulation of a SocketChannel for communication */
     protected OFMessageAsyncStream _stream;
+    
+    /** mac address -> port */
+    private final Map<Integer, Short> _macTable;
 
     public OFSwitch(SocketChannel channel, OFMessageFactory factory) throws IOException
     {
-        _channel = channel;
-        _stream  = new OFMessageAsyncStream(channel, factory);
+        _channel  = channel;
+        _stream   = new OFMessageAsyncStream(channel, factory);
+        _macTable = new LRULinkedHashMap<Integer, Short>(64001, 64000);
     }
     
     public SocketChannel getChannel() {
@@ -34,6 +41,10 @@ public class OFSwitch
         return _stream;
     }
     
+    public Map<Integer, Short> getMacTable() {
+        return _macTable;
+    }
+
     @Override
     public String toString()
     {

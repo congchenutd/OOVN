@@ -75,7 +75,6 @@ public abstract class Controller implements EventHandler
         // ask the server to accept the connection, and register the channel for READ
         SocketChannel switchChannel = _server.accept();
         switchChannel.configureBlocking(false);
-//        _server.register(switchChannel, SelectionKey.OP_READ);
 
         // create a switch object
         OFSwitch sw = new OFSwitch(switchChannel, _factory);
