@@ -15,12 +15,29 @@ import org.openflow.protocol.OFPacketIn;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.factory.BasicFactory;
 
+/**
+ * Base class for controllers
+ * Implements EventHandler, a callback for Server
+ * 
+ * @author Cong Chen <Cong.Chen@us.fujitsu.com>
+ *
+ */
 public abstract class Controller implements EventHandler
 {
+    /** for generating OFMessage */
     protected BasicFactory _factory;
-    protected Server       _server;
-    protected Map<SocketChannel, OFSwitch> _channel2Switch;   // switch objects
     
+    /** for accepting connections and messages */
+    protected Server       _server;
+    
+    /** Virtual switches */
+    protected Map<SocketChannel, OFSwitch> _channel2Switch;
+    
+    
+    /**
+     * @param port  the port to work on
+     * @throws IOException
+     */
     public Controller(int port) throws IOException
     {
         _factory        = new BasicFactory();
@@ -28,26 +45,37 @@ public abstract class Controller implements EventHandler
         _channel2Switch = new ConcurrentHashMap<SocketChannel, OFSwitch>();
     }
     
-    public void run()
-    {
+    /**
+     * Start the controller
+     */
+    public void run() {
         _server.listen();
     }
-    
+
+    /**
+     * Handles event wrapped by key
+     * @param key   A SelectionKey representing the event
+     */
     @Override
     public void handleEvent(SelectionKey key) throws IOException
     {
         if(key.isAcceptable())
-            handleAcceptEvent(key);
+            handleAcceptEvent(key);   // new connection event
         else
             handleSwitchEvent(key);
     }
     
+    /**
+     * Handles new connection event
+     * @param key   A SelectionKey representing the event
+     * @throws IOException
+     */
     protected void handleAcceptEvent(SelectionKey key) throws IOException
     {
-        // ask the server to accept the connection, and register the selector for READ
+        // ask the server to accept the connection, and register the channel for READ
         SocketChannel switchChannel = _server.accept();
         switchChannel.configureBlocking(false);
-        _server.register(switchChannel, SelectionKey.OP_READ);
+//        _server.register(switchChannel, SelectionKey.OP_READ);
 
         // create a switch object
         OFSwitch sw = new OFSwitch(switchChannel, _factory);
@@ -68,6 +96,11 @@ public abstract class Controller implements EventHandler
         _server.register(switchChannel, ops);
     }
 
+    
+    /**
+     * Handles other events from the switches
+     * @param key
+     */
     protected void handleSwitchEvent(SelectionKey key)
     {
         SocketChannel channel = (SocketChannel) key.channel();
@@ -75,23 +108,27 @@ public abstract class Controller implements EventHandler
         OFMessageAsyncStream stream = sw.getStream();
         try
         {
+            // read events from the switches
             if(key.isReadable())
             {
                 List<OFMessage> messages = stream.read();
-                if (messages == null)
+                if(messages == null)
                 {
                     key.cancel();
                     _channel2Switch.remove(channel);
                     return;
                 }
 
-                for (OFMessage message : messages)
+                for(OFMessage message : messages)
                 {
-                    switch (message.getType())
+                    switch(message.getType())
                     {
                         case PACKET_IN:
+                            // leave to subclasses
                             handlePacketIn(sw, (OFPacketIn) message);
                             break;
+                            
+                            // simple events are handled here
                         case HELLO:
                             System.out.println("GOT HELLO from " + sw);
                             break;
@@ -108,6 +145,8 @@ public abstract class Controller implements EventHandler
                     }
                 }
             }
+            
+            // write
             if (key.isWritable()) {
                 stream.flush();
             }
@@ -124,5 +163,11 @@ public abstract class Controller implements EventHandler
         }
     }
     
+    
+    /**
+     * Complex events are left for subclasses
+     * @param sw        switch
+     * @param packetIn  PacketIn message
+     */
     abstract protected void handlePacketIn(OFSwitch sw, OFPacketIn packetIn);
 }

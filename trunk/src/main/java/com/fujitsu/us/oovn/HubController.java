@@ -10,6 +10,13 @@ import org.openflow.protocol.OFPort;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
 
+
+/**
+ * Turning a switch into a hub, by simply flooding all incoming packets
+ * 
+ * @author Cong Chen <Cong.Chen@us.fujitsu.com>
+ *
+ */
 public class HubController extends Controller
 {
     public HubController(int port) throws IOException {
@@ -19,12 +26,12 @@ public class HubController extends Controller
     @Override
     protected void handlePacketIn(OFSwitch sw, OFPacketIn packetIn)
     {
-        // Send a packet out
+        // make a packet out message
         OFPacketOut packetOut = new OFPacketOut();
         packetOut.setBufferId(packetIn.getBufferId());
         packetOut.setInPort(packetIn.getInPort());
 
-        // set actions
+        // set actions as a flood action
         OFActionOutput action = new OFActionOutput();
         action.setMaxLength((short) 0);
         action.setPort(OFPort.OFPP_FLOOD.getValue());
