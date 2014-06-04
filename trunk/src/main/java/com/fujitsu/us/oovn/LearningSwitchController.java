@@ -14,7 +14,6 @@ import org.openflow.protocol.OFPort;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
-import org.openflow.util.LRULinkedHashMap;
 import org.openflow.util.U16;
 
 /**
@@ -25,17 +24,12 @@ import org.openflow.util.U16;
  */
 public class LearningSwitchController extends Controller
 {
-    /** mac address -> port */
-    protected Map<Integer, Short> _macTable;
-
     /**
      * @param port
      * @throws IOException
      */
-    public LearningSwitchController(int port) throws IOException
-    {
+    public LearningSwitchController(int port) throws IOException {
         super(port);
-        _macTable = new LRULinkedHashMap<Integer, Short>(64001, 64000);
     }
     
     @Override
@@ -50,19 +44,26 @@ public class LearningSwitchController extends Controller
         Integer dlSrcKey = Arrays.hashCode(dlSrc);
         int bufferId = packetIn.getBufferId();
 
+        // debug
+        System.out.println("PacketIn from stream " + sw.getStream() + " " + match.getNetworkSource() + 
+                                   "->" + match.getNetworkDestination());
+        
         // if the src is not multicast, learn it
+        Map<Integer, Short> macTable = sw.getMacTable();
         if ((dlSrc[0] & 0x1) == 0)
         {
-            if (!_macTable.containsKey(dlSrcKey) ||                        // no entry
-                !_macTable.get(dlSrcKey).equals(packetIn.getInPort())) {   // wrong port
-                _macTable.put(dlSrcKey, packetIn.getInPort());             // update entry
+            if (!macTable.containsKey(dlSrcKey) ||                        // no entry
+                !macTable.get(dlSrcKey).equals(packetIn.getInPort())) {   // wrong port
+                macTable.put(dlSrcKey, packetIn.getInPort());             // update entry
             }
+            
+//            System.out.println("MacTable set: " + match.getNetworkSource() + ":" + packetIn.getInPort());
         }
 
         Short outPort = null;
         // if the destination is not multicast, look it up
         if ((dlDst[0] & 0x1) == 0) {
-            outPort = _macTable.get(dlDstKey);
+            outPort = macTable.get(dlDstKey);
         }
 
         // modify the switch's flow table with a flow mod message
@@ -75,7 +76,7 @@ public class LearningSwitchController extends Controller
             flowMod.setCookie(0);
             flowMod.setFlags((short) 0);
             flowMod.setHardTimeout((short) 0);
-            flowMod.setIdleTimeout((short) 5);
+            flowMod.setIdleTimeout((short) 10);
             match.setInputPort(packetIn.getInPort());
             match.setWildcards(0);
             flowMod.setMatch(match);
@@ -96,6 +97,10 @@ public class LearningSwitchController extends Controller
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            
+//            System.out.println("FLowMod sent to: " + sw.getStream() + " " +
+//                                match.getNetworkSource() + "->" + match.getNetworkDestination() + 
+//                                " goes to " + outPort);
         }
 
         // Forward the packet by sending a packet out message to the switch
@@ -132,6 +137,9 @@ public class LearningSwitchController extends Controller
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            
+//            System.out.println("PacketOut sent to " + sw.getStream() + " " +
+//                                action.getPort());
         }
     }
     

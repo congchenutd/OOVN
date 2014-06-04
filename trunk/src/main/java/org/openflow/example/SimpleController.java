@@ -68,6 +68,10 @@ public class SimpleController implements SelectListener {
             byte[] dlSrc = match.getDataLayerSource();
             Integer dlSrcKey = Arrays.hashCode(dlSrc);
             int bufferId = pi.getBufferId();
+            
+            // debug
+            System.out.println("PacketIn, stream " + stream + " " + match.getNetworkSource() + 
+                                       "->" + match.getNetworkDestination());
 
             // if the src is not multicast, learn it
             if ((dlSrc[0] & 0x1) == 0) {
@@ -91,11 +95,11 @@ public class SimpleController implements SelectListener {
                 fm.setCookie(0);
                 fm.setFlags((short) 0);
                 fm.setHardTimeout((short) 0);
-                fm.setIdleTimeout((short) 5);
+                fm.setIdleTimeout((short) 10);
                 match.setInputPort(pi.getInPort());
                 match.setWildcards(0);
                 fm.setMatch(match);
-                fm.setOutPort((short) OFPort.OFPP_NONE.getValue());
+                fm.setOutPort(OFPort.OFPP_NONE.getValue());
                 fm.setPriority((short) 0);
                 OFActionOutput action = new OFActionOutput();
                 action.setMaxLength((short) 0);
@@ -109,6 +113,10 @@ public class SimpleController implements SelectListener {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                
+                System.out.println("FLowMod sent to: " + stream + " " +
+                                    match.getNetworkSource() + "->" + match.getNetworkDestination() + 
+                                    " goes to " + outPort);
             }
 
             // Send a packet out
@@ -120,8 +128,8 @@ public class SimpleController implements SelectListener {
                 // set actions
                 OFActionOutput action = new OFActionOutput();
                 action.setMaxLength((short) 0);
-                action.setPort((short) ((outPort == null) ? OFPort.OFPP_FLOOD
-                        .getValue() : outPort));
+                action.setPort((outPort == null) ? OFPort.OFPP_FLOOD
+                        .getValue() : outPort);
                 List<OFAction> actions = new ArrayList<OFAction>();
                 actions.add(action);
                 po.setActions(actions);
@@ -142,9 +150,13 @@ public class SimpleController implements SelectListener {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                
+                System.out.println("PacketOut sent to " + stream + " " +
+                                    action.getPort());
             }
         }
 
+        @Override
         public String toString() {
             InetAddress remote = sock.socket().getInetAddress();
             return remote.getHostAddress() + ":" + sock.socket().getPort();
@@ -295,7 +307,7 @@ public class SimpleController implements SelectListener {
         options.addOption("h", "help", "print help");
         // unused?
         // options.addOption("n", true, "the number of packets to send");
-        options.addOption("p", "port", 6633, "the port to listen on");
+        options.addOption("p", "port", 6634, "the port to listen on");
         options.addOption("t", "threads", 1, "the number of threads to run");
         try {
             SimpleCLI cmd = SimpleCLI.parse(options, args);
