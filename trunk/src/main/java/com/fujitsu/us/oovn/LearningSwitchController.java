@@ -44,9 +44,9 @@ public class LearningSwitchController extends Controller
         Integer dlSrcKey = Arrays.hashCode(dlSrc);
         int bufferId = packetIn.getBufferId();
 
-        // debug
-        System.out.println("PacketIn from stream " + sw.getStream() + " " + match.getNetworkSource() + 
-                                   "->" + match.getNetworkDestination());
+        // DEBUG:
+//        System.out.println("PacketIn from stream " + sw.getStream() + " " + match.getNetworkSource() + 
+//                                   "->" + match.getNetworkDestination());
         
         // if the src is not multicast, learn it
         Map<Integer, Short> macTable = sw.getMacTable();
