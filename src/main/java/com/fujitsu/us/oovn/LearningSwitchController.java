@@ -14,19 +14,34 @@ import org.openflow.protocol.OFPort;
 import org.openflow.protocol.OFType;
 import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
+import org.openflow.util.LRULinkedHashMap;
 import org.openflow.util.U16;
 
+/**
+ * Making a switch a learning switch
+ * 
+ * @author Cong Chen <Cong.Chen@us.fujitsu.com>
+ *
+ */
 public class LearningSwitchController extends Controller
 {
+    /** mac address -> port */
+    protected Map<Integer, Short> _macTable;
 
-    public LearningSwitchController(int port) throws IOException {
+    /**
+     * @param port
+     * @throws IOException
+     */
+    public LearningSwitchController(int port) throws IOException
+    {
         super(port);
+        _macTable = new LRULinkedHashMap<Integer, Short>(64001, 64000);
     }
     
     @Override
     protected void handlePacketIn(OFSwitch sw, OFPacketIn packetIn)
     {
-        // Build the Match
+        // Build a Match object
         OFMatch match = new OFMatch();
         match.loadFromPacket(packetIn.getPacketData(), packetIn.getInPort());
         byte[] dlDst = match.getDataLayerDestination();
@@ -36,23 +51,23 @@ public class LearningSwitchController extends Controller
         int bufferId = packetIn.getBufferId();
 
         // if the src is not multicast, learn it
-        Map<Integer, Short> macTable = sw.getMacTable();
         if ((dlSrc[0] & 0x1) == 0)
         {
-            if (!macTable.containsKey(dlSrcKey) ||                        // no entry
-                !macTable.get(dlSrcKey).equals(packetIn.getInPort())) {   // wrong port
-                macTable.put(dlSrcKey, packetIn.getInPort());             // update entry
+            if (!_macTable.containsKey(dlSrcKey) ||                        // no entry
+                !_macTable.get(dlSrcKey).equals(packetIn.getInPort())) {   // wrong port
+                _macTable.put(dlSrcKey, packetIn.getInPort());             // update entry
             }
         }
 
         Short outPort = null;
         // if the destination is not multicast, look it up
         if ((dlDst[0] & 0x1) == 0) {
-            outPort = macTable.get(dlDstKey);
+            outPort = _macTable.get(dlDstKey);
         }
 
-        // push a flow mod if we know where the packet should be going
-        if (outPort != null)
+        // modify the switch's flow table with a flow mod message
+        // if we know where the packet should be going
+        if(outPort != null)
         {
             OFFlowMod flowMod = (OFFlowMod) _factory.getMessage(OFType.FLOW_MOD);
             flowMod.setBufferId(bufferId);
@@ -66,6 +81,8 @@ public class LearningSwitchController extends Controller
             flowMod.setMatch(match);
             flowMod.setOutPort(OFPort.OFPP_NONE.getValue());
             flowMod.setPriority((short) 0);
+            
+            // add a forwarding action
             OFActionOutput action = new OFActionOutput();
             action.setMaxLength((short) 0);
             action.setPort(outPort);
@@ -81,14 +98,14 @@ public class LearningSwitchController extends Controller
             }
         }
 
-        // Send a packet out
-        if (outPort == null || packetIn.getBufferId() == 0xffffffff)
+        // Forward the packet by sending a packet out message to the switch
+        if(outPort == null || packetIn.getBufferId() == 0xffffffff)
         {
             OFPacketOut packetOut = new OFPacketOut();
             packetOut.setBufferId(bufferId);
             packetOut.setInPort(packetIn.getInPort());
 
-            // set actions
+            // add a forward action
             OFActionOutput action = new OFActionOutput();
             action.setMaxLength((short) 0);
             action.setPort(outPort == null ? OFPort.OFPP_FLOOD.getValue() 
@@ -122,7 +139,7 @@ public class LearningSwitchController extends Controller
     {
         try
         {
-            LearningSwitchController controller = new LearningSwitchController(6634);
+            Controller controller = new LearningSwitchController(6634);
             controller.run();
         }
         catch(IOException e) {
