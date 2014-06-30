@@ -1,26 +1,26 @@
 package com.fujitsu.us.oovn.element.port;
 
+import com.fujitsu.us.oovn.element.Jsonable;
 import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.datapath.Switch;
 import com.fujitsu.us.oovn.element.link.Link;
 import com.fujitsu.us.oovn.element.link.LinkPair;
-import com.fujitsu.us.oovn.util.NoJson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 
-public class Port
+public class Port implements Jsonable
 {
     private int        _number;
     private MACAddress _mac;
     private Boolean    _isEdge;
-    
-    @NoJson
     private Switch     _switch;
-    
-    @NoJson
     private LinkPair   _linkPair;
 
-    public Port(final int number) {
+    public Port(int number, MACAddress mac)
+    {
         setNumber(number);
+        setMACAddress(mac);
     }
     
     public Switch getSwitch() {
@@ -39,11 +39,11 @@ public class Port
         _number = number;
     }
 
-    public MACAddress getMAC() {
+    public MACAddress getMACAddress() {
         return _mac;
     }
 
-    public void setMAC(MACAddress mac) {
+    public void setMACAddress(MACAddress mac) {
         _mac = mac;
     }
 
@@ -64,19 +64,19 @@ public class Port
     }
     
     public Link getInLink() {
-        return getLinkPair().getInLink();
+        return getLinkPair() == null ? null : getLinkPair().getInLink();
     }
     
     public Link getOutLink() {
-        return getLinkPair().getOutLink();
+        return getLinkPair() == null ? null : getLinkPair().getOutLink();
     }
 
     @Override
     public String toString() {
         return  "PORT:" +
                 "\n- number: "      + getNumber() + 
-                "\n- wwitch: "      + getSwitch().getName() +
-                "\n- MACAddress: "  + getMAC() +
+                "\n- switch: "      + getSwitch().getName() +
+                "\n- MACAddress: "  + getMACAddress() +
                 "\n- isEdge: "      + isEdge();
     }
     
@@ -92,5 +92,16 @@ public class Port
         final Switch yourSwitch = other.getSwitch();
         return  mySwitch == null && yourSwitch == null || 
                 mySwitch != null && yourSwitch != null && mySwitch.equals(yourSwitch);
+    }
+    
+    @Override
+    public JsonElement toJson()
+    {
+        JsonObject result = new JsonObject();
+        result.addProperty("dpid",        getSwitch().getFormattedDPID());
+        result.addProperty("number",      getNumber());
+        result.addProperty("is edge",     isEdge());
+        result.add        ("mac address", getMACAddress().toJson());
+        return result;
     }
 }

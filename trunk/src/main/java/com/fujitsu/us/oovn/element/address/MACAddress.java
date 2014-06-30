@@ -2,7 +2,11 @@ package com.fujitsu.us.oovn.element.address;
 
 import java.util.Arrays;
 
-public class MACAddress
+import com.fujitsu.us.oovn.element.Jsonable;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+
+public class MACAddress implements Jsonable
 {
     /**
      * MAC address is always 6 bytes long
@@ -33,4 +37,10 @@ public class MACAddress
         }
         return builder.toString();
     }
+    
+    @Override
+    public JsonElement toJson() {
+        return new JsonPrimitive(toString());
+    }
+
 }

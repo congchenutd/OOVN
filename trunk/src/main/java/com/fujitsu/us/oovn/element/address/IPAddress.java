@@ -2,8 +2,12 @@ package com.fujitsu.us.oovn.element.address;
 
 import org.openflow.util.U8;
 
+import com.fujitsu.us.oovn.element.Jsonable;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 
-public class IPAddress
+
+public class IPAddress implements Jsonable
 {
     protected int _ip;
 
@@ -38,10 +42,10 @@ public class IPAddress
 
     @Override
     public String toString() {
-        return U8.f((byte)  (_ip >> 24))       + "." + 
-                            (_ip >> 16 & 0xFF) + "." + 
-                            (_ip >> 8  & 0xFF) + "." + 
-                            (_ip & 0xFF);
+        return U8.f((byte)  (_ip >> 24))      + "." + 
+                            (_ip >> 16 & 0xF) + "." + 
+                            (_ip >> 8  & 0xF) + "." + 
+                            (_ip       & 0xF);
     }
 
     @Override
@@ -62,4 +66,10 @@ public class IPAddress
         IPAddress other = (IPAddress) obj;
         return _ip == other._ip;
     }
+    
+    @Override
+    public JsonElement toJson() {
+        return new JsonPrimitive(toString());
+    }
+    
 }

@@ -1,15 +1,18 @@
 package com.fujitsu.us.oovn.element.link;
 
+import com.fujitsu.us.oovn.element.Jsonable;
 import com.fujitsu.us.oovn.element.datapath.Switch;
 import com.fujitsu.us.oovn.element.port.Port;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 
-public class Link
+public class Link implements Jsonable
 {
     protected Port _srcPort = null;
     protected Port _dstPort = null;
     
-    public Link(final Port src, final Port dst)
+    public Link(Port src, Port dst)
     {
         _srcPort = src;
         _dstPort = dst;
@@ -35,6 +38,15 @@ public class Link
     public String toString() {
         return  getSrcSwitch().getName() + ":" + _srcPort.getNumber() + "-" + 
                 getDstSwitch().getName() + ":" + _dstPort.getNumber();
+    }
+    
+    @Override
+    public JsonElement toJson()
+    {
+        JsonObject result = new JsonObject();
+        result.add("src port", getSrcPort().toJson());
+        result.add("dst port", getDstPort().toJson());
+        return result;
     }
     
 }
