@@ -1,16 +1,29 @@
 package com.fujitsu.us.oovn.element.address;
 
-public class VirtualIPAddress extends IPAddress
-{
-    private final int _tenantId;
+import com.fujitsu.us.oovn.element.Jsonable;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
-    public VirtualIPAddress(final int tenantId, final String ipString)
+public class VirtualIPAddress extends IPAddress implements Jsonable
+{
+    private final int _tenantID;
+
+    public VirtualIPAddress(int tenantID, String ipString)
     {
         super(ipString);
-        _tenantId = tenantId;
+        _tenantID = tenantID;
     }
 
-    public int getTenantId() {
-        return _tenantId;
+    public int getTenantID() {
+        return _tenantID;
+    }
+    
+    @Override
+    public JsonElement toJson()
+    {
+        JsonObject result = new JsonObject();
+        result.addProperty("tenant id", getTenantID());
+        result.addProperty("address",   toString());
+        return result;
     }
 }

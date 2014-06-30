@@ -2,6 +2,8 @@ package com.fujitsu.us.oovn.element.network;
 
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.address.IPAddress;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 public class VirtualNetwork extends Network
 {
@@ -31,6 +33,17 @@ public class VirtualNetwork extends Network
     public int getMask() {
         return _mask;
     }
+    
+    @Override
+    public JsonElement toJson()
+    {
+        JsonObject result = new JsonObject();
+        result.add(        "ip address", getNetworkAddress().toJson());
+        result.addProperty("mask",       getMask());
+        result.add(        "network",    super.toJson());
+        return result;
+    }
+    
 }
 
 

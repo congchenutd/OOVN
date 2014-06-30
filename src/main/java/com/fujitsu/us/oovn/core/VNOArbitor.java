@@ -1,13 +1,26 @@
 package com.fujitsu.us.oovn.core;
 
+import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
+import com.google.gson.JsonObject;
+
 public class VNOArbitor
 {
-    public NetworkConfiguration getPhysicalConfiguration()
+    private static VNOArbitor _instance = null;
+    
+    public static VNOArbitor getInstance()
     {
-        return new NetworkConfiguration();
+        if(_instance == null)
+            _instance = new VNOArbitor();
+        return _instance;
     }
     
-    public boolean verifyConfiguration(NetworkConfiguration config)
+    public JsonObject getPhysicalTopology()
+    {
+        PhysicalNetwork pnw = PhysicalNetwork.getInstance();
+        return (JsonObject) pnw.toJson();
+    }
+    
+    public boolean verifyConfiguration(JsonObject config)
     {
         return true;
     }
@@ -22,7 +35,7 @@ public class VNOArbitor
         return true;
     }
     
-    public boolean decommsionVNO(VNO vno)
+    public boolean decommssionVNO(VNO vno)
     {
         return true;
     }

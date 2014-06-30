@@ -8,51 +8,63 @@ import java.util.Set;
 
 import org.openflow.util.HexString;
 
-import com.fujitsu.us.oovn.core.NetworkConfiguration;
+import com.fujitsu.us.oovn.element.Jsonable;
 import com.fujitsu.us.oovn.element.datapath.Switch;
 import com.fujitsu.us.oovn.element.link.Link;
+import com.fujitsu.us.oovn.element.link.LinkPair;
 import com.fujitsu.us.oovn.element.port.Port;
 import com.fujitsu.us.oovn.exception.InvalidDPIDException;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
-public class Network
+public class Network implements Jsonable
 {
     protected Map<Long, Switch> _switches;
-    protected Set<Link>         _links;
+    protected Set<LinkPair>     _linkPairs;
     
     public Network()
     {
         _switches  = new HashMap<Long, Switch>();
-        _links     = new HashSet<Link>();
+        _linkPairs = new HashSet<LinkPair>();
     }
     
     public boolean addSwitch(final Switch sw)
     {
-        if(_switches.containsKey(sw.getID()))
+        if(_switches.containsKey(sw.getDPID()))
             return false;
-        _switches.put(sw.getID(), sw);
+        _switches.put(sw.getDPID(), sw);
         return true;
     }
     
     public boolean removeSwitch(final Switch sw)
     {
-        if(_switches.containsKey(sw.getID()))
+        if(_switches.containsKey(sw.getDPID()))
         {
-            _switches.remove(sw.getID());
+            _switches.remove(sw.getDPID());
             return true;
         }
         return false;
     }
     
-    public boolean addLink(final Link link)
+    public boolean addLinkPair(LinkPair linkPair)
     {
-        if(_links.contains(link))
+        if(_linkPairs.contains(linkPair))
             return false;
-        _links.add(link);
+        _linkPairs.add(linkPair);
         return true;
     }
     
+    public boolean addLinkPair(Port port1, Port port2)
+    {
+        if(port1.getInLink()  != null && port1.getInLink() .getSrcPort() == port2 || 
+           port2.getOutLink() != null && port2.getOutLink().getDstPort() == port2)
+            return false;
+        return addLinkPair(new LinkPair(port1, port2));
+    }
+    
     public boolean removeLink(final Link link) {
-        return _links.remove(link);
+        return _linkPairs.remove(link);
     }
     
     public Switch getSwitch(long dpid) throws InvalidDPIDException
@@ -77,17 +89,29 @@ public class Network
         return null;
     }
     
-    public Set<Link> getLinks() {
-        return Collections.unmodifiableSet(_links);
+    public Set<LinkPair> getLinks() {
+        return Collections.unmodifiableSet(_linkPairs);
     }
     
     public Port getNeighborPort(final Port srcPort) {
         return srcPort.getLinkPair().getOutLink().getDstPort();
     }
     
-    public NetworkConfiguration toConfiguration()
+    @Override
+    public JsonElement toJson()
     {
-        NetworkConfiguration config = new NetworkConfiguration();
-        return config;
+        JsonObject result = new JsonObject();
+        
+        JsonArray switches = new JsonArray();
+        for(Switch sw: getSwitches().values())
+            switches.add(sw.toJson());
+        result.add("switches", switches);
+        
+        JsonArray links = new JsonArray();
+        for(LinkPair link: getLinks())
+            links.add(link.toJson());
+        result.add("links", links);
+        
+        return result;
     }
 }

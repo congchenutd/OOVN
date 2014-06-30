@@ -1,7 +1,8 @@
 package com.fujitsu.us.oovn.element;
 
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 
 public interface Jsonable {
-    public JsonObject toJsonObject();
+    public JsonElement toJson();
+//    public boolean fromJson(JsonObject jsonObj);
 }
