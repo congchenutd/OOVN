@@ -1,32 +1,39 @@
 package com.fujitsu.us.oovn.core;
 
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
+import com.fujitsu.us.oovn.element.network.VirtualNetwork;
 import com.google.gson.JsonObject;
 
 public class VNOArbitor
 {
-    private static VNOArbitor _instance = null;
-    
-    public static VNOArbitor getInstance()
-    {
-        if(_instance == null)
-            _instance = new VNOArbitor();
-        return _instance;
+    // singleton
+    public static VNOArbitor getInstance() {
+        return LazyHolder._instance;
     }
     
-    public JsonObject getPhysicalTopology()
+    private static class LazyHolder {
+        private static final VNOArbitor _instance = new VNOArbitor();
+    }
+    
+    private VNOArbitor() {}
+    
+    public NetworkConfiguration getPhysicalTopology()
     {
         PhysicalNetwork pnw = PhysicalNetwork.getInstance();
-        return (JsonObject) pnw.toJson();
+        return new NetworkConfiguration((JsonObject) pnw.toJson());
     }
     
-    public boolean verifyConfiguration(JsonObject config)
+    public boolean verifyConfiguration(NetworkConfiguration config)
     {
         return true;
     }
     
     public boolean activateVNO(VNO vno)
     {
+        // build a VirtualNetwork and assign it to VNO
+        VirtualNetwork vn = NetworkBuilder.getInstance().build(vno);
+        vno.setNetwork(vn);
+        VNOPool.getInstance().registerVNO(vno);
         return true;
     }
     
@@ -37,6 +44,7 @@ public class VNOArbitor
     
     public boolean decommssionVNO(VNO vno)
     {
+        VNOPool.getInstance().unregisterVNO(vno);
         return true;
     }
 }

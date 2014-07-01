@@ -30,4 +30,9 @@ public class NetworkConfiguration implements Jsonable
     public JsonObject toJson() {
         return _json;
     }
+    
+    @Override
+    public String toString() {
+        return _json.toString();
+    }
 }

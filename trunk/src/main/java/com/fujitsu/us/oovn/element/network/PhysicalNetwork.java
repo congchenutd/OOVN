@@ -6,13 +6,13 @@ import com.fujitsu.us.oovn.element.port.PhysicalPort;
 
 public class PhysicalNetwork extends Network
 {
-    private static PhysicalNetwork _instance;
+    // singleton
+    public static PhysicalNetwork getInstance() {
+        return LazyHolder._instance;
+    }
     
-    public static PhysicalNetwork getInstance()
-    {
-        if (_instance == null)
-            _instance = new PhysicalNetwork();
-        return _instance;
+    private static class LazyHolder {
+        private static final PhysicalNetwork _instance = new PhysicalNetwork();
     }
     
     // for testing

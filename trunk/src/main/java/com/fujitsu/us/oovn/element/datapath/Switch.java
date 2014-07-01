@@ -13,9 +13,9 @@ public class Switch
     protected String _name;
     protected HashMap<Integer, Port> _portMap = new HashMap<Integer, Port>();
     
-    public Switch(long id, String name)
+    public Switch(long dpid, String name)
     {
-        _dpid = id;
+        _dpid = dpid;
         _name = name;
     }
     

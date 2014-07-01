@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gson.JsonObject;
-
 public class Tenant
 {
     private final int               _id;
@@ -31,7 +29,6 @@ public class Tenant
     {
         if(_vnos.containsKey(vno.getID()))
             return false;
-//        vno.setTenant(this);
         _vnos.put(vno.getID(), vno);
         return true;
     }
@@ -54,8 +51,18 @@ public class Tenant
     {
         Tenant tenant = new Tenant("Carl");
         VNO vno = new VNO(tenant);
-        JsonObject topo = vno.getPhysicalTopology();
-        System.out.println(topo.toString());
+        NetworkConfiguration topo = vno.getPhysicalTopology();
+//        System.out.println(topo.toString());
+        
+        vno.init("VirtualConfig.json");
+//        System.out.println(vno.getConfiguration().toString());
+        
+        if(vno.verify())
+        {
+            vno.activate();
+            vno.deactivate();
+            vno.decommission();
+        }
     }
 }
 

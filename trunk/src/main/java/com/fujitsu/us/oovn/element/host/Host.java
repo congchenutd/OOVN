@@ -7,6 +7,7 @@ import com.fujitsu.us.oovn.element.Jsonable;
 import com.fujitsu.us.oovn.element.address.IPAddress;
 import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.address.VirtualIPAddress;
+import com.fujitsu.us.oovn.element.port.VirtualPort;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -15,14 +16,14 @@ public class Host implements Jsonable
     private static Logger     _log = LoggerFactory.getLogger(Host.class);
     private final  int        _id;
     private final  MACAddress _mac;
-//    private final  OVXPort port;
-    private final IPAddress _ip = new VirtualIPAddress(0, "0.0.0.0");
+    private VirtualPort       _port;
+    private IPAddress         _ip = new VirtualIPAddress(0, "0.0.0.0");
     
-    public Host(Integer id, MACAddress mac)
+    public Host(Integer id, MACAddress mac, IPAddress ip)
     {
         _id  = id;
         _mac = mac;
-//        this.port = port;
+        _ip  = ip;
     }
     
     public int getID() {
@@ -37,6 +38,13 @@ public class Host implements Jsonable
         return _ip;
     }
     
+    public boolean connectTo(VirtualPort port)
+    {
+        // TODO: how to check if this port has already connected to another host?
+        _port = port;
+        return true;
+    }
+    
     @Override
     public JsonElement toJson()
     {
@@ -45,11 +53,5 @@ public class Host implements Jsonable
         result.add("mac address", getMACAddress().toJson());
         result.add("ip address",  getIPAddress() .toJson());
         return result;
-    }
-    
-    public static void main(String argv[])
-    {
-        Host host = new Host(1, new MACAddress(new byte[] {0,0,0,0,0,1}));
-        System.out.println(host.toJson().toString());
     }
 }
