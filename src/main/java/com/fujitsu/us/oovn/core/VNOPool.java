@@ -5,15 +5,18 @@ import java.util.Map;
 
 public class VNOPool
 {
-    private static VNOPool           _instance = null;
-    private        Map<Integer, VNO> _vnos;
+    private Map<Integer, VNO> _vnos;
     
-    public VNOPool getInstance() 
-    {
-        if(_instance == null)
-            _instance = new VNOPool();
-        return _instance;
+    // singleton
+    public static VNOPool getInstance() {
+        return LazyHolder._instance;
     }
+    
+    private static class LazyHolder {
+        private static final VNOPool _instance = new VNOPool();
+    }
+    
+    private VNOPool() {}
     
     public VNO getVNO(int vnoID) {
         return _vnos.containsKey(vnoID) ? _vnos.get(vnoID) : null;            

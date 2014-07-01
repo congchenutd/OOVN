@@ -11,7 +11,7 @@ public class IPAddress implements Jsonable
 {
     protected int _ip;
 
-    public IPAddress(final String ipString) {
+    public IPAddress(String ipString) {
         setIP(ipString);
     }
 

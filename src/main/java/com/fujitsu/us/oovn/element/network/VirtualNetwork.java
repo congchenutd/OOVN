@@ -1,7 +1,11 @@
 package com.fujitsu.us.oovn.element.network;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.address.IPAddress;
+import com.fujitsu.us.oovn.element.host.Host;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -10,12 +14,14 @@ public class VirtualNetwork extends Network
     private final VNO       _vno;
     private final IPAddress _networkIP;
     private final int       _mask;
+    private final Map<Integer, Host> _hosts;
 
-    public VirtualNetwork(final VNO vno, final IPAddress ip, int mask)
+    public VirtualNetwork(VNO vno, IPAddress ip, int mask)
     {
         _vno       = vno;
         _networkIP = ip;
         _mask      = mask;
+        _hosts     = new HashMap<Integer, Host>();
     }
     
     public int getID() {
@@ -32,6 +38,14 @@ public class VirtualNetwork extends Network
     
     public int getMask() {
         return _mask;
+    }
+    
+    public boolean addHost(Host host)
+    {
+        if(_hosts.containsKey(host.getID()))
+            return false;
+        _hosts.put(host.getID(), host);
+        return true;
     }
     
     @Override
