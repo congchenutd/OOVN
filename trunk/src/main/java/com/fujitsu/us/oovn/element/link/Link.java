@@ -44,8 +44,8 @@ public class Link implements Jsonable
     public JsonElement toJson()
     {
         JsonObject result = new JsonObject();
-        result.add("src port", getSrcPort().toJson());
-        result.add("dst port", getDstPort().toJson());
+        result.add("src", getSrcPort().toJson());
+        result.add("dst", getDstPort().toJson());
         return result;
     }
     

@@ -6,9 +6,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.openflow.util.HexString;
-
 import com.fujitsu.us.oovn.element.Jsonable;
+import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.datapath.Switch;
 import com.fujitsu.us.oovn.element.link.Link;
 import com.fujitsu.us.oovn.element.link.LinkPair;
@@ -67,13 +66,13 @@ public class Network implements Jsonable
         return _linkPairs.remove(link);
     }
     
-    public Switch getSwitch(long dpid) throws InvalidDPIDException
+    public Switch getSwitch(DPID dpid) throws InvalidDPIDException
     {
         try {
-            return _switches.get(dpid);
+            return _switches.get(dpid.value());
         }
         catch (NullPointerException e) {
-            throw new InvalidDPIDException("DPID " + HexString.toHexString(dpid) + " is unknown");
+            throw new InvalidDPIDException("DPID " + dpid + " is unknown");
         }
     }
     

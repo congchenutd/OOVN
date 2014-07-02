@@ -15,15 +15,17 @@ public class Host implements Jsonable
 {
     private static Logger     _log = LoggerFactory.getLogger(Host.class);
     private final  int        _id;
+    private final  String     _name;
     private final  MACAddress _mac;
-    private VirtualPort       _port;
     private IPAddress         _ip = new VirtualIPAddress(0, "0.0.0.0");
+    private VirtualPort       _port;
     
-    public Host(Integer id, MACAddress mac, IPAddress ip)
+    public Host(Integer id, String name, MACAddress mac, IPAddress ip)
     {
-        _id  = id;
-        _mac = mac;
-        _ip  = ip;
+        _id   = id;
+        _name = name;
+        _mac  = mac;
+        _ip   = ip;
     }
     
     public int getID() {

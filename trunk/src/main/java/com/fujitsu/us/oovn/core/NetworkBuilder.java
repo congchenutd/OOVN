@@ -1,13 +1,17 @@
 package com.fujitsu.us.oovn.core;
 
+import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.address.IPAddress;
 import com.fujitsu.us.oovn.element.datapath.BigSwitch;
+import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
 import com.fujitsu.us.oovn.element.datapath.SingleSwitch;
 import com.fujitsu.us.oovn.element.datapath.VirtualSwitch;
 import com.fujitsu.us.oovn.element.host.Host;
 import com.fujitsu.us.oovn.element.link.LinkPair;
 import com.fujitsu.us.oovn.element.link.VirtualLink;
+import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.element.network.VirtualNetwork;
+import com.fujitsu.us.oovn.element.port.PhysicalPort;
 import com.fujitsu.us.oovn.element.port.VirtualPort;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -68,11 +72,27 @@ public class NetworkBuilder
 
     private SingleSwitch buildSingleSwitch(JsonObject json)
     {
-        Long dpid   = json.get("dpid").getAsLong();
+        DPID dpid   = new DPID(json.get("dpid").getAsString());
         String name = json.get("name").getAsString();
         SingleSwitch result = new SingleSwitch(dpid, name);
-
-        // TODO: virtual ports
+        
+        // map to physical switch
+        DPID phyID = new DPID(json.get("physical").getAsString());
+        PhysicalSwitch sw = (PhysicalSwitch) PhysicalNetwork.getInstance().getSwitch(phyID);
+        result.setPhysicalSwitch(sw);
+        
+        // virtual ports
+        JsonArray portsJson = json.get("ports").getAsJsonArray();
+        
+        int index = 0;
+        for(JsonElement e: portsJson)
+        {
+            int number = e.getAsInt();
+            PhysicalPort port = (PhysicalPort) sw.getPort(number);
+            VirtualPort vPort = new VirtualPort(++index, port.getMACAddress());
+            vPort.setPhysicalPort(port);
+            result.addPort(vPort);
+        }
         
         return result;
     }
@@ -82,14 +102,15 @@ public class NetworkBuilder
         return null;
     }
     
-    private VirtualSwitch buildSwitch(JsonObject json)
-    {
-        return json.get("type").toString() == "single" ? buildSingleSwitch(json) 
-                                                       : buildBigSwitch(json);
+    private VirtualSwitch buildSwitch(JsonObject json) {
+        return json.get("type").getAsString().equals("single") ? buildSingleSwitch(json) 
+                                                               : buildBigSwitch(json);
     }
     
     private VirtualPort buildPort(JsonObject json)
     {
+        Long dpid   = json.get("dpid")  .getAsLong();
+        int  number = json.get("number").getAsInt();
         return null;
     }
     
@@ -110,6 +131,9 @@ public class NetworkBuilder
     
     private Host buildHost(JsonObject json)
     {
+        int id = json.get("id").getAsInt();
+        String name = json.get("name").getAsString();
+        json.get("mac").getAsString();
         return null;
     }
     
