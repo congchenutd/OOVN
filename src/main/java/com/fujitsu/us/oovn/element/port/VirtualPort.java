@@ -14,4 +14,7 @@ public class VirtualPort extends Port
         _physicalPort = port;
     }
     
+    public PhysicalPort getPhysicalPort() {
+        return _physicalPort;
+    }
 }

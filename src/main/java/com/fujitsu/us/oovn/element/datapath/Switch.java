@@ -2,6 +2,7 @@ package com.fujitsu.us.oovn.element.datapath;
 
 import java.util.HashMap;
 
+import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.port.Port;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -9,11 +10,11 @@ import com.google.gson.JsonObject;
 
 public class Switch
 {
-    protected long   _dpid;
+    protected DPID   _dpid;
     protected String _name;
     protected HashMap<Integer, Port> _portMap = new HashMap<Integer, Port>();
     
-    public Switch(long dpid, String name)
+    public Switch(DPID dpid, String name)
     {
         _dpid = dpid;
         _name = name;
@@ -24,19 +25,11 @@ public class Switch
     }
     
     public long getDPID() {
-        return _dpid;
+        return _dpid.value();
     }
     
-    public String getFormattedDPID()
-    {
-        final StringBuilder builder = new StringBuilder();
-        for(int i = 56; i >= 0; i -= 8)
-        {
-            if(builder.length() > 0)
-                builder.append(":");
-            builder.append(String.format("%02X", (_dpid >> i) & 0xF));
-        }
-        return builder.toString();
+    public String getFormattedDPID() {
+        return _dpid.toString();
     }
     
     public boolean addPort(final Port port)

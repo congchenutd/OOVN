@@ -13,7 +13,7 @@ public class Port implements Jsonable
 {
     private int        _number;
     private MACAddress _mac;
-    private Boolean    _isEdge;
+    private boolean    _isEdge;
     private Switch     _switch;
     private LinkPair   _linkPair;
 
@@ -98,10 +98,10 @@ public class Port implements Jsonable
     public JsonElement toJson()
     {
         JsonObject result = new JsonObject();
-        result.addProperty("dpid",        getSwitch().getFormattedDPID());
-        result.addProperty("number",      getNumber());
-        result.addProperty("is edge",     isEdge());
-        result.add        ("mac address", getMACAddress().toJson());
+        result.addProperty("switch", getSwitch().getFormattedDPID());
+        result.addProperty("number", getNumber());
+        result.addProperty("edge",   isEdge());
+        result.add        ("mac",    getMACAddress().toJson());
         return result;
     }
 }

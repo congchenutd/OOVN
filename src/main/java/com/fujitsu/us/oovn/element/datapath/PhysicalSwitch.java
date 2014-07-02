@@ -1,11 +1,13 @@
 package com.fujitsu.us.oovn.element.datapath;
 
+import com.fujitsu.us.oovn.element.address.DPID;
+
 public class PhysicalSwitch extends Switch
 {
 
-    public PhysicalSwitch(long id, String name)
+    public PhysicalSwitch(DPID dpid, String name)
     {
-        super(id, name);
+        super(dpid, name);
     }
 
 }
