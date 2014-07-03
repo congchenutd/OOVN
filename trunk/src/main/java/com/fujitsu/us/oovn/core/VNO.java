@@ -9,11 +9,20 @@ import com.fujitsu.us.oovn.exception.InvalidVNOOperationException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+/**
+ * A Tenant only interacts with the VNOs
+ * VNO talks to VNOArbitor and other VNOs
+ * 
+ * The operations are delegated to VNOState
+ * 
+ * @author Cong Chen <Cong.Chen@us.fujitsu.com>
+ *
+ */
 public class VNO
 {
     private final Tenant         _tenant;
     private final int            _id;
-    private State                _state;
+    private VNOState             _state;
     private NetworkConfiguration _config;
     private VirtualNetwork       _network;
     
@@ -21,7 +30,7 @@ public class VNO
     {
         _tenant = tenant;
         _id     = VNOCounter.getNextID();
-        _state = State.UNCONFIGURED;
+        _state = VNOState.UNCONFIGURED;
     }
      
     public int getID() {
@@ -48,6 +57,10 @@ public class VNO
         return VNOArbitor.getInstance().getPhysicalTopology();
     }
     
+    /**
+     * The tenant sets requested virtual topology here
+     * @param config
+     */
     public void setConfiguration(NetworkConfiguration config) {
         _config = config;
     }
@@ -56,14 +69,19 @@ public class VNO
         return getConfiguration().isVerified();
     }
     
-    public void setVerified(boolean verified) {
+    private void setVerified(boolean verified) {
         getConfiguration().setVerified(verified);
     }
     
+    /**
+     * Attach a VirtualNetwork to this VNO, once it's created
+     * @param network
+     */
     public void setNetwork(VirtualNetwork network) {
         _network = network;
     }
     
+    ///////////// The major APIs tenant can call ////////////////
     public void init(String configFileName) {
         _state.init(this, configFileName);
     }
@@ -111,12 +129,13 @@ public class VNO
         }
         return true;
     }
+    /////////////////////////////////////////////////////////////
 
-    private void setState(State state) {
+    private void setState(VNOState state) {
         _state = state;
     }
     
-    enum State
+    enum VNOState
     {
         UNCONFIGURED
         {
@@ -127,11 +146,13 @@ public class VNO
                     String config = new String(Files.readAllBytes(Paths.get(configFileName)));
                     vno.setConfiguration(new NetworkConfiguration(
                                     (JsonObject) new JsonParser().parse(config)));
-                    vno.setState(UNVERIFIED);
                 }
                 catch(IOException e) {
                     e.printStackTrace();
                 }
+                
+                // if the config is loaded successfully, go to the next state
+                vno.setState(UNVERIFIED);
             }
         },
         UNVERIFIED
@@ -212,6 +233,10 @@ public class VNO
 
 }
 
+/**
+ * A VNO id generator
+ * The id is unique in the entire universe, NOT per tenant
+ */
 class VNOCounter
 {
     private static int _counter = 0;

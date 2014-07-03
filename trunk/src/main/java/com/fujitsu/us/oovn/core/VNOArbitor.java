@@ -4,6 +4,12 @@ import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.element.network.VirtualNetwork;
 import com.google.gson.JsonObject;
 
+/**
+ * Controller of the entire virtual universe
+ * 
+ * @author Cong Chen <Cong.Chen@us.fujitsu.com>
+ *
+ */
 public class VNOArbitor
 {
     // singleton
@@ -32,9 +38,6 @@ public class VNOArbitor
     {
         // build a VirtualNetwork and assign it to VNO
         VirtualNetwork vn = NetworkBuilder.getInstance().build(vno);
-        
-        System.out.println(vn.toJson());
-        
         vno.setNetwork(vn);
         VNOPool.getInstance().registerVNO(vno);
         return true;
