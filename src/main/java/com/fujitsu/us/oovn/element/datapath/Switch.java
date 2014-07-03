@@ -25,7 +25,7 @@ public class Switch
     }
     
     public long getDPID() {
-        return _dpid.value();
+        return _dpid.toInt();
     }
     
     public String getFormattedDPID() {

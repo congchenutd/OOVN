@@ -6,6 +6,7 @@ import java.util.Map;
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.address.IPAddress;
 import com.fujitsu.us.oovn.element.host.Host;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -52,9 +53,16 @@ public class VirtualNetwork extends Network
     public JsonElement toJson()
     {
         JsonObject result = new JsonObject();
-        result.add(        "ip address", getNetworkAddress().toJson());
-        result.addProperty("mask",       getMask());
-        result.add(        "network",    super.toJson());
+        result.add(        "address", getNetworkAddress().toJson());
+        result.addProperty("mask",    getMask());
+        
+        JsonObject nwJson = (JsonObject) super.toJson();
+        JsonArray hosts = new JsonArray();
+        for(Host h: _hosts.values())
+            hosts.add(h.toJson());
+        nwJson.add("hosts", hosts);
+        result.add("network", nwJson);
+
         return result;
     }
     

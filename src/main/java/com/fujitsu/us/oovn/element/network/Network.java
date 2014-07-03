@@ -69,7 +69,7 @@ public class Network implements Jsonable
     public Switch getSwitch(DPID dpid) throws InvalidDPIDException
     {
         try {
-            return _switches.get(dpid.value());
+            return _switches.get(dpid.toInt());
         }
         catch (NullPointerException e) {
             throw new InvalidDPIDException("DPID " + dpid + " is unknown");
