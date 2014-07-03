@@ -4,6 +4,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The collection of VNOs
+ * 
+ * @author Cong Chen <Cong.Chen@us.fujitsu.com>
+ *
+ */
 public class VNOPool
 {
     private final Map<Integer, VNO> _vnos;

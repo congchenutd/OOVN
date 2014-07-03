@@ -19,6 +19,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+/**
+ * Build a VirtualNetwork for a VNO, according to its configuration
+ * 
+ * @author Cong Chen <Cong.Chen@us.fujitsu.com>
+ */
 public class NetworkBuilder
 {
     // singleton
@@ -32,6 +37,12 @@ public class NetworkBuilder
     
     private NetworkBuilder() {}
 
+    /**
+     * Build a VirtualNetwork for the given VNO
+     * Traverse the configuration Json structure and add corresponding elements
+     * @param vno the VNO the virtual network is built for
+     * @return a new virtual network object for the VNO 
+     */
     public VirtualNetwork build(VNO vno)
     {
         JsonObject json    = vno.getConfiguration().toJson();
@@ -72,6 +83,11 @@ public class NetworkBuilder
         return vnw;
     }
 
+    /**
+     * Build a SingleSwitch based on the given Json configuration
+     * @param json the Json segment for the switch
+     * @return a SingleSwitch object
+     */
     private SingleSwitch buildSingleSwitch(JsonObject json)
     {
         DPID dpid   = new DPID(json.get("dpid").getAsString());
@@ -92,7 +108,7 @@ public class NetworkBuilder
             int number = e.getAsInt();
             PhysicalPort port  = (PhysicalPort) psw.getPort(number);
             
-            // TODO: is it OK to reuse physical MAC address? OVX does so.
+            // QUESTION: is it OK to reuse physical MAC address? OVX does so.
             VirtualPort  vPort = new VirtualPort(++index, port.getMACAddress());
             vPort.setPhysicalPort(port);
             vsw.addPort(vPort);
@@ -101,16 +117,33 @@ public class NetworkBuilder
         return vsw;
     }
     
+    /**
+     * Build a BigSwitch based on the given Json configuration
+     * @param json the Json segment for the switch
+     * @return a BigSwitch object
+     */
     private BigSwitch buildBigSwitch(JsonObject json)
     {
         return null;
     }
     
+    /**
+     * Build a VirtualSwitch (either SingleSwitch or BigSwitch)
+     * based on the given Json configuration
+     * @param json the Json segment for the switch
+     * @return a VirtualSwitch object
+     */
     private VirtualSwitch buildSwitch(JsonObject json) {
         return json.get("type").getAsString().equals("single") ? buildSingleSwitch(json) 
                                                                : buildBigSwitch(json);
     }
     
+    /**
+     * Build a VirtualPort based on the given Json configuration
+     * @param json the segment of the configuration for the port
+     * @param vnw the VirtualNetwork of this port
+     * @return a VirtualPort object
+     */
     private VirtualPort buildPort(JsonObject json, VirtualNetwork vnw)
     {
         DPID dpid   = new DPID(json.get("switch").getAsString());
@@ -118,6 +151,12 @@ public class NetworkBuilder
         return (VirtualPort) vnw.getSwitch(dpid).getPort(number);
     }
     
+    /**
+     * Build a LinkPair based on the given Json configuration
+     * @param json the segment of the configuration for the LinkPair
+     * @param vnw the VirtualNetwork of this LinkPair
+     * @return a LinkPair object
+     */
     private LinkPair buildLinkPair(JsonObject json, VirtualNetwork vnw)
     {
         JsonObject egressJson  = json.getAsJsonObject("egress");
@@ -125,6 +164,12 @@ public class NetworkBuilder
         return new LinkPair(buildLink(ingressJson, vnw), buildLink(egressJson, vnw));
     }
     
+    /**
+     * Build a VirtualLink based on the given Json configuration
+     * @param json the segment of the configuration for the VirtualLink
+     * @param vnw the VirtualNetwork of this port
+     * @return a VirtualLink object
+     */
     private VirtualLink buildLink(JsonObject json, VirtualNetwork vnw)
     {
         if(json.isJsonNull())
@@ -135,6 +180,12 @@ public class NetworkBuilder
         return new VirtualLink(buildPort(srcJson, vnw), buildPort(dstJson, vnw));
     }
     
+    /**
+     * Build a Host based on the given Json configuration
+     * @param json the segment of the configuration for the Host
+     * @param vnw the VirtualNetwork of this port
+     * @return a Host object
+     */
     private Host buildHost(JsonObject json, VirtualNetwork vnw)
     {
         int              id   = json.get("id").getAsInt();

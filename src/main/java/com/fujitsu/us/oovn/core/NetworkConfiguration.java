@@ -3,6 +3,13 @@ package com.fujitsu.us.oovn.core;
 import com.fujitsu.us.oovn.element.Jsonable;
 import com.google.gson.JsonObject;
 
+/**
+ * Configuration of a physical or virtual network
+ * Internally a JsonObject
+ * 
+ * @author Cong Chen <Cong.Chen@us.fujitsu.com>
+ *
+ */
 public class NetworkConfiguration implements Jsonable
 {
     private JsonObject _json;
@@ -18,6 +25,10 @@ public class NetworkConfiguration implements Jsonable
         return _verified;
     }
     
+    /**
+     * VNOArbitor verifies the config and VNO calls this method
+     * @param verified
+     */
     public void setVerified(boolean verified) {
         _verified = verified;
     }

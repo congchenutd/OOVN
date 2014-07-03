@@ -4,11 +4,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represent a tenant for demo purpose
+ * 
+ * @author Cong Chen <Cong.Chen@us.fujitsu.com>
+ *
+ */
 public class Tenant
 {
     private final int               _id;
     private final String            _name;
-    private final Map<Integer, VNO> _vnos;
+    private final Map<Integer, VNO> _vnos;   // VNO id -> VNO
     
     public Tenant(String name)
     {
@@ -25,6 +31,9 @@ public class Tenant
         return _name;
     }
     
+    /**
+     * Add a VNO to this tenant's possession
+     */
     public boolean registerVNO(VNO vno)
     {
         if(_vnos.containsKey(vno.getID()))
@@ -33,16 +42,25 @@ public class Tenant
         return true;
     }
     
+    /**
+     * Remove a VNO from this tenant's possession
+     */
     public boolean unregisterVNO(VNO vno)
     {
         _vnos.remove(vno.getID());
         return true;
     }
     
+    /**
+     * @return the entire VNO map
+     */
     public Map<Integer, VNO> getVNOs() {
         return Collections.unmodifiableMap(_vnos);
     }
     
+    /**
+     * @return the VNO with the id or null if the id doesn't exist
+     */
     public VNO getVNO(int id) {
         return _vnos.containsKey(id) ? _vnos.get(id) : null;
     }
@@ -66,6 +84,9 @@ public class Tenant
     }
 }
 
+/**
+ * A VNO id generator
+ */
 class TenantCounter
 {
     private static int _counter = 0;
