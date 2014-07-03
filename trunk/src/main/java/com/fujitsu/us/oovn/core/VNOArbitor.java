@@ -32,6 +32,9 @@ public class VNOArbitor
     {
         // build a VirtualNetwork and assign it to VNO
         VirtualNetwork vn = NetworkBuilder.getInstance().build(vno);
+        
+        System.out.println(vn.toJson());
+        
         vno.setNetwork(vn);
         VNOPool.getInstance().registerVNO(vno);
         return true;

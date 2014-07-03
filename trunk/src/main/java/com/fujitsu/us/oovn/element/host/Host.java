@@ -40,7 +40,11 @@ public class Host implements Jsonable
         return _ip;
     }
     
-    public boolean connectTo(VirtualPort port)
+    public VirtualPort getPort() {
+        return _port;
+    }
+    
+    public boolean setPort(VirtualPort port)
     {
         // TODO: how to check if this port has already connected to another host?
         _port = port;
@@ -51,9 +55,10 @@ public class Host implements Jsonable
     public JsonElement toJson()
     {
         JsonObject result = new JsonObject();
-        result.addProperty("vno id", getID());
-        result.add("mac address", getMACAddress().toJson());
-        result.add("ip address",  getIPAddress() .toJson());
+        result.addProperty("id", getID());
+        result.add("mac",  getMACAddress().toJson());
+        result.add("ip",   getIPAddress() .toJson());
+        result.add("port", getPort().toJson());
         return result;
     }
 }

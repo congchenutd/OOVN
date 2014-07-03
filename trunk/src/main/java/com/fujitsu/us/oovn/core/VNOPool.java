@@ -1,11 +1,12 @@
 package com.fujitsu.us.oovn.core;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public class VNOPool
 {
-    private Map<Integer, VNO> _vnos;
+    private final Map<Integer, VNO> _vnos;
     
     // singleton
     public static VNOPool getInstance() {
@@ -16,7 +17,9 @@ public class VNOPool
         private static final VNOPool _instance = new VNOPool();
     }
     
-    private VNOPool() {}
+    private VNOPool() {
+        _vnos = new HashMap<Integer, VNO>();
+    }
     
     public VNO getVNO(int vnoID) {
         return _vnos.containsKey(vnoID) ? _vnos.get(vnoID) : null;            

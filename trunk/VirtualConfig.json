@@ -30,21 +30,21 @@
             {
                 "egress": {
                     "src": {
-                        "dpid": "a:b:c:0:0:0:0:1",
+                        "switch": "a:b:c:0:0:0:0:1",
                         "number": 2
                     },
                     "dst": {
-                        "dpid": "a:b:c:0:0:0:0:2",
+                        "switch": "a:b:c:0:0:0:0:2",
                         "number": 1
                     }
                 },
                 "ingress": {
                     "src": {
-                        "dpid": "a:b:c:0:0:0:0:2",
+                        "switch": "a:b:c:0:0:0:0:2",
                         "number": 1
                     },
                     "dst": {
-                        "dpid": "a:b:c:0:0:0:0:1",
+                        "switch": "a:b:c:0:0:0:0:1",
                         "number": 2
                     }
                 }
@@ -56,16 +56,20 @@
                 "name": "h1",
 				"mac": "0a:00:00:00:00:01",
 				"ip" : "192.168.1.101",
-                "switch": "a:b:c:0:0:0:0:1",
-                "port": 1
+				"port" : {
+					"switch": "a:b:c:0:0:0:0:1",
+					"number": 1
+				}
             },
             {
                 "id": 2,
                 "name": "h2",
 				"mac": "0a:00:00:00:00:02",
 				"ip" : "192.168.1.102",
-                "switch": "a:b:c:0:0:0:0:2",
-                "port": 2
+				"port" : {
+					"switch": "a:b:c:0:0:0:0:2",
+					"number": 2
+				}
             }
         ]
     }

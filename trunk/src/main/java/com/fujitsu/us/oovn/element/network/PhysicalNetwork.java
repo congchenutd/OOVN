@@ -20,12 +20,12 @@ public class PhysicalNetwork extends Network
     private PhysicalNetwork()
     {
         PhysicalSwitch sw1 = new PhysicalSwitch(new DPID(1), "s1");
-        sw1.addPort(new PhysicalPort(1, new MACAddress(new byte[] {0,0,0,0,0,1})));
-        sw1.addPort(new PhysicalPort(2, new MACAddress(new byte[] {0,0,0,0,0,2})));
+        sw1.addPort(new PhysicalPort(1, new MACAddress("0:0:0:0:0:1")));
+        sw1.addPort(new PhysicalPort(2, new MACAddress("0:0:0:0:0:2")));
                 
         PhysicalSwitch sw2 = new PhysicalSwitch(new DPID(2), "s2");
-        sw2.addPort(new PhysicalPort(1, new MACAddress(new byte[] {0,0,0,0,0,3})));
-        sw2.addPort(new PhysicalPort(2, new MACAddress(new byte[] {0,0,0,0,0,4})));
+        sw2.addPort(new PhysicalPort(1, new MACAddress("0:0:0:0:0:3")));
+        sw2.addPort(new PhysicalPort(2, new MACAddress("0:0:0:0:0:4")));
         
         addSwitch(sw1);
         addSwitch(sw2);

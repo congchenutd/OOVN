@@ -28,17 +28,23 @@ public class LinkPair implements Jsonable
         return _out;
     }
 
-    protected void setInLink(final Link in) {
+    protected void setInLink(final Link in)
+    {
         _in = in;
+        _in.getSrcPort().setLinkPair(this);
+        _in.getDstPort().setLinkPair(this);
     }
 
-    protected void setOutLink(final Link out) {
+    protected void setOutLink(final Link out)
+    {
         _out = out;
+        _out.getSrcPort().setLinkPair(this);
+        _out.getDstPort().setLinkPair(this);
     }
     
     @Override
     public String toString() {
-        return "LinkPair[int:" + _in.toString() + " and out:" + _out.toString() + "]";
+        return "LinkPair[in:" + _in.toString() + " and out:" + _out.toString() + "]";
     }
 
     @Override

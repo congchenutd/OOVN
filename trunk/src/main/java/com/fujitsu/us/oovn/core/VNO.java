@@ -36,6 +36,10 @@ public class VNO
         return getTenant().getID();
     }
     
+    public VirtualNetwork getNetwork() {
+        return _network;
+    }
+    
     public NetworkConfiguration getConfiguration() {
         return _config;
     }

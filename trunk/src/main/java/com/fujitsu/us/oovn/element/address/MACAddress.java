@@ -7,12 +7,8 @@ import com.google.gson.JsonPrimitive;
 
 public class MACAddress extends HexString implements Jsonable
 {
-    public MACAddress(byte[] bytes) {
-        super(bytes);
-    }
-    
     public MACAddress(String string) {
-        super(string, ":");
+        super(string, 6, ':');
     }
     
     @Override
