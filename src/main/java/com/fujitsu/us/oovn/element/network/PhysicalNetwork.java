@@ -5,6 +5,11 @@ import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
 
+/**
+ * Should sync with real physical network
+ * @author Cong Chen <Cong.Chen@us.fujitsu.com>
+ *
+ */
 public class PhysicalNetwork extends Network
 {
     // singleton

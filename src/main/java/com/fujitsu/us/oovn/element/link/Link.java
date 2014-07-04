@@ -6,7 +6,12 @@ import com.fujitsu.us.oovn.element.port.Port;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-
+/**
+ * Base class for all the links
+ * Switches are connected by Links, while hosts are not
+ * @author Cong Chen <Cong.Chen@us.fujitsu.com>
+ *
+ */
 public class Link implements Jsonable
 {
     protected Port _srcPort = null;

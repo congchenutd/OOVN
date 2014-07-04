@@ -35,6 +35,10 @@ public class VNOPool
         return Collections.unmodifiableMap(_vnos);
     }
     
+    /**
+     * Add the vno to the pool
+     * @return true if successful
+     */
     public boolean registerVNO(VNO vno)
     {
         if(_vnos.containsKey(vno.getID()))
@@ -43,6 +47,9 @@ public class VNOPool
         return true;
     }
     
+    /**
+     * Remove the vno from the pool
+     */
     public void unregisterVNO(VNO vno) {
         _vnos.remove(vno.getID());
     }
