@@ -12,14 +12,18 @@ import com.fujitsu.us.oovn.element.datapath.Switch;
 import com.fujitsu.us.oovn.element.link.Link;
 import com.fujitsu.us.oovn.element.link.LinkPair;
 import com.fujitsu.us.oovn.element.port.Port;
-import com.fujitsu.us.oovn.exception.InvalidDPIDException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+/**
+ * Base class for all networks
+ * @author Cong Chen <Cong.Chen@us.fujitsu.com>
+ *
+ */
 public class Network implements Jsonable
 {
-    protected Map<Long, Switch> _switches;
+    protected Map<Long, Switch> _switches;    // dpid -> switch
     protected Set<LinkPair>     _linkPairs;
     
     public Network()
@@ -28,22 +32,20 @@ public class Network implements Jsonable
         _linkPairs = new HashSet<LinkPair>();
     }
     
-    public boolean addSwitch(final Switch sw)
+    public boolean addSwitch(Switch sw)
     {
-        if(_switches.containsKey(sw.getDPID()))
+        if(_switches.containsKey(sw.getDPID().toInt()))
             return false;
-        _switches.put(sw.getDPID(), sw);
+        _switches.put(sw.getDPID().toInt(), sw);
         return true;
     }
     
-    public boolean removeSwitch(final Switch sw)
+    public boolean removeSwitch(Switch sw)
     {
-        if(_switches.containsKey(sw.getDPID()))
-        {
-            _switches.remove(sw.getDPID());
-            return true;
-        }
-        return false;
+        if(!_switches.containsKey(sw.getDPID().toInt()))
+            return false;
+        _switches.remove(sw.getDPID());
+        return true;
     }
     
     public boolean addLinkPair(LinkPair linkPair)
@@ -62,25 +64,20 @@ public class Network implements Jsonable
         return addLinkPair(new LinkPair(port1, port2));
     }
     
-    public boolean removeLink(final Link link) {
+    public boolean removeLink(Link link) {
         return _linkPairs.remove(link);
     }
     
-    public Switch getSwitch(DPID dpid) throws InvalidDPIDException
-    {
-        try {
-            return _switches.get(dpid.toInt());
-        }
-        catch (NullPointerException e) {
-            throw new InvalidDPIDException("DPID " + dpid + " is unknown");
-        }
+    public Switch getSwitch(DPID dpid) {
+        return _switches.containsKey(dpid.toInt()) ? _switches.get(dpid.toInt()) 
+                                                   : null;
     }
     
     public Map<Long, Switch> getSwitches() {
         return Collections.unmodifiableMap(_switches);
     }
     
-    public Link getLink(final Port srcPort, final Port dstPort)
+    public Link getLink(Port srcPort, Port dstPort)
     {
         Link link = srcPort.getLinkPair().getOutLink();
         if(link.getDstPort().equals(dstPort))
@@ -92,7 +89,7 @@ public class Network implements Jsonable
         return Collections.unmodifiableSet(_linkPairs);
     }
     
-    public Port getNeighborPort(final Port srcPort) {
+    public Port getNeighborPort(Port srcPort) {
         return srcPort.getLinkPair().getOutLink().getDstPort();
     }
     
@@ -102,12 +99,12 @@ public class Network implements Jsonable
         JsonObject result = new JsonObject();
         
         JsonArray switches = new JsonArray();
-        for(Switch sw: getSwitches().values())
+        for(Switch sw: _switches.values())
             switches.add(sw.toJson());
         result.add("switches", switches);
         
         JsonArray links = new JsonArray();
-        for(LinkPair link: getLinks())
+        for(LinkPair link: _linkPairs)
             links.add(link.toJson());
         result.add("links", links);
         

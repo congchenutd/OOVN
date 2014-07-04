@@ -4,6 +4,11 @@ import com.fujitsu.us.oovn.element.Jsonable;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+/**
+ * VirtualIPAddress = tenant id + PhysicalIPAddress
+ * @author Cong Chen <Cong.Chen@us.fujitsu.com>
+ *
+ */
 public class VirtualIPAddress extends IPAddress implements Jsonable
 {
     private final int _tenantID;

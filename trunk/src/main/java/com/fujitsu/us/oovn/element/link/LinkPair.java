@@ -5,6 +5,11 @@ import com.fujitsu.us.oovn.element.port.Port;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+/**
+ * A pair of links (egress and ingress)
+ * @author Cong Chen <Cong.Chen@us.fujitsu.com>
+ *
+ */
 public class LinkPair implements Jsonable
 {
     private Link _in;

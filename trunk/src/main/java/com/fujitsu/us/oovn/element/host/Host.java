@@ -1,8 +1,5 @@
 package com.fujitsu.us.oovn.element.host;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fujitsu.us.oovn.element.Jsonable;
 import com.fujitsu.us.oovn.element.address.IPAddress;
 import com.fujitsu.us.oovn.element.address.MACAddress;
@@ -11,16 +8,22 @@ import com.fujitsu.us.oovn.element.port.VirtualPort;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+/**
+ * Host always connects to the virtual network
+ * Unlike switches, hosts are "connected" to ports without Links
+ * @author Cong Chen <Cong.Chen@us.fujitsu.com>
+ *
+ */
 public class Host implements Jsonable
 {
-    private static Logger     _log = LoggerFactory.getLogger(Host.class);
+//    private static Logger     _log = LoggerFactory.getLogger(Host.class);
     private final  int        _id;
     private final  String     _name;
     private final  MACAddress _mac;
-    private IPAddress         _ip = new VirtualIPAddress(0, "0.0.0.0");
+    private VirtualIPAddress  _ip;
     private VirtualPort       _port;
     
-    public Host(Integer id, String name, MACAddress mac, IPAddress ip)
+    public Host(Integer id, String name, MACAddress mac, VirtualIPAddress ip)
     {
         _id   = id;
         _name = name;
@@ -30,6 +33,10 @@ public class Host implements Jsonable
     
     public int getID() {
         return _id;
+    }
+    
+    public String getName() {
+        return _name;
     }
     
     public MACAddress getMACAddress() {
@@ -47,7 +54,9 @@ public class Host implements Jsonable
     public boolean setPort(VirtualPort port)
     {
         // TODO: how to check if this port has already connected to another host?
+        // a port has no info about the host
         _port = port;
+        _port.setIsEdge(true);
         return true;
     }
     

@@ -2,7 +2,11 @@ package com.fujitsu.us.oovn.element.address;
 
 import com.fujitsu.us.oovn.util.SectionedString;
 
-
+/**
+ * IPv4 address is a 4-byte . separated string
+ * @author Cong Chen <Cong.Chen@us.fujitsu.com>
+ *
+ */
 public class IPAddress extends SectionedString
 {
     public IPAddress(String ipString) {

@@ -8,7 +8,11 @@ import com.fujitsu.us.oovn.element.link.LinkPair;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-
+/**
+ * Base class for all ports
+ * @author Cong Chen <Cong.Chen@us.fujitsu.com>
+ *
+ */
 public class Port implements Jsonable
 {
     private int        _number;
@@ -80,25 +84,22 @@ public class Port implements Jsonable
                 "\n- isEdge: "      + isEdge();
     }
     
-    public boolean equals(Port other)
-    {
-        if(this == other)
-            return true;
-        
-        if(!super.equals(other))
-            return false;
-
-        final Switch mySwitch   = getSwitch();
-        final Switch yourSwitch = other.getSwitch();
-        return  mySwitch == null && yourSwitch == null || 
-                mySwitch != null && yourSwitch != null && mySwitch.equals(yourSwitch);
-    }
+//    public boolean equals(Port other)
+//    {
+//        if(this == other)
+//            return true;
+//        
+//        Switch mySwitch   = getSwitch();
+//        Switch yourSwitch = other.getSwitch();
+//        return  mySwitch == null && yourSwitch == null || 
+//                mySwitch != null && yourSwitch != null && mySwitch.equals(yourSwitch);
+//    }
     
     @Override
     public JsonElement toJson()
     {
         JsonObject result = new JsonObject();
-        result.addProperty("switch", getSwitch().getFormattedDPID());
+        result.addProperty("switch", getSwitch().getDPID().toString());
         result.addProperty("number", getNumber());
         result.addProperty("edge",   isEdge());
         result.add        ("mac",    getMACAddress().toJson());

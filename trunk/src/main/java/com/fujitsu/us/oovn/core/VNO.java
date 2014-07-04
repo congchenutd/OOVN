@@ -160,7 +160,7 @@ public class VNO
             @Override
             public boolean verify(VNO vno)
             {
-                if(VNOArbitor.getInstance().verifyConfiguration(vno.getConfiguration()))
+                if(VNOArbitor.getInstance().verifyVNO(vno))
                 {
                     vno.setVerified(true);
                     vno.getTenant().registerVNO(vno);
@@ -195,6 +195,7 @@ public class VNO
             @Override
             public boolean deactivate(VNO vno)
             {
+                VNOArbitor.getInstance().deactivateVNO(vno);
                 vno.setState(INACTIVE);
                 return true;
             }

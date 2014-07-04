@@ -23,13 +23,16 @@ public class VNOArbitor
     
     private VNOArbitor() {}
     
+    /**
+     * @return the allowable physical topology, may not be the actual one
+     */
     public NetworkConfiguration getPhysicalTopology()
     {
         PhysicalNetwork pnw = PhysicalNetwork.getInstance();
         return new NetworkConfiguration((JsonObject) pnw.toJson());
     }
     
-    public boolean verifyConfiguration(NetworkConfiguration config)
+    public boolean verifyVNO(VNO vno)
     {
         return true;
     }
@@ -43,7 +46,7 @@ public class VNOArbitor
         return true;
     }
     
-    public boolean deactiveVNO(VNO vno)
+    public boolean deactivateVNO(VNO vno)
     {
         return true;
     }

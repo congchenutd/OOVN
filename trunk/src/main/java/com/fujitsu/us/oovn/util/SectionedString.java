@@ -9,7 +9,7 @@ import com.google.gson.JsonPrimitive;
 /**
  * A SectionedString is a string with multiple separated sections
  * Each section represents a byte
- * e.g., a MAC address 00:00:00:00:0A:01 or a ip address 192.168.1.2
+ * e.g., a MAC address 00:00:00:00:0A:01 or an ip address 192.168.1.2
  * 
  * @author Cong Chen <Cong.Chen@us.fujitsu.com>
  * 
@@ -17,8 +17,14 @@ import com.google.gson.JsonPrimitive;
 public abstract class SectionedString implements Jsonable
 {
     private final byte[] _bytes;
-    private char _separator = ':';
+    private final char   _separator;
     
+    /**
+     * Construct the string using integer
+     * @param value the integer value
+     * @param length the number of sections
+     * @param separator
+     */
     public SectionedString(long value, int length, char separator)
     {
         _bytes     = new byte[length];
@@ -28,17 +34,25 @@ public abstract class SectionedString implements Jsonable
             _bytes[i] = (byte) ((value >> (length-1-i)*8) & 0xFF);
     }
     
+    /**
+     * Construct the string using a separated string
+     * @param string
+     * @param length the number of sections
+     * @param separator
+     */
     public SectionedString(String string, int length, char separator)
     {
         _separator = separator;
         
         if (string == null)
-            throw new IllegalArgumentException("Null HexString");
+            throw new IllegalArgumentException("Null String");
         
+        // convert . to \\. because String.split only supports regex, not wildcard
         String s = String.valueOf(_separator);
         if(s.equals("."))
             s = "\\.";
-        final String[] sections = string.split(s);
+        
+        String[] sections = string.split(s);
         if (sections.length != length)
             throw new IllegalArgumentException("Wrong length");
 
@@ -78,7 +92,18 @@ public abstract class SectionedString implements Jsonable
         return new JsonPrimitive(toString());
     }
     
+    /**
+     * Template method. Subclasses determine how to print the section
+     * @param b
+     * @return
+     */
     protected abstract String printSection(byte b);
-    protected abstract byte   sectionValue(String section);
+    
+    /**
+     * Template method. Subclasses determine how to evaluate the section
+     * @param section
+     * @return
+     */
+    protected abstract byte sectionValue(String section);
     
 }
