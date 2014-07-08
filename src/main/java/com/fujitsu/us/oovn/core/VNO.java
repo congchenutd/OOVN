@@ -53,6 +53,10 @@ public class VNO
         return _config;
     }
     
+    public VNOState getState() {
+        return _state;
+    }
+    
     public NetworkConfiguration getPhysicalTopology() {
         return VNOArbitor.getInstance().getPhysicalTopology();
     }

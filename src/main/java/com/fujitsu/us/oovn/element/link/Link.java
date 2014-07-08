@@ -53,5 +53,5 @@ public class Link implements Jsonable
         result.add("dst", getDstPort().toJson());
         return result;
     }
-    
+
 }

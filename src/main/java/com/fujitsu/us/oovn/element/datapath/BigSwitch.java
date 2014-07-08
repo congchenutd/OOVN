@@ -1,5 +1,7 @@
 package com.fujitsu.us.oovn.element.datapath;
 
+import java.util.List;
+
 import com.fujitsu.us.oovn.element.address.DPID;
 
 /**
@@ -12,6 +14,12 @@ public class BigSwitch extends VirtualSwitch {
 
     public BigSwitch(DPID dpid, String name) {
         super(dpid, name);
+    }
+
+    @Override
+    public List<PhysicalSwitch> getPhysicalSwitches() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

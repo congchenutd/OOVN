@@ -110,4 +110,14 @@ public class Network implements Jsonable
         
         return result;
     }
+    
+    public boolean activate()
+    {
+        return true;
+    }
+    
+    public boolean deactivate()
+    {
+        return true;
+    }
 }
