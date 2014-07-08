@@ -1,5 +1,8 @@
 package com.fujitsu.us.oovn.element.datapath;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.fujitsu.us.oovn.element.address.DPID;
 
 /**
@@ -21,6 +24,11 @@ public class SingleSwitch extends VirtualSwitch
     
     public void setPhysicalSwitch(PhysicalSwitch physical) {
         _physicalSwitch = physical;
+    }
+
+    @Override
+    public List<PhysicalSwitch> getPhysicalSwitches() {
+        return Arrays.asList(getPhysicalSwitch());
     }
 
 }

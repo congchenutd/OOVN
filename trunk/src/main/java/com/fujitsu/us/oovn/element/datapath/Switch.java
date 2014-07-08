@@ -1,6 +1,7 @@
 package com.fujitsu.us.oovn.element.datapath;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.port.Port;
@@ -17,13 +18,13 @@ public class Switch
 {
     protected DPID   _dpid;
     protected String _name;
-    protected HashMap<Integer, Port> _portMap;  // port number -> port
+    protected Map<Integer, Port> _ports;  // port number -> port
     
     public Switch(DPID dpid, String name)
     {
         _dpid = dpid;
         _name = name;
-        _portMap = new HashMap<Integer, Port>();
+        _ports = new HashMap<Integer, Port>();
     }
     
     public String getName() {
@@ -40,16 +41,20 @@ public class Switch
      */
     public boolean addPort(Port port)
     {
-        if(_portMap.containsKey(port.getNumber()))
+        if(_ports.containsKey(port.getNumber()))
             return false;
-        _portMap.put(port.getNumber(), port);
+        _ports.put(port.getNumber(), port);
         port.setSwitch(this);
         return true;
     }
     
     public Port getPort(int id) {
-        return _portMap.containsKey(id) ? _portMap.get(id) 
+        return _ports.containsKey(id) ? _ports.get(id) 
                                         : null;
+    }
+    
+    public Map<Integer, Port> getPorts() {
+        return _ports;
     }
     
     public JsonElement toJson()
@@ -58,14 +63,15 @@ public class Switch
         result.addProperty("dpid", getDPID().toString());
         result.addProperty("name", getName());
         
-        if(_portMap.size() > 0)
+        if(_ports.size() > 0)
         {
             JsonArray portsJson = new JsonArray();
-            for(Port port: _portMap.values())
+            for(Port port: _ports.values())
                 portsJson.add(port.toJson());
             result.add("ports", portsJson);
         }
         
         return result;
     }
+    
 }
