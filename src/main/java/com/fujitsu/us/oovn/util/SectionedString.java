@@ -78,18 +78,20 @@ public abstract class SectionedString implements Jsonable
     {
         long result = 0;
         for (int i = 0; i < _bytes.length; ++i) {
-            result |= (long)_bytes[i] << (_bytes.length-1-i) * 8;
+            result |= ((long)_bytes[i] & 0xFF) << (_bytes.length-1-i) * 8;
         }
         return result;
-    }
-    
-    public byte[] toBytes() {
-        return Arrays.copyOf(_bytes, _bytes.length);
     }
     
     @Override
     public JsonElement toJson() {
         return new JsonPrimitive(toString());
+    }
+    
+    public boolean equals(SectionedString other)
+    {
+        return  this == other ||
+                Arrays.equals(_bytes, other._bytes) && this._separator == other._separator;
     }
     
     /**

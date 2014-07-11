@@ -3,6 +3,7 @@ package com.fujitsu.us.oovn.element.datapath;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fujitsu.us.oovn.element.Jsonable;
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.port.Port;
 import com.google.gson.JsonArray;
@@ -14,7 +15,7 @@ import com.google.gson.JsonObject;
  * @author Cong Chen <Cong.Chen@us.fujitsu.com>
  *
  */
-public class Switch
+public class Switch implements Jsonable
 {
     protected DPID   _dpid;
     protected String _name;
@@ -57,6 +58,7 @@ public class Switch
         return _ports;
     }
     
+    @Override
     public JsonElement toJson()
     {
         JsonObject result = new JsonObject();
