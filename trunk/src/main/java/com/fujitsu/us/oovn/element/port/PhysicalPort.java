@@ -4,9 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fujitsu.us.oovn.element.Measurable;
+import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.address.MACAddress;
 
-public class PhysicalPort extends Port  implements Measurable
+public class PhysicalPort extends Port implements Measurable, Persistable
 {
     private final Map<String, Object> _attributes = new HashMap<String, Object>();
     
@@ -23,6 +24,23 @@ public class PhysicalPort extends Port  implements Measurable
     @Override
     public Object getMeasurement(String key) {
         return _attributes.get(key);
+    }
+    
+    @Override
+    public String toDBCreate() {
+        return  "(" + getName() +
+                ":Physical:Port {" +
+                "switch:\"" + getSwitch().getDPID().toString() + "\"," +
+                "number:" + getNumber() + "," +
+                "mac:\""  + getMACAddress() + "\"})";
+    }
+    
+    @Override
+    public String toDBMatch() {
+        return  getName() +
+                ":Physical:Port {" +
+                "switch:\"" + getSwitch().getDPID().toString() + "\"," + 
+                "number:" + getNumber() + "}";
     }
 
 }

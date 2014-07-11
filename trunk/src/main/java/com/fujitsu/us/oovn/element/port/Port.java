@@ -4,7 +4,6 @@ import com.fujitsu.us.oovn.element.Jsonable;
 import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.datapath.Switch;
 import com.fujitsu.us.oovn.element.link.Link;
-import com.fujitsu.us.oovn.element.link.LinkPair;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -19,7 +18,7 @@ public class Port implements Jsonable
     private MACAddress _mac;
     private boolean    _isEdge;
     private Switch     _switch;
-    private LinkPair   _linkPair;
+    private Link       _link;
 
     public Port(int number, MACAddress mac)
     {
@@ -58,23 +57,28 @@ public class Port implements Jsonable
     public void setIsEdge(Boolean isEdge) {
         _isEdge = isEdge;
     }
-
-    public LinkPair getLinkPair() {
-        return _linkPair;
+    
+    public Link getLink() {
+        return _link;
     }
 
-    public void setLinkPair(LinkPair linkPair) {
-        _linkPair = linkPair;
+    public void setLink(Link link) {
+        _link = link;
     }
     
-    public Link getInLink() {
-        return getLinkPair() == null ? null : getLinkPair().getInLink();
-    }
-    
-    public Link getOutLink() {
-        return getLinkPair() == null ? null : getLinkPair().getOutLink();
+    public Port getNeighbor()
+    {
+        Link link = getLink();
+        if(link == null)
+            return null;
+        
+        return link.getOtherPort(this);
     }
 
+    public String getName() {
+        return getSwitch().getName() + "P" + getNumber();
+    }
+    
     @Override
     public String toString() {
         return  "PORT:" +
@@ -84,16 +88,21 @@ public class Port implements Jsonable
                 "\n- isEdge: "      + isEdge();
     }
     
-//    public boolean equals(Port other)
-//    {
-//        if(this == other)
-//            return true;
-//        
-//        Switch mySwitch   = getSwitch();
-//        Switch yourSwitch = other.getSwitch();
-//        return  mySwitch == null && yourSwitch == null || 
-//                mySwitch != null && yourSwitch != null && mySwitch.equals(yourSwitch);
-//    }
+    @Override
+    public boolean equals(Object other)
+    {
+        if(this == other)
+            return true;
+        
+        Port otherPort = (Port) other;
+        Switch mySwitch   = getSwitch();
+        Switch yourSwitch = otherPort.getSwitch();
+        return  mySwitch == null && yourSwitch == null || 
+                mySwitch != null && yourSwitch != null && 
+                mySwitch.equals(yourSwitch) && 
+                getMACAddress().equals(otherPort.getMACAddress()) &&
+                getNumber() == otherPort.getNumber();
+    }
     
     @Override
     public JsonElement toJson()
@@ -105,4 +114,6 @@ public class Port implements Jsonable
         result.add        ("mac",    getMACAddress().toJson());
         return result;
     }
+    
+    
 }

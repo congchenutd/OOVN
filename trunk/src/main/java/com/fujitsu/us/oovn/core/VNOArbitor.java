@@ -6,8 +6,6 @@ import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
 import com.fujitsu.us.oovn.element.datapath.Switch;
 import com.fujitsu.us.oovn.element.datapath.VirtualSwitch;
 import com.fujitsu.us.oovn.element.link.LinkPair;
-import com.fujitsu.us.oovn.element.link.PhysicalLink;
-import com.fujitsu.us.oovn.element.link.VirtualLink;
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.element.network.VirtualNetwork;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
@@ -73,6 +71,7 @@ public class VNOArbitor
     {
         VNOPool.getInstance().unregisterVNO(vno);
         updateGlobalMap(vno);
+        return true;
     }
     
     private void updateGlobalMap(VNO vno)
@@ -104,7 +103,7 @@ public class VNOArbitor
             // links
             for(LinkPair linkPair: vn.getLinks())
             {
-                PhysicalLink inLink = ((VirtualLink) linkPair.getInLink()).getPhysicalLink();
+//                PhysicalLink inLink = ((VirtualLink) linkPair.getInLink()).getPhysicalLink();
             }
 
         }

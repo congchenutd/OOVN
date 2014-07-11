@@ -10,7 +10,6 @@ import com.fujitsu.us.oovn.element.Jsonable;
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.datapath.Switch;
 import com.fujitsu.us.oovn.element.link.Link;
-import com.fujitsu.us.oovn.element.link.LinkPair;
 import com.fujitsu.us.oovn.element.port.Port;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -24,12 +23,12 @@ import com.google.gson.JsonObject;
 public class Network implements Jsonable
 {
     protected Map<Long, Switch> _switches;    // dpid -> switch
-    protected Set<LinkPair>     _linkPairs;
+    protected Set<Link>         _links;
     
     public Network()
     {
-        _switches  = new HashMap<Long, Switch>();
-        _linkPairs = new HashSet<LinkPair>();
+        _switches = new HashMap<Long, Switch>();
+        _links    = new HashSet<Link>();
     }
     
     public boolean addSwitch(Switch sw)
@@ -48,24 +47,24 @@ public class Network implements Jsonable
         return true;
     }
     
-    public boolean addLinkPair(LinkPair linkPair)
+    public boolean addLink(Link link)
     {
-        if(_linkPairs.contains(linkPair))
+        if(_links.contains(link))
             return false;
-        _linkPairs.add(linkPair);
+        _links.add(link);
         return true;
     }
     
-    public boolean addLinkPair(Port port1, Port port2)
-    {
-        if(port1.getInLink()  != null && port1.getInLink() .getSrcPort() == port2 || 
-           port2.getOutLink() != null && port2.getOutLink().getDstPort() == port2)
-            return false;
-        return addLinkPair(new LinkPair(port1, port2));
-    }
+//    public boolean addLinkPair(Port port1, Port port2)
+//    {
+//        if(port1.getInLink()  != null && port1.getInLink() .getSrcPort() == port2 || 
+//           port2.getOutLink() != null && port2.getOutLink().getDstPort() == port2)
+//            return false;
+//        return addLinkPair(new LinkPair(port1, port2));
+//    }
     
     public boolean removeLink(Link link) {
-        return _linkPairs.remove(link);
+        return _links.remove(link);
     }
     
     public Switch getSwitch(DPID dpid) {
@@ -79,18 +78,18 @@ public class Network implements Jsonable
     
     public Link getLink(Port srcPort, Port dstPort)
     {
-        Link link = srcPort.getLinkPair().getOutLink();
-        if(link.getDstPort().equals(dstPort))
+        Link link = srcPort.getLink();
+        if(link.getOtherPort(srcPort).equals(dstPort))
             return link;
         return null;
     }
     
-    public Set<LinkPair> getLinks() {
-        return Collections.unmodifiableSet(_linkPairs);
+    public Set<Link> getLinks() {
+        return Collections.unmodifiableSet(_links);
     }
     
     public Port getNeighborPort(Port srcPort) {
-        return srcPort.getLinkPair().getOutLink().getDstPort();
+        return srcPort.getLink().getDstPort();
     }
     
     @Override
@@ -104,7 +103,7 @@ public class Network implements Jsonable
         result.add("switches", switches);
         
         JsonArray links = new JsonArray();
-        for(LinkPair link: _linkPairs)
+        for(Link link: _links)
             links.add(link.toJson());
         result.add("links", links);
         
