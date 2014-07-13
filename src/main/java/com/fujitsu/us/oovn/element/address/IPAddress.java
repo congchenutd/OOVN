@@ -20,17 +20,6 @@ public class IPAddress extends SectionedString
 //        result = prime * result + _ip;
 //        return result;
 //    }
-//
-//    @Override
-//    public boolean equals(Object obj)
-//    {
-//        if (this == obj)
-//            return true;
-//        if (obj == null)
-//            return false;
-//        IPAddress other = (IPAddress) obj;
-//        return _ip == other._ip;
-//    }
     
     @Override
     protected String printSection(byte b) {
