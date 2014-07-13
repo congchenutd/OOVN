@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.fujitsu.us.oovn.element.address.DPID;
@@ -14,8 +15,15 @@ import com.fujitsu.us.oovn.element.link.Link;
 
 public class PortTest
 {
-    private final Port port1 = new Port(1, new MACAddress("0:0:0:0:0:1"));
-    private final Port port2 = new Port(1, new MACAddress("0:0:0:0:0:1"));
+    private Port port1;
+    private Port port2;
+    
+    @Before
+    public void setUp()
+    {
+        port1 = new Port(1, new MACAddress("0:0:0:0:0:1"));
+        port2 = new Port(1, new MACAddress("0:0:0:0:0:1"));
+    }
     
     @Test
     public void testEquals()
