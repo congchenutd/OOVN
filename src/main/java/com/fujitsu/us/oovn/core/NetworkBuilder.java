@@ -9,7 +9,7 @@ import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
 import com.fujitsu.us.oovn.element.datapath.SingleSwitch;
 import com.fujitsu.us.oovn.element.datapath.VirtualSwitch;
 import com.fujitsu.us.oovn.element.host.Host;
-import com.fujitsu.us.oovn.element.link.LinkPair;
+import com.fujitsu.us.oovn.element.link.Link;
 import com.fujitsu.us.oovn.element.link.VirtualLink;
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.element.network.VirtualNetwork;
@@ -66,9 +66,9 @@ public class NetworkBuilder
         JsonArray linksJson = vnoJson.getAsJsonArray("links");
         for(JsonElement e: linksJson)
         {
-            JsonObject linkPairJson = (JsonObject) e;
-            LinkPair linkPair = buildLinkPair(linkPairJson, vnw);
-            vnw.addLinkPair(linkPair);
+            JsonObject linkJson = (JsonObject) e;
+            Link link = buildLink(linkJson, vnw);
+            vnw.addLink(link);
         }
         
         // hosts
@@ -152,19 +152,6 @@ public class NetworkBuilder
     }
     
     /**
-     * Build a LinkPair based on the given Json configuration
-     * @param json the segment of the configuration for the LinkPair
-     * @param vnw the VirtualNetwork of this LinkPair
-     * @return a LinkPair object
-     */
-    private LinkPair buildLinkPair(JsonObject json, VirtualNetwork vnw)
-    {
-        JsonObject egressJson  = json.getAsJsonObject("egress");
-        JsonObject ingressJson = json.getAsJsonObject("ingress");
-        return new LinkPair(buildLink(ingressJson, vnw), buildLink(egressJson, vnw));
-    }
-    
-    /**
      * Build a VirtualLink based on the given Json configuration
      * @param json the segment of the configuration for the VirtualLink
      * @param vnw the VirtualNetwork of this port
@@ -191,7 +178,7 @@ public class NetworkBuilder
         int              id   = json.get("id").getAsInt();
         String           name = json.get("name").getAsString();
         MACAddress       mac  = new MACAddress(json.get("mac").getAsString());
-        VirtualIPAddress ip   = new VirtualIPAddress(vnw.getTenantID(),
+        VirtualIPAddress ip   = new VirtualIPAddress(vnw.getVNO(),
                                                      json.get("ip").getAsString());
         Host host = new Host(id, name, mac, ip);
         

@@ -2,7 +2,6 @@ package com.fujitsu.us.oovn.util;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.equalTo;
 
 import org.junit.Assert;
 import org.junit.Before;

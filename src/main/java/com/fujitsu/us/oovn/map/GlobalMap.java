@@ -76,6 +76,9 @@ public class GlobalMap
      */
     public boolean verifyVNO(VNO vno)
     {
+        // Currently, only verify that the mapping is correct
+        
+        
         return true;
     }
 
@@ -85,7 +88,8 @@ public class GlobalMap
      */
     public void registerVNO(VNO vno)
     {
-        
+        if(!vno.isVerified())
+            return;
     }
     
     /**
@@ -110,7 +114,7 @@ public class GlobalMap
     private final ExecutionEngine      _engine;
     
     /**
-     * Initiate the map from the PhysicalNetwork
+     * Initiate the map from the PhysicalNetwork object
      */
     private GlobalMap()
     {
@@ -120,21 +124,18 @@ public class GlobalMap
         
         try(Transaction tx = _graphDb.beginTx())
         {
+            _engine.execute("MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r");
             _engine.execute("CREATE " + PhysicalNetwork.getInstance().toDBCreate());
             tx.success();
         }
     }
     
-    public static void main(String argvs[])
-    {
-        GlobalMap.getInstance();
-    }
-    
+    /**
+     * Registers a shutdown hook for the Neo4j instance so that it shuts down nicely 
+     * when the VM exits (even if you "Ctrl-C" the running application).
+     */
     private static void registerShutdownHook(final GraphDatabaseService graphDb)
     {
-        // Registers a shutdown hook for the Neo4j instance so that it
-        // shuts down nicely when the VM exits (even if you "Ctrl-C" the
-        // running application).
         Runtime.getRuntime().addShutdownHook(new Thread()
         {
             @Override
@@ -142,5 +143,11 @@ public class GlobalMap
                 graphDb.shutdown();
             }
         } );
+    }
+    
+    public static void main(String argvs[])
+    {
+        System.out.println(PhysicalNetwork.getInstance().toDBCreate());
+//        GlobalMap.getInstance();
     }
 }
