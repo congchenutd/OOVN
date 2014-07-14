@@ -1,7 +1,6 @@
 package com.fujitsu.us.oovn.element.link;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.*;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -53,26 +52,33 @@ public class LinkTest
     @Test
     public final void testGetOtherPort() {
         Assert.assertThat(link.getOtherPort(sw1.getPort(2)), is(sw2.getPort(1)));
+        Assert.assertThat(link.getOtherPort(sw2.getPort(1)), is(sw1.getPort(2)));
+        Assert.assertThat(link.getOtherPort(sw1.getPort(1)), is(nullValue()));
     }
 
     @Test
     public final void testIsConnected() {
         Assert.assertThat(Link.isConnected(sw1.getPort(2), sw2.getPort(1)), is(true));
+        Assert.assertThat(Link.isConnected(sw1.getPort(2), sw2.getPort(2)), is(false));
     }
 
     @Test
     public final void testGetName() {
-        fail("Not yet implemented");
+        Assert.assertThat(link.getName(), is("S1P2S2P1"));
     }
 
     @Test
     public final void testToString() {
-        fail("Not yet implemented");
+        Assert.assertThat(link.toString(), is("S1P2-S2P1"));
     }
 
     @Test
-    public final void testEqualsObject() {
-        fail("Not yet implemented");
+    public final void testEqualsObject()
+    {
+        Assert.assertThat(link, is (new Link(sw1.getPort(2), sw2.getPort(1))));
+        Assert.assertThat(link, is (new Link(sw2.getPort(1), sw1.getPort(2))));
+        Assert.assertThat(link, not(new Link(sw1.getPort(1), sw2.getPort(1))));
+        Assert.assertThat(link, not(new Link(sw1.getPort(1), sw1.getPort(1))));
     }
 
 }

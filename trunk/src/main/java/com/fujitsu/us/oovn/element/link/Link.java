@@ -42,8 +42,10 @@ public class Link implements Jsonable
         return _dstPort.getSwitch();
     }
     
-    public Port getOtherPort(Port one) {
-        return one == _srcPort ? getDstPort() : getSrcPort(); 
+    public Port getOtherPort(Port port) {
+        return port.equals(getSrcPort()) ? getDstPort() 
+                                         : port.equals(getDstPort()) ? getSrcPort() 
+                                                                     : null; 
     }
     
     public static boolean isConnected(Port srcPort, Port dstPort)
@@ -76,13 +78,26 @@ public class Link implements Jsonable
         if(this == obj)
             return true;
         
-        Link other = (Link) obj;
-        return getSrcPort() == null && getDstPort() == null && 
-               other.getSrcPort() == null && other.getDstPort() == null ||
-               getSrcPort() != null && getDstPort() != null && 
-               other.getSrcPort() != null && other.getDstPort() != null &&
-               getSrcPort().equals(other.getSrcPort()) &&
-               getDstPort().equals(other.getDstPort());
+        if(!(obj instanceof Link))
+            return false;
+        
+        Link that = (Link) obj;
+        
+        // both null
+        if(this.getSrcPort() == null && this.getDstPort() == null && 
+           that.getSrcPort() == null && that.getDstPort() == null)
+            return true;
+
+        // same or same reversed ends
+        if(this.getSrcPort() != null && this.getDstPort() != null && 
+           that.getSrcPort() != null && that.getDstPort() != null)
+        {
+            return getSrcPort().equals(that.getSrcPort()) &&
+                   getDstPort().equals(that.getDstPort())    ||
+                   getSrcPort().equals(that.getDstPort()) &&
+                   getDstPort().equals(that.getSrcPort());
+        }
+        return false;
     }
 
 }

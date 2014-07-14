@@ -17,8 +17,8 @@ import com.google.gson.JsonObject;
  */
 public class Switch implements Jsonable
 {
-    protected DPID   _dpid;
-    protected String _name;
+    protected final DPID   _dpid;
+    protected final String _name;
     protected Map<Integer, Port> _ports;  // port number -> port
     
     public Switch(DPID dpid, String name)
@@ -74,6 +74,20 @@ public class Switch implements Jsonable
         }
         
         return result;
+    }
+    
+    @Override
+    public boolean equals(Object obj)
+    {
+        if(this == obj)
+            return true;
+        
+        if(!(obj instanceof Switch))
+            return false;
+        
+        Switch that = (Switch) obj;
+        return  this.getDPID() .equals(that.getDPID()) &&
+                this.getName() .equals(that.getName());        
     }
     
 }

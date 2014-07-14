@@ -16,12 +16,11 @@ import com.google.gson.JsonObject;
  */
 public class Host implements Jsonable
 {
-//    private static Logger     _log = LoggerFactory.getLogger(Host.class);
-    private final  int        _id;
-    private final  String     _name;
-    private final  MACAddress _mac;
-    private VirtualIPAddress  _ip;
-    private VirtualPort       _port;
+    private final int              _id;
+    private final String           _name;
+    private final MACAddress       _mac;
+    private final VirtualIPAddress _ip;
+    private       VirtualPort      _port;
     
     public Host(Integer id, String name, MACAddress mac, VirtualIPAddress ip)
     {
@@ -51,13 +50,37 @@ public class Host implements Jsonable
         return _port;
     }
     
-    public boolean setPort(VirtualPort port)
+    public void setPort(VirtualPort port)
     {
-        // TODO: how to check if this port has already connected to another host?
-        // a port has no info about the host
         _port = port;
-        _port.setIsEdge(true);
-        return true;
+        _port.setHost(this);
+    }
+    
+    @Override
+    public boolean equals(Object obj)
+    {
+        if(this == obj)
+            return true;
+        
+        if(! (obj instanceof Host))
+            return false;
+        
+        Host that = (Host) obj;
+        return  this.getID()         == that.getID()              &&
+                this.getName().      equals(that.getName())       &&
+                this.getIPAddress(). equals(that.getIPAddress())  &&
+                this.getMACAddress().equals(that.getMACAddress()) &&
+                (this.getPort() == null && that.getPort() == null || 
+                 this.getPort() != null && this.getPort().equals(that.getPort()));
+    }
+    
+    @Override
+    public String toString() {
+        return  "id: "   + getID() +
+                "name: " + getName() +
+                "mac: "  + getMACAddress() +
+                "ip: "   + getIPAddress() +
+                "port: " + getPort();
     }
     
     @Override
@@ -67,7 +90,8 @@ public class Host implements Jsonable
         result.addProperty("id", getID());
         result.add("mac",  getMACAddress().toJson());
         result.add("ip",   getIPAddress() .toJson());
-        result.add("port", getPort().toJson());
+        if(getPort() != null)
+            result.add("port", getPort().toJson());
         return result;
     }
 }

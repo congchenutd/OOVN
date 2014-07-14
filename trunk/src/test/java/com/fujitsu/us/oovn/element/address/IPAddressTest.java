@@ -1,7 +1,6 @@
 package com.fujitsu.us.oovn.element.address;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.*;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,7 +28,8 @@ public class IPAddressTest
     
     @Test
     public final void testEquals() {
-        Assert.assertThat(ip, equalTo(new IPAddress("192.168.1.2")));
+        Assert.assertThat(ip, is (new IPAddress("192.168.1.2")));
+        Assert.assertThat(ip, not(new IPAddress("192.168.1.1")));
     }
 
 }

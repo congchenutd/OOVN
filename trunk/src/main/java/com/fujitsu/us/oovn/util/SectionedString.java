@@ -88,11 +88,18 @@ public abstract class SectionedString implements Jsonable
         return new JsonPrimitive(toString());
     }
     
+    @Override
     public boolean equals(Object obj)
     {
-        SectionedString other = (SectionedString) obj;
-        return  this == other ||
-                Arrays.equals(_bytes, other._bytes) && this._separator == other._separator;
+        if(this == obj)
+            return true;
+        
+        if(!(obj instanceof SectionedString))
+            return false;
+        
+        SectionedString that = (SectionedString) obj;
+        return  Arrays.equals(this._bytes, that._bytes) && 
+                this._separator == that._separator;
     }
     
     /**

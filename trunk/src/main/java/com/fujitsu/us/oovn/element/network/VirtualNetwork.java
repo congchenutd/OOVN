@@ -25,8 +25,12 @@ public class VirtualNetwork extends Network
         _hosts     = new HashMap<Integer, Host>();
     }
     
+    public VNO getVNO() {
+        return _vno;
+    }
+    
     public int getID() {
-        return _vno.getID();
+        return getVNO().getID();
     }
     
     public int getTenantID() {

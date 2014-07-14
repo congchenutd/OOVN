@@ -17,4 +17,20 @@ public class VirtualPort extends Port
     public PhysicalPort getPhysicalPort() {
         return _physicalPort;
     }
+    
+    @Override
+    public boolean equals(Object obj)
+    {
+        if(this == obj)
+            return true;
+        
+        if(!super.equals(obj))
+            return false;
+        
+        if(!(obj instanceof VirtualPort))
+            return false;
+        
+        VirtualPort that = (VirtualPort) obj;
+        return this.getPhysicalPort().equals(that.getPhysicalPort());
+    }
 }

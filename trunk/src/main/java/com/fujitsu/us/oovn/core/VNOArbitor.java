@@ -5,12 +5,13 @@ import java.util.List;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
 import com.fujitsu.us.oovn.element.datapath.Switch;
 import com.fujitsu.us.oovn.element.datapath.VirtualSwitch;
-import com.fujitsu.us.oovn.element.link.LinkPair;
+import com.fujitsu.us.oovn.element.link.Link;
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.element.network.VirtualNetwork;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
 import com.fujitsu.us.oovn.element.port.Port;
 import com.fujitsu.us.oovn.element.port.VirtualPort;
+import com.fujitsu.us.oovn.map.GlobalMap;
 import com.google.gson.JsonObject;
 
 /**
@@ -41,9 +42,8 @@ public class VNOArbitor
         return new NetworkConfiguration((JsonObject) pnw.toJson());
     }
     
-    public boolean verifyVNO(VNO vno)
-    {
-        return true;
+    public boolean verifyVNO(VNO vno) {
+        return GlobalMap.getInstance().verifyVNO(vno);
     }
     
     public boolean activateVNO(VNO vno)
@@ -52,6 +52,9 @@ public class VNOArbitor
         if(vno.getNetwork() == null)
         {
             VirtualNetwork vn = NetworkBuilder.getInstance().build(vno);
+            
+            System.out.println(vn.toJson());
+            
             vno.setNetwork(vn);
             VNOPool.getInstance().registerVNO(vno);
             vn.activate();
@@ -76,42 +79,5 @@ public class VNOArbitor
     
     private void updateGlobalMap(VNO vno)
     {
-        // add the vno info to the global map
-        if(vno.getState() == VNO.VNOState.ACTIVE)
-        {
-            VirtualNetwork vn = vno.getNetwork();
-            
-            // switches
-            for(Switch sw : vn.getSwitches().values())
-            {
-                List<PhysicalSwitch> psws = ((VirtualSwitch) sw).getPhysicalSwitches();
-                for(PhysicalSwitch psw: psws)
-                {
-                    int count = (Integer) psw.getMeasurement("sharedcount");
-                    psw.setMeasurement("sharedcount", count + 1);
-                }
-                
-                // ports
-                for(Port port: sw.getPorts().values())
-                {
-                    PhysicalPort pport = ((VirtualPort) port).getPhysicalPort();
-                    int count = (Integer) pport.getMeasurement("sharedcount");
-                    pport.setMeasurement("sharedcount", count + 1);
-                }
-            }
-            
-            // links
-            for(LinkPair linkPair: vn.getLinks())
-            {
-//                PhysicalLink inLink = ((VirtualLink) linkPair.getInLink()).getPhysicalLink();
-            }
-
-        }
-        
-        // remove the vno info from the global map
-        else
-        {
-            
-        }
     }
 }

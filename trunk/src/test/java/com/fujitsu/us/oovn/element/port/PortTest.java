@@ -51,5 +51,4 @@ public class PortTest
         Assert.assertThat(port2.getNeighbor(), is(port1));
     }
     
-    
 }

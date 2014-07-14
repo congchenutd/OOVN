@@ -55,14 +55,6 @@ public class Network implements Jsonable
         return true;
     }
     
-//    public boolean addLinkPair(Port port1, Port port2)
-//    {
-//        if(port1.getInLink()  != null && port1.getInLink() .getSrcPort() == port2 || 
-//           port2.getOutLink() != null && port2.getOutLink().getDstPort() == port2)
-//            return false;
-//        return addLinkPair(new LinkPair(port1, port2));
-//    }
-    
     public boolean removeLink(Link link) {
         return _links.remove(link);
     }
@@ -88,8 +80,8 @@ public class Network implements Jsonable
         return Collections.unmodifiableSet(_links);
     }
     
-    public Port getNeighborPort(Port srcPort) {
-        return srcPort.getLink().getDstPort();
+    public Port getNeighborPort(Port port) {
+        return port.getLink().getOtherPort(port);
     }
     
     @Override

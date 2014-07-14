@@ -38,7 +38,7 @@ public class PhysicalNetwork extends Network
         addSwitch(sw1);
         addSwitch(sw2);
         
-        addLink(new Link(sw1.getPort(2), sw2.getPort(1)));
+        addLink(new PhysicalLink(sw1.getPort(2), sw2.getPort(1)));
     }
     
     public String toDBMatch() {
