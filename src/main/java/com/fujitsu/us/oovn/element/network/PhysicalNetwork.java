@@ -3,8 +3,6 @@ package com.fujitsu.us.oovn.element.network;
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
-import com.fujitsu.us.oovn.element.datapath.Switch;
-import com.fujitsu.us.oovn.element.link.Link;
 import com.fujitsu.us.oovn.element.link.PhysicalLink;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
 
@@ -13,7 +11,7 @@ import com.fujitsu.us.oovn.element.port.PhysicalPort;
  * @author Cong Chen <Cong.Chen@us.fujitsu.com>
  *
  */
-public class PhysicalNetwork extends Network
+public class PhysicalNetwork extends Network<PhysicalSwitch, PhysicalLink, PhysicalPort>
 {
     // singleton
     public static PhysicalNetwork getInstance() {
@@ -56,17 +54,17 @@ public class PhysicalNetwork extends Network
         StringBuilder builder = new StringBuilder();
         
         int swIndex = 0;
-        for(Switch sw: getSwitches().values())
+        for(PhysicalSwitch sw: getSwitches().values())
         {
             if(swIndex++ > 0)
                 builder.append(",\n");
-            builder.append(((PhysicalSwitch) sw).toDBCreate());
+            builder.append(sw.toDBCreate());
         }
         
-        for(Link link: getLinks())
+        for(PhysicalLink link: getLinks())
         {
             builder.append(",\n");
-            builder.append(((PhysicalLink) link).toDBCreate() + ",\n");
+            builder.append(link.toDBCreate() + ",\n");
             builder.append("(" + link.getName() + ")-[:Connects]->(" + link.getSrcPort().getName() + ")" + ",\n");
             builder.append("(" + link.getName() + ")-[:Connects]->(" + link.getDstPort().getName() + ")");
         }

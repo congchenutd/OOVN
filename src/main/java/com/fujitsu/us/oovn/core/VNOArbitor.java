@@ -1,16 +1,7 @@
 package com.fujitsu.us.oovn.core;
 
-import java.util.List;
-
-import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
-import com.fujitsu.us.oovn.element.datapath.Switch;
-import com.fujitsu.us.oovn.element.datapath.VirtualSwitch;
-import com.fujitsu.us.oovn.element.link.Link;
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.element.network.VirtualNetwork;
-import com.fujitsu.us.oovn.element.port.PhysicalPort;
-import com.fujitsu.us.oovn.element.port.Port;
-import com.fujitsu.us.oovn.element.port.VirtualPort;
 import com.fujitsu.us.oovn.map.GlobalMap;
 import com.google.gson.JsonObject;
 
@@ -51,12 +42,8 @@ public class VNOArbitor
         // build a VirtualNetwork and assign it to VNO
         if(vno.getNetwork() == null)
         {
-            VirtualNetwork vn = NetworkBuilder.getInstance().build(vno);
-            System.out.println(vn.toJson());
-            
-            vno.setNetwork(vn);
+            NetworkBuilder.getInstance().build(vno);
             VNOPool.getInstance().registerVNO(vno);
-            vn.activate();
         }
         updateGlobalMap(vno);
         return true;

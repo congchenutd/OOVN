@@ -13,12 +13,13 @@ import com.google.gson.JsonObject;
  *
  */
 
-public class Link implements Jsonable
+@SuppressWarnings("rawtypes")
+public class Link<SwitchType extends Switch, PortType extends Port> implements Jsonable
 {
-    protected Port _srcPort;
-    protected Port _dstPort;
+    protected PortType _srcPort;
+    protected PortType _dstPort;
     
-    public Link(Port src, Port dst)
+    public Link(PortType src, PortType dst)
     {
         _srcPort = src;
         _dstPort = dst;
@@ -26,23 +27,23 @@ public class Link implements Jsonable
         _dstPort.setLink(this);
     }
     
-    public Port getSrcPort() {
+    public PortType getSrcPort() {
         return _srcPort;
     }
     
-    public Port getDstPort() {
+    public PortType getDstPort() {
         return _dstPort;
     }
     
-    public Switch getSrcSwitch() {
-        return _srcPort.getSwitch();
+    public SwitchType getSrcSwitch() {
+        return (SwitchType) _srcPort.getSwitch();
     }
     
-    public Switch getDstSwitch() {
-        return _dstPort.getSwitch();
+    public SwitchType getDstSwitch() {
+        return (SwitchType) _dstPort.getSwitch();
     }
     
-    public Port getOtherPort(Port port) {
+    public PortType getOtherPort(PortType port) {
         return port.equals(getSrcPort()) ? getDstPort() 
                                          : port.equals(getDstPort()) ? getSrcPort() 
                                                                      : null; 

@@ -2,6 +2,7 @@ package com.fujitsu.us.oovn.element.datapath;
 
 import java.util.List;
 
+import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.address.DPID;
 
 /**
@@ -12,8 +13,8 @@ import com.fujitsu.us.oovn.element.address.DPID;
  */
 public class BigSwitch extends VirtualSwitch {
 
-    public BigSwitch(DPID dpid, String name) {
-        super(dpid, name);
+    public BigSwitch(VNO vno, DPID dpid, String name) {
+        super(vno, dpid, name);
     }
 
     @Override

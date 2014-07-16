@@ -15,17 +15,18 @@ import com.google.gson.JsonObject;
  * @author Cong Chen <Cong.Chen@us.fujitsu.com>
  *
  */
-public class Switch implements Jsonable
+@SuppressWarnings("rawtypes")
+public class Switch<PortType extends Port> implements Jsonable
 {
     protected final DPID   _dpid;
     protected final String _name;
-    protected Map<Integer, Port> _ports;  // port number -> port
+    protected Map<Integer, PortType> _ports;  // port number -> port
     
     public Switch(DPID dpid, String name)
     {
         _dpid = dpid;
         _name = name;
-        _ports = new HashMap<Integer, Port>();
+        _ports = new HashMap<Integer, PortType>();
     }
     
     public String getName() {
@@ -40,7 +41,7 @@ public class Switch implements Jsonable
      * Attach a port to the switch
      * @return true if successful
      */
-    public boolean addPort(Port port)
+    public boolean addPort(PortType port)
     {
         if(_ports.containsKey(port.getNumber()))
             return false;
@@ -49,12 +50,12 @@ public class Switch implements Jsonable
         return true;
     }
     
-    public Port getPort(int id) {
+    public PortType getPort(int id) {
         return _ports.containsKey(id) ? _ports.get(id) 
                                         : null;
     }
     
-    public Map<Integer, Port> getPorts() {
+    public Map<Integer, PortType> getPorts() {
         return _ports;
     }
     
