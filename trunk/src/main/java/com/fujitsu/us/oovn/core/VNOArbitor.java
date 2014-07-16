@@ -52,7 +52,6 @@ public class VNOArbitor
         if(vno.getNetwork() == null)
         {
             VirtualNetwork vn = NetworkBuilder.getInstance().build(vno);
-            
             System.out.println(vn.toJson());
             
             vno.setNetwork(vn);

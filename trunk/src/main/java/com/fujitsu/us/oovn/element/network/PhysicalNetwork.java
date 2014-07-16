@@ -35,10 +35,16 @@ public class PhysicalNetwork extends Network
         sw2.addPort(new PhysicalPort(1, new MACAddress("0:0:0:0:0:3")));
         sw2.addPort(new PhysicalPort(2, new MACAddress("0:0:0:0:0:4")));
         
+        PhysicalSwitch sw3 = new PhysicalSwitch(new DPID(3), "S3");
+        sw3.addPort(new PhysicalPort(1, new MACAddress("0:0:0:0:0:5")));
+        sw3.addPort(new PhysicalPort(2, new MACAddress("0:0:0:0:0:6")));
+        
         addSwitch(sw1);
         addSwitch(sw2);
+        addSwitch(sw3);
         
         addLink(new PhysicalLink(sw1.getPort(2), sw2.getPort(1)));
+        addLink(new PhysicalLink(sw2.getPort(2), sw3.getPort(1)));
     }
     
     public String toDBMatch() {

@@ -73,14 +73,14 @@ public class Tenant
 //        System.out.println(topo.toString());
         
         vno.init("VirtualConfig.json");
-//        System.out.println(vno.getConfiguration().toString());
+        System.out.println(vno.getConfiguration().toString());
         
-        if(vno.verify())
-        {
-            vno.activate();
-            vno.deactivate();
-            vno.decommission();
-        }
+//        if(vno.verify())
+//        {
+//            vno.activate();
+//            vno.deactivate();
+//            vno.decommission();
+//        }
     }
 }
 

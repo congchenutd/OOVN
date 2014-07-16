@@ -1,23 +1,16 @@
 package com.fujitsu.us.oovn.core;
 
-import com.fujitsu.us.oovn.element.address.DPID;
-import com.fujitsu.us.oovn.element.address.IPAddress;
-import com.fujitsu.us.oovn.element.address.MACAddress;
-import com.fujitsu.us.oovn.element.address.VirtualIPAddress;
-import com.fujitsu.us.oovn.element.datapath.BigSwitch;
-import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
-import com.fujitsu.us.oovn.element.datapath.SingleSwitch;
-import com.fujitsu.us.oovn.element.datapath.VirtualSwitch;
-import com.fujitsu.us.oovn.element.host.Host;
-import com.fujitsu.us.oovn.element.link.Link;
-import com.fujitsu.us.oovn.element.link.VirtualLink;
-import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
-import com.fujitsu.us.oovn.element.network.VirtualNetwork;
-import com.fujitsu.us.oovn.element.port.PhysicalPort;
-import com.fujitsu.us.oovn.element.port.VirtualPort;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.fujitsu.us.oovn.element.*;
+import com.fujitsu.us.oovn.element.address.*;
+import com.fujitsu.us.oovn.element.datapath.*;
+import com.fujitsu.us.oovn.element.host.*;
+import com.fujitsu.us.oovn.element.link.*;
+import com.fujitsu.us.oovn.element.network.*;
+import com.fujitsu.us.oovn.element.port.*;
+import com.google.gson.*;
 
 /**
  * Build a VirtualNetwork for a VNO, according to its configuration
@@ -144,11 +137,23 @@ public class NetworkBuilder
      * @param vnw the VirtualNetwork of this port
      * @return a VirtualPort object
      */
-    private VirtualPort buildPort(JsonObject json, VirtualNetwork vnw)
+    private VirtualPort buildVirtualPort(JsonObject json, VirtualNetwork vnw)
     {
         DPID dpid   = new DPID(json.get("switch").getAsString());
         int  number = json.get("number").getAsInt();
         return (VirtualPort) vnw.getSwitch(dpid).getPort(number);
+    }
+    
+    /**
+     * Build a PhysicalPort based on the given Json configuration
+     * @param json the segment of the configuration for the port
+     * @return a VirtualPort object
+     */
+    private PhysicalPort buildPhysicalPort(JsonObject json)
+    {
+        DPID dpid   = new DPID(json.get("switch").getAsString());
+        int  number = json.get("number").getAsInt();
+        return (PhysicalPort) PhysicalNetwork.getInstance().getSwitch(dpid).getPort(number);
     }
     
     /**
@@ -162,9 +167,27 @@ public class NetworkBuilder
         if(json.isJsonNull())
             return null;
         
-        JsonObject srcJson = json.get("src").getAsJsonObject();
-        JsonObject dstJson = json.get("dst").getAsJsonObject();
-        return new VirtualLink(buildPort(srcJson, vnw), buildPort(dstJson, vnw));
+        JsonObject vSrcJson = json.get("src").getAsJsonObject();
+        JsonObject vDstJson = json.get("dst").getAsJsonObject();
+        
+        VirtualLink result = new VirtualLink(buildVirtualPort(vSrcJson, vnw),
+                                             buildVirtualPort(vDstJson, vnw));
+        
+        JsonArray pathJson = json.get("path").getAsJsonArray();
+        List<PhysicalLink> path = new LinkedList<PhysicalLink>();
+        for(JsonElement e: pathJson)
+        {
+            JsonObject linkJson = (JsonObject) e;
+            JsonObject pSrcJson = linkJson.get("src").getAsJsonObject();
+            JsonObject pDstJson = linkJson.get("dst").getAsJsonObject();
+            PhysicalLink pLink = new PhysicalLink(buildPhysicalPort(pSrcJson), 
+                                                  buildPhysicalPort(pDstJson));
+            path.add(pLink);
+        }
+        if(!path.isEmpty())
+            result.setPath(path);
+        
+        return result;
     }
     
     /**
@@ -183,7 +206,7 @@ public class NetworkBuilder
         Host host = new Host(id, name, mac, ip);
         
         JsonObject portJson = json.get("port").getAsJsonObject();
-        host.setPort(buildPort(portJson, vnw));
+        host.setPort(buildVirtualPort(portJson, vnw));
         
         return host;
     }
