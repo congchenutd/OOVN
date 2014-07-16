@@ -1,7 +1,6 @@
 package com.fujitsu.us.oovn.core;
 
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
-import com.fujitsu.us.oovn.element.network.VirtualNetwork;
 import com.fujitsu.us.oovn.map.GlobalMap;
 import com.google.gson.JsonObject;
 
