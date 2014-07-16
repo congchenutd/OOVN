@@ -3,19 +3,23 @@ package com.fujitsu.us.oovn.element.link;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.fujitsu.us.oovn.element.port.Port;
+import com.fujitsu.us.oovn.core.VNO;
+import com.fujitsu.us.oovn.element.Persistable;
+import com.fujitsu.us.oovn.element.datapath.VirtualSwitch;
 import com.fujitsu.us.oovn.element.port.VirtualPort;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-public class VirtualLink extends Link
+public class VirtualLink extends Link<VirtualSwitch, VirtualPort> implements Persistable
 {
+    private final VNO          _vno;
     private List<PhysicalLink> _path;
     
-    public VirtualLink(Port src, Port dst)
+    public VirtualLink(VNO vno, VirtualPort src, VirtualPort dst)
     {
         super(src, dst);
+        _vno  = vno;
         _path = new LinkedList<PhysicalLink>();
     }
     
@@ -24,13 +28,17 @@ public class VirtualLink extends Link
         if(path.isEmpty())
             return;
         
-        if(path.get(0)            .getSrcPort().equals(((VirtualPort) getSrcPort()).getPhysicalPort()) && 
-           path.get(path.size()-1).getDstPort().equals(((VirtualPort) getDstPort()).getPhysicalPort()))
+        if(path.get(0)            .getSrcPort().equals(getSrcPort().getPhysicalPort()) && 
+           path.get(path.size()-1).getDstPort().equals(getDstPort().getPhysicalPort()))
            _path = path;
     }
     
     public List<PhysicalLink> getPath() {
         return _path;
+    }
+    
+    public VNO getVNO() {
+        return _vno;
     }
 
     @Override
@@ -38,7 +46,7 @@ public class VirtualLink extends Link
     {
         StringBuilder builder = new StringBuilder();
         builder.append("VirtualLink: ");
-        for(Link link: getPath())
+        for(PhysicalLink link: getPath())
             builder.append(link.getName() + ",");
         return builder.toString();
     }
@@ -57,4 +65,20 @@ public class VirtualLink extends Link
         return result;
     }
     
+    @Override
+    public String toDBMatch() {
+        return  getName() + 
+                ":Virtual:Link " + "{" + 
+                "vnoid:" + getVNO().getID() + "," +
+                "srcSwitch:" + "\"" + getSrcSwitch().getDPID().toString() + "\", " +
+                "srcPort:" + getSrcPort().getNumber() + "," +
+                "dstSwitch:" + "\"" + getDstSwitch().getDPID().toString() + "\", " +
+                "dstPort:" + getDstPort().getNumber() +
+                "}";
+    }
+    
+    @Override
+    public String toDBCreate() {
+        return "(" + toDBMatch() + ")";
+    }
 }

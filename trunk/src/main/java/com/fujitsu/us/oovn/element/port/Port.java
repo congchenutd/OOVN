@@ -13,12 +13,13 @@ import com.google.gson.JsonObject;
  * @author Cong Chen <Cong.Chen@us.fujitsu.com>
  *
  */
-public class Port implements Jsonable
+@SuppressWarnings("rawtypes")
+public class Port<SwitchType extends Switch, LinkType extends Link> implements Jsonable
 {
     private int        _number;
     private MACAddress _mac;
-    private Switch     _switch;
-    private Link       _link;
+    private SwitchType _switch;
+    private LinkType   _link;
     private Host       _host;
 
     public Port(int number, MACAddress mac)
@@ -27,11 +28,11 @@ public class Port implements Jsonable
         setMACAddress(mac);
     }
     
-    public Switch getSwitch() {
+    public SwitchType getSwitch() {
         return _switch;
     }
     
-    public void setSwitch(Switch sw) {
+    public void setSwitch(SwitchType sw) {
         _switch = sw;
     }
     
@@ -63,15 +64,15 @@ public class Port implements Jsonable
         return _host != null;
     }
 
-    public Link getLink() {
+    public LinkType getLink() {
         return _link;
     }
 
-    public void setLink(Link link) {
+    public void setLink(LinkType link) {
         _link = link;
     }
     
-    public Port getNeighbor()
+    public Port<SwitchType, LinkType> getNeighbor()
     {
         Link link = getLink();
         if(link == null)

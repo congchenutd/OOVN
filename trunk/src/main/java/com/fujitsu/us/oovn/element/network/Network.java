@@ -20,18 +20,21 @@ import com.google.gson.JsonObject;
  * @author Cong Chen <Cong.Chen@us.fujitsu.com>
  *
  */
-public class Network implements Jsonable
+@SuppressWarnings("rawtypes")
+public class Network<SwitchType extends Switch, 
+                     LinkType extends Link, 
+                     PortType extends Port> implements Jsonable
 {
-    protected Map<Long, Switch> _switches;    // dpid -> switch
-    protected Set<Link>         _links;
+    protected Map<Long, SwitchType> _switches;    // dpid -> switch
+    protected Set<LinkType>         _links;
     
     public Network()
     {
-        _switches = new HashMap<Long, Switch>();
-        _links    = new HashSet<Link>();
+        _switches = new HashMap<Long, SwitchType>();
+        _links    = new HashSet<LinkType>();
     }
     
-    public boolean addSwitch(Switch sw)
+    public boolean addSwitch(SwitchType sw)
     {
         if(_switches.containsKey(sw.getDPID().toInt()))
             return false;
@@ -39,7 +42,7 @@ public class Network implements Jsonable
         return true;
     }
     
-    public boolean removeSwitch(Switch sw)
+    public boolean removeSwitch(SwitchType sw)
     {
         if(!_switches.containsKey(sw.getDPID().toInt()))
             return false;
@@ -47,7 +50,7 @@ public class Network implements Jsonable
         return true;
     }
     
-    public boolean addLink(Link link)
+    public boolean addLink(LinkType link)
     {
         if(_links.contains(link))
             return false;
@@ -55,7 +58,7 @@ public class Network implements Jsonable
         return true;
     }
     
-    public boolean removeLink(Link link) {
+    public boolean removeLink(LinkType link) {
         return _links.remove(link);
     }
     
@@ -64,24 +67,24 @@ public class Network implements Jsonable
                                                    : null;
     }
     
-    public Map<Long, Switch> getSwitches() {
+    public Map<Long, SwitchType> getSwitches() {
         return Collections.unmodifiableMap(_switches);
     }
     
-    public Link getLink(Port srcPort, Port dstPort)
+    public LinkType getLink(PortType srcPort, PortType dstPort)
     {
-        Link link = srcPort.getLink();
+        LinkType link = (LinkType) srcPort.getLink();
         if(link.getOtherPort(srcPort).equals(dstPort))
             return link;
         return null;
     }
     
-    public Set<Link> getLinks() {
+    public Set<LinkType> getLinks() {
         return Collections.unmodifiableSet(_links);
     }
     
-    public Port getNeighborPort(Port port) {
-        return port.getLink().getOtherPort(port);
+    public PortType getNeighborPort(PortType port) {
+        return (PortType) port.getLink().getOtherPort(port);
     }
     
     @Override

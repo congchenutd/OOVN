@@ -5,12 +5,15 @@ import java.util.Map;
 
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.address.IPAddress;
+import com.fujitsu.us.oovn.element.datapath.VirtualSwitch;
 import com.fujitsu.us.oovn.element.host.Host;
+import com.fujitsu.us.oovn.element.link.VirtualLink;
+import com.fujitsu.us.oovn.element.port.VirtualPort;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-public class VirtualNetwork extends Network
+public class VirtualNetwork extends Network<VirtualSwitch, VirtualLink, VirtualPort>
 {
     private final VNO       _vno;
     private final IPAddress _networkIP;

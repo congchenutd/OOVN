@@ -1,29 +1,15 @@
 package com.fujitsu.us.oovn.element.port;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.fujitsu.us.oovn.element.Measurable;
 import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.address.MACAddress;
+import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
+import com.fujitsu.us.oovn.element.link.PhysicalLink;
 
-public class PhysicalPort extends Port implements Measurable, Persistable
+public class PhysicalPort extends Port<PhysicalSwitch, PhysicalLink> implements Persistable
 {
-    private final Map<String, Object> _attributes = new HashMap<String, Object>();
-    
     public PhysicalPort(int number, MACAddress mac)
     {
         super(number, mac);
-    }
-    
-    @Override
-    public void setMeasurement(String key, Object value) {
-        _attributes.put(key, value);
-    }
-
-    @Override
-    public Object getMeasurement(String key) {
-        return _attributes.get(key);
     }
     
     @Override
