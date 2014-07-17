@@ -1,5 +1,7 @@
 package com.fujitsu.us.oovn.element.port;
 
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+
 import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
@@ -13,8 +15,8 @@ public class PhysicalPort extends Port<PhysicalSwitch, PhysicalLink> implements 
     }
     
     @Override
-    public String toDBCreate() {
-        return  "(" + getName() +
+    public String toDBMatch() {
+        return  "(" + toDBVariable() +
                 ":Physical:Port {" +
                 "switch:\"" + getSwitch().getDPID().toString() + "\"," +
                 "number:" + getNumber() + "," +
@@ -22,13 +24,12 @@ public class PhysicalPort extends Port<PhysicalSwitch, PhysicalLink> implements 
     }
     
     @Override
-    public String toDBMatch() {
-        return  toDBCreate();
+    public void createSelf(ExecutionEngine engine) {
+        engine.execute("CREATE " + toDBMatch());        
     }
-    
+
     @Override
-    public String toDBMapping() {
-        return null;
+    public void createMapping(ExecutionEngine engine) {
     }
 
 }

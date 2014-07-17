@@ -44,6 +44,7 @@ public class NetworkBuilder
         String address = vnoJson.get("address").getAsString();
         int    mask    = vnoJson.get("mask")   .getAsInt();
         VirtualNetwork vnw = new VirtualNetwork(vno, new IPAddress(address), mask);
+        vno.setNetwork(vnw);
         
         // switches
         JsonArray switchesJson = vnoJson.getAsJsonArray("switches");
@@ -72,7 +73,6 @@ public class NetworkBuilder
             vnw.addHost(host);
         }
         
-        vno.setNetwork(vnw);
         return true;
     }
 

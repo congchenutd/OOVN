@@ -44,25 +44,20 @@ public class VNOArbitor
             NetworkBuilder.getInstance().build(vno);
             VNOPool.getInstance().registerVNO(vno);
         }
-        updateGlobalMap(vno);
+        GlobalMap.getInstance().registerVNO(vno);
         return true;
     }
     
     public boolean deactivateVNO(VNO vno)
     {
         boolean result = vno.getNetwork().deactivate();
-        updateGlobalMap(vno);
         return result;
     }
     
     public boolean decommssionVNO(VNO vno)
     {
         VNOPool.getInstance().unregisterVNO(vno);
-        updateGlobalMap(vno);
         return true;
     }
-    
-    private void updateGlobalMap(VNO vno)
-    {
-    }
+
 }

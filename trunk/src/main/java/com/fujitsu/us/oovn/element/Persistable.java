@@ -1,19 +1,28 @@
 package com.fujitsu.us.oovn.element;
 
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+
 public interface Persistable
 {
     /**
-     * @return a Neo4j clause for matching the object
+     * @return a variable name for Neo4J query, without ()
+     */
+    public String toDBVariable();
+    
+    /**
+     * @return a Neo4j clause for matching the object, () included
      */
     public String toDBMatch();
     
     /**
-     * @return a Neo4j clause for creating the object without "CREATE"
+     * Create the node(s) (network, switch, link, port) in the db
+     * @param engine execution engine of Neo4j
      */
-    public String toDBCreate();
+    public void createSelf(ExecutionEngine engine);
     
     /**
-     * @return a Neo4J clause for creating virtual->physical mapping
+     * Create the mapping to the physical node(s) in the db
+     * @param engine execution engine of Neo4j
      */
-    public String toDBMapping();
+    public void createMapping(ExecutionEngine engine);
 }

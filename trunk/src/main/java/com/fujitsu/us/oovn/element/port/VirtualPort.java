@@ -1,5 +1,7 @@
 package com.fujitsu.us.oovn.element.port;
 
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.address.MACAddress;
@@ -43,8 +45,8 @@ public class VirtualPort extends Port<VirtualSwitch, VirtualLink> implements Per
     }
     
     @Override
-    public String toDBCreate() {
-        return  "(" + getName() +
+    public String toDBMatch() {
+        return  "(" + toDBVariable() +
                 ":Virtual:Port {" +
                 "vnoid:" + getVNO().getID() + "," +
                 "switch:\"" + getSwitch().getDPID().toString() + "\"," +
@@ -53,12 +55,24 @@ public class VirtualPort extends Port<VirtualSwitch, VirtualLink> implements Per
     }
     
     @Override
-    public String toDBMatch() {
-        return toDBCreate();
+    public void createSelf(ExecutionEngine engine)
+    {
+        engine.execute("CREATE " + toDBMatch());
+        createMapping(engine);
     }
-    
+
     @Override
-    public String toDBMapping() {
-        return null;
+    public void createMapping(ExecutionEngine engine)
+    {
+        // nothing to map to
+        if(getPhysicalPort() == null)
+            return;
+        
+        engine.execute(
+                "MATCH \n" + 
+                toDBMatch() + ",\n" +
+                getPhysicalPort().toDBMatch() + "\n" +
+                "CREATE (" + toDBVariable() + ")-[:Maps]->(" + getPhysicalPort().toDBVariable() + ")");
     }
+
 }

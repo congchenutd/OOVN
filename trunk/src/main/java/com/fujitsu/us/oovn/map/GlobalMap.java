@@ -83,22 +83,33 @@ public class GlobalMap
     }
 
     /**
-     * Add a VNO to the universe 
+     * Add a VNO to the map 
      * @param vno
      */
     public void registerVNO(VNO vno)
     {
         if(!vno.isVerified())
             return;
+        
+        try(Transaction tx = _graphDb.beginTx())
+        {
+            vno.getNetwork().createSelf(_engine);
+            tx.success();
+        }
     }
     
     /**
-     * Remove a VNO from the universe
+     * Remove a VNO from the map
      * @param vno
      */
     public void unregisterVNO(VNO vno)
     {
-        
+        try(Transaction tx = _graphDb.beginTx())
+        {
+            _engine.execute("MATCH (n:Virtual {vnoid:" + vno.getID() +  
+                            "}) OPTIONAL MATCH (n)-[r]-() DELETE n,r");
+            tx.success();
+        }
     }
     
     // singleton
@@ -125,7 +136,7 @@ public class GlobalMap
         try(Transaction tx = _graphDb.beginTx())
         {
             _engine.execute("MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r");
-            _engine.execute("CREATE " + PhysicalNetwork.getInstance().toDBCreate());
+            PhysicalNetwork.getInstance().createSelf(_engine);
             tx.success();
         }
     }
@@ -144,10 +155,5 @@ public class GlobalMap
             }
         } );
     }
-    
-    public static void main(String argvs[])
-    {
-        System.out.println(PhysicalNetwork.getInstance().toDBCreate());
-//        GlobalMap.getInstance();
-    }
+
 }

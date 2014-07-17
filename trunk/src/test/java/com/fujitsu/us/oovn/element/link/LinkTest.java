@@ -64,7 +64,7 @@ public class LinkTest
 
     @Test
     public final void testGetName() {
-        Assert.assertThat(link.getName(), is("S1P2S2P1"));
+        Assert.assertThat(link.toDBVariable(), is("S1P2S2P1"));
     }
 
     @Test

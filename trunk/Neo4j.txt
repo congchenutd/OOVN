@@ -1,44 +1,75 @@
 // Physical network
-CREATE
+
+// S1
+CREATE (S1:Physical:Switch {dpid:"00:00:00:00:00:00:00:01",name:"S1"})
+
+// S1 P1
+CREATE (S1P1:Physical:Port {switch:"00:00:00:00:00:00:00:01",number:1,mac:"00:00:00:00:00:01"})
+
+MATCH 
 (S1:Physical:Switch {dpid:"00:00:00:00:00:00:00:01",name:"S1"}),
-(S1P1:Physical:Port {switch:"00:00:00:00:00:00:00:01",number:1,mac:"00:00:00:00:00:01"}),
-(S1)-[:Has]->(S1P1),
-(S1P2:Physical:Port {switch:"00:00:00:00:00:00:00:01",number:2,mac:"00:00:00:00:00:02"}),
-(S1)-[:Has]->(S1P2),
+(S1P1:Physical:Port {switch:"00:00:00:00:00:00:00:01",number:1,mac:"00:00:00:00:00:01"})
+CREATE (S1)-[:Has]->(S1P1)
+
+// S2 P2
+CREATE (S1P2:Physical:Port {switch:"00:00:00:00:00:00:00:01",number:2,mac:"00:00:00:00:00:02"})
+
+MATCH
+(S1:Physical:Switch {dpid:"00:00:00:00:00:00:00:01",name:"S1"}),
+(S1P2:Physical:Port {switch:"00:00:00:00:00:00:00:01",number:2,mac:"00:00:00:00:00:02"})
+CREATE (S1)-[:Has]->(S1P2)
+
+
 (S2:Physical:Switch {dpid:"00:00:00:00:00:00:00:02",name:"S2"}),
 (S2P1:Physical:Port {switch:"00:00:00:00:00:00:00:02",number:1,mac:"00:00:00:00:00:03"}),
 (S2)-[:Has]->(S2P1),
 (S2P2:Physical:Port {switch:"00:00:00:00:00:00:00:02",number:2,mac:"00:00:00:00:00:04"}),
 (S2)-[:Has]->(S2P2),
+
 (S3:Physical:Switch {dpid:"00:00:00:00:00:00:00:03",name:"S3"}),
 (S3P1:Physical:Port {switch:"00:00:00:00:00:00:00:03",number:1,mac:"00:00:00:00:00:05"}),
 (S3)-[:Has]->(S3P1),
 (S3P2:Physical:Port {switch:"00:00:00:00:00:00:00:03",number:2,mac:"00:00:00:00:00:06"}),
 (S3)-[:Has]->(S3P2),
-(S1P2S2P1:Physical:Link {ingressSwitch:"00:00:00:00:00:00:00:01", ingressPort:2,egressSwitch:"00:00:00:00:00:00:00:02", egressPort:1}),
+
+(S1P2S2P1:Physical:Link {srcSwitch:"00:00:00:00:00:00:00:01", srcPort:2,dstSwitch:"00:00:00:00:00:00:00:02", dstPort:1}),
 (S1P2S2P1)-[:Connects]->(S1P2),
 (S1P2S2P1)-[:Connects]->(S2P1),
-(S2P2S3P1:Physical:Link {ingressSwitch:"00:00:00:00:00:00:00:02", ingressPort:2,egressSwitch:"00:00:00:00:00:00:00:03", egressPort:1}),
+
+
+// Link 1
+CREATE (S1P2S2P1:Physical:Link {srcSwitch:"00:00:00:00:00:00:00:01", srcPort:2,dstSwitch:"00:00:00:00:00:00:00:02", dstPort:1})
+
+MATCH
+(S1P2S2P1:Physical:Link {srcSwitch:"00:00:00:00:00:00:00:01", srcPort:2,dstSwitch:"00:00:00:00:00:00:00:02", dstPort:1}),
+(S1P2:Physical:Port {switch:"00:00:00:00:00:00:00:01",number:2,mac:"00:00:00:00:00:02"}),
+(S2P1:Physical:Port {switch:"00:00:00:00:00:00:00:02",number:1,mac:"00:00:00:00:00:03"})
+CREATE
+(S1P2S2P1)-[:Connects]->(S1P2),
+(S1P2S2P1)-[:Connects]->(S2P1)
+
+
+(S2P2S3P1:Physical:Link {srcSwitch:"00:00:00:00:00:00:00:02", srcPort:2,dstSwitch:"00:00:00:00:00:00:00:03", dstPort:1}),
 (S2P2S3P1)-[:Connects]->(S2P2),
 (S2P2S3P1)-[:Connects]->(S3P1)
 
 // Virtual network
 CREATE
-(VS1:Virtual:Switch {vnoid:1,dpid:"0a:00:00:00:00:00:00:01",name:"VS1"}),
-(VS1VP1:Virtual:Port {vnoid:1,switch:"0a:00:00:00:00:00:00:01",number:1,mac:"00:00:00:00:00:01"}),
-(VS1)-[:Has]->(VS1VP1),
-(VS1VP2:Virtual:Port {vnoid:1,switch:"0a:00:00:00:00:00:00:01",number:2,mac:"00:00:00:00:00:02"}),
-(VS1)-[:Has]->(VS1VP2),
+(VS1:Virtual:Switch {vnoid:1,dpid:"0A:0B:0C:00:00:00:00:01",name:"VS1"}),
+(VS1P1:Virtual:Port {vnoid:1,switch:"0A:0B:0C:00:00:00:00:01",number:1,mac:"00:00:00:00:00:01"}),
+(VS1)-[:Has]->(VS1P1),
+(VS1P2:Virtual:Port {vnoid:1,switch:"0A:0B:0C:00:00:00:00:01",number:2,mac:"00:00:00:00:00:02"}),
+(VS1)-[:Has]->(VS1P2),
 
-(VS2:Virtual:Switch {vnoid:1,dpid:"0a:00:00:00:00:00:00:02",name:"VS2"}),
-(VS2VP1:Virtual:Port {vnoid:1,switch:"0a:00:00:00:00:00:00:02",number:1,mac:"00:00:00:00:00:03"}),
-(VS2)-[:Has]->(VS2VP1),
-(VS2VP2:Virtual:Port {vnoid:1,switch:"0a:00:00:00:00:00:00:02",number:2,mac:"00:00:00:00:00:04"}),
-(VS2)-[:Has]->(VS2VP2),
+(VS2:Virtual:Switch {vnoid:1,dpid:"0A:0B:0C:00:00:00:00:02",name:"VS2"}),
+(VS2P1:Virtual:Port {vnoid:1,switch:"0A:0B:0C:00:00:00:00:02",number:1,mac:"00:00:00:00:00:05"}),
+(VS2)-[:Has]->(VS2P1),
+(VS2P2:Virtual:Port {vnoid:1,switch:"0A:0B:0C:00:00:00:00:02",number:2,mac:"00:00:00:00:00:06"}),
+(VS2)-[:Has]->(VS2P2),
 
-(VS1VP2VS2VP1:Virtual:Link {vnoid:1,ingressSwitch:"0a:00:00:00:00:00:00:01", ingressPort:2,egressSwitch:"0a:00:00:00:00:00:00:02", egressPort:1}),
-(VS1VP2VS2VP1)-[:Connects]->(VS1VP2),
-(VS1VP2VS2VP1)-[:Connects]->(VS2VP1)
+(VS1P2VS2P1:Virtual:Link {vnoid:1,srcSwitch:"0A:0B:0C:00:00:00:00:01", srcPort:2,dstSwitch:"0A:0B:0C:00:00:00:00:02", dstPort:1}),
+(VS1P2VS2P1)-[:Connects]->(VS1P2),
+(VS1P2VS2P1)-[:Connects]->(VS2P1)
 
 // mappings
 MATCH
