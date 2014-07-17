@@ -111,7 +111,7 @@ public abstract class Link<SwitchType extends Switch, PortType extends Port> imp
 
     public abstract String toDBMatch();
     
-    public void create(ExecutionEngine engine)
+    public void createInDB(ExecutionEngine engine)
     {
         // create the link node itself
         engine.execute("CREATE " + toDBMatch());

@@ -97,7 +97,7 @@ public abstract class Switch<PortType extends Port> implements Jsonable
                 this.getName() .equals(that.getName());        
     }
     
-    public void create(ExecutionEngine engine)
+    public void createInDB(ExecutionEngine engine)
     {
         // create the switch itself
         engine.execute("CREATE " + toDBMatch());
@@ -105,7 +105,7 @@ public abstract class Switch<PortType extends Port> implements Jsonable
         // create and connect ports
         for(PortType port: getPorts().values())
         {
-            port.create(engine);
+            port.createInDB(engine);
             engine.execute(
                     "MATCH \n" +
                     toDBMatch() + ",\n" +

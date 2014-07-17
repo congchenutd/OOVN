@@ -4,6 +4,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fujitsu.us.oovn.element.address.DPID;
+import com.fujitsu.us.oovn.element.port.PhysicalPort;
+import com.fujitsu.us.oovn.element.port.VirtualPort;
+import com.fujitsu.us.oovn.map.GlobalMap;
+
 /**
  * Represent a tenant for demo purpose
  * 
@@ -78,6 +83,13 @@ public class Tenant
         if(vno.verify())
         {
             vno.activate();
+            VirtualPort  vPort = (VirtualPort) vno.getNetwork().getSwitch(new DPID("a:b:c:0:0:0:0:1")).getPort(1);
+            PhysicalPort pPort = GlobalMap.getInstance().getPhysicalPort(vPort);
+            System.out.println(pPort);
+            
+            vPort = GlobalMap.getInstance().getVirtualPort(pPort, vno);
+            System.out.println(vPort);
+            
 //            vno.deactivate();
 //            vno.decommission();
         }

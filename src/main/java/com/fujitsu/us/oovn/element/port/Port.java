@@ -134,7 +134,7 @@ public abstract class Port<SwitchType extends Switch, LinkType extends Link> imp
         return getSwitch().getName() + "P" + getNumber();
     }
     
-    public void create(ExecutionEngine engine)
+    public void createInDB(ExecutionEngine engine)
     {
         engine.execute("CREATE " + toDBMatch());
         createMapping(engine);

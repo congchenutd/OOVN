@@ -3,11 +3,14 @@ package com.fujitsu.us.oovn.map;
 import java.util.List;
 
 import org.neo4j.cypher.javacompat.ExecutionEngine;
+import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
 import com.fujitsu.us.oovn.core.VNO;
+import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.address.PhysicalIPAddress;
 import com.fujitsu.us.oovn.element.address.VirtualIPAddress;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
@@ -42,17 +45,39 @@ public class GlobalMap
         return null;
     }
     
-    public PhysicalPort getPhysicalPort(VirtualPort vport)
+    public PhysicalPort getPhysicalPort(VirtualPort vPort)
     {
-        return null;
+        try(Transaction tx = _graphDb.beginTx())
+        {
+            ExecutionResult result = 
+                _engine.execute("MATCH " + vPort.toDBMatch() + 
+                                "-[:Maps]->(pPort) " +
+                                "RETURN pPort");
+            
+            Node node   = (Node) result.columnAs("pPort").next();
+            DPID dpid   = new DPID(node.getProperty("switch").toString());
+            int  number = Integer.valueOf(node.getProperty("number").toString());
+            return (PhysicalPort) PhysicalNetwork.getInstance().getSwitch(dpid).getPort(number);
+        }
     }
     
-    public VirtualPort getVirtualPort(PhysicalPort pport, VNO vno)
+    public VirtualPort getVirtualPort(PhysicalPort pPort, VNO vno)
     {
-        return null;
+        try(Transaction tx = _graphDb.beginTx())
+        {
+            ExecutionResult result = 
+                _engine.execute("MATCH " + pPort.toDBMatch() + 
+                                "<-[:Maps]-(vPort {vnoid:" + vno.getID() + "}) " +
+                                "RETURN vPort");
+            
+            Node node   = (Node) result.columnAs("vPort").next();
+            DPID dpid   = new DPID(node.getProperty("switch").toString());
+            int  number = Integer.valueOf(node.getProperty("number").toString());
+            return (VirtualPort) vno.getNetwork().getSwitch(dpid).getPort(number);
+        }
     }
     
-    public PhysicalLink getPhysicalLink(VirtualLink vlink)
+    public List<PhysicalLink> getPhysicalLinks(VirtualLink vlink)
     {
         return null;
     }
@@ -95,7 +120,7 @@ public class GlobalMap
         
         try(Transaction tx = _graphDb.beginTx())
         {
-            vno.getNetwork().create(_engine);
+            vno.getNetwork().createInDB(_engine);
             tx.success();
         }
     }
@@ -140,7 +165,7 @@ public class GlobalMap
         try(Transaction tx = _graphDb.beginTx())
         {
             _engine.execute("MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r");
-            PhysicalNetwork.getInstance().create(_engine);
+            PhysicalNetwork.getInstance().createInDB(_engine);
             tx.success();
         }
     }

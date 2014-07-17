@@ -25,7 +25,7 @@ public class BigSwitch extends VirtualSwitch {
     }
 
     @Override
-    public void create(ExecutionEngine engine) {
+    public void createInDB(ExecutionEngine engine) {
     }
 
     @Override

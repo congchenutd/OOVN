@@ -53,10 +53,11 @@ public class SingleSwitch extends VirtualSwitch implements Persistable
         
         engine.execute(
                 "MATCH\n" +
-                toDBMatch() + ",\n" +
-                getPhysicalSwitch().toDBMatch() + "\n" +
+                    toDBMatch() + ",\n" +
+                    getPhysicalSwitch().toDBMatch() + "\n" +
                 "CREATE\n" +
-                "(" + toDBVariable() + ")-[:Maps]->(" + getPhysicalSwitch().toDBVariable() + ")");
+                    "(" + toDBVariable() + ")-[:Maps]->(" + 
+                    getPhysicalSwitch().toDBVariable() + ")");
     }
 
 }

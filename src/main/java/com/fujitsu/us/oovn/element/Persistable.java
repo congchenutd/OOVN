@@ -19,7 +19,7 @@ public interface Persistable
      * Create the node(s) (network, switch, link, port) in the db
      * @param engine execution engine of Neo4j
      */
-    public void create(ExecutionEngine engine);
+    public void createInDB(ExecutionEngine engine);
     
     /**
      * Create the mapping to the physical node(s) in the db

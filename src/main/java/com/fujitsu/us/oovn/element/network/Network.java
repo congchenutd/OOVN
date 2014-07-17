@@ -133,13 +133,13 @@ public abstract class Network<SwitchType extends Switch,
      * Create the network in the db using the engine
      * @param engine ExecutionEngine for running db queries
      */
-    public void create(ExecutionEngine engine)
+    public void createInDB(ExecutionEngine engine)
     {
         for(SwitchType sw: getSwitches().values())
-            sw.create(engine);
+            sw.createInDB(engine);
         
         for(LinkType link: getLinks())
-            link.create(engine);
+            link.createInDB(engine);
     }
     
 }
