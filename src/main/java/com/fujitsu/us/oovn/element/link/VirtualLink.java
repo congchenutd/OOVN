@@ -3,6 +3,8 @@ package com.fujitsu.us.oovn.element.link;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.datapath.VirtualSwitch;
@@ -47,7 +49,7 @@ public class VirtualLink extends Link<VirtualSwitch, VirtualPort> implements Per
         StringBuilder builder = new StringBuilder();
         builder.append("VirtualLink: ");
         for(PhysicalLink link: getPath())
-            builder.append(link.getName() + ",");
+            builder.append(link.toDBVariable() + ",");
         return builder.toString();
     }
     
@@ -66,8 +68,8 @@ public class VirtualLink extends Link<VirtualSwitch, VirtualPort> implements Per
     }
     
     @Override
-    public String toDBCreate() {
-        return "(" + getName() + 
+    public String toDBMatch() {
+        return "(" + toDBVariable() + 
                 ":Virtual:Link " + "{" + 
                 "vnoid:" + getVNO().getID() + "," +
                 "srcSwitch:" + "\"" + getSrcSwitch().getDPID().toString() + "\", " +
@@ -76,15 +78,42 @@ public class VirtualLink extends Link<VirtualSwitch, VirtualPort> implements Per
                 "dstPort:" + getDstPort().getNumber() +
                 "})";
     }
-    
+
     @Override
-    public String toDBMatch() {
-        return toDBCreate();
+    public void createSelf(ExecutionEngine engine)
+    {
+        engine.execute("CREATE " + toDBMatch());
+        
+        engine.execute(
+                "MATCH \n" +
+                toDBMatch() + ",\n" +
+                getSrcPort().toDBMatch() + ",\n" +
+                getDstPort().toDBMatch() + "\n" +
+                "CREATE " + 
+                "(" + toDBVariable() + ")-[:Connects]->(" + getSrcPort().toDBVariable() + ")," +
+                "(" + toDBVariable() + ")-[:Connects]->(" + getDstPort().toDBVariable() + ")");
+        
+        createMapping(engine);
     }
-    
+
     @Override
-    public String toDBMapping() {
-        return null;
+    public void createMapping(ExecutionEngine engine)
+    {
+        if(getPath().isEmpty())
+            return;
+        
+        StringBuilder builder = new StringBuilder();
+        builder.append("MATCH \n");
+        for(PhysicalLink link: getPath())
+            builder.append(link.toDBMatch() + ",\n");
+        builder.append(toDBMatch() + "\n");
+        builder.append("CREATE \n");
+        int order = 1;
+        for(PhysicalLink link: getPath())
+            builder.append("(" + toDBVariable() + ")-[:Maps {order:" + order++ + "}]->(" + 
+                           link.toDBVariable() + "),");
+        builder.deleteCharAt(builder.length() - 1);  // remove last comma
+        engine.execute(builder.toString());    
     }
     
 }

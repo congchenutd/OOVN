@@ -55,13 +55,13 @@ public class Link<SwitchType extends Switch, PortType extends Port> implements J
         return link.getOtherPort(srcPort) == dstPort; 
     }
 
-    public String getName() {
-        return getSrcPort().getName() + getDstPort().getName();
+    public String toDBVariable() {
+        return getSrcPort().toDBVariable() + getDstPort().toDBVariable();
     }
     
     @Override
     public String toString() {
-        return  getSrcPort().getName() + "-" + getDstPort().getName();                
+        return  getSrcPort().toDBVariable() + "-" + getDstPort().toDBVariable();                
     }
     
     @Override

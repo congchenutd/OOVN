@@ -3,7 +3,10 @@ package com.fujitsu.us.oovn.element.network;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+
 import com.fujitsu.us.oovn.core.VNO;
+import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.address.IPAddress;
 import com.fujitsu.us.oovn.element.datapath.VirtualSwitch;
 import com.fujitsu.us.oovn.element.host.Host;
@@ -14,6 +17,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class VirtualNetwork extends Network<VirtualSwitch, VirtualLink, VirtualPort>
+                            implements Persistable
 {
     private final VNO       _vno;
     private final IPAddress _networkIP;
@@ -32,7 +36,7 @@ public class VirtualNetwork extends Network<VirtualSwitch, VirtualLink, VirtualP
         return _vno;
     }
     
-    public int getID() {
+    public int getVNOID() {
         return getVNO().getID();
     }
     
@@ -73,6 +77,25 @@ public class VirtualNetwork extends Network<VirtualSwitch, VirtualLink, VirtualP
         return result;
     }
     
+    @Override
+    public String toDBMatch() {
+        return "(:Virtual [vnoid=" + getVNOID() + "])";
+    }
+    
+    @Override
+    public void createSelf(ExecutionEngine engine)
+    {
+        for(VirtualSwitch sw: getSwitches().values())
+            sw.createSelf(engine);
+            
+        for(VirtualLink link: getLinks())
+            link.createSelf(engine);
+    }
+
+    @Override
+    public void createMapping(ExecutionEngine engine) {
+    }
+
 }
 
 

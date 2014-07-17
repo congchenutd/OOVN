@@ -8,7 +8,7 @@
 		"switches" : [
 			{
 				"type" : "single",
-				"name" : "vs1",
+				"name" : "VS1",
 				"dpid" : "a:b:c:0:0:0:0:1",
 				"physical" : "0:0:0:0:0:0:0:1",
 				"ports" : [
@@ -18,7 +18,7 @@
 			},
 			{
 				"type" : "single",
-				"name" : "vs2",
+				"name" : "VS2",
 				"dpid" : "a:b:c:0:0:0:0:2",
 				"physical" : "0:0:0:0:0:0:0:3",
 				"ports" : [

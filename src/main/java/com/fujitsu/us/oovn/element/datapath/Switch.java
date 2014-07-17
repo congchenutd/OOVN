@@ -37,6 +37,10 @@ public class Switch<PortType extends Port> implements Jsonable
         return _dpid;
     }
 
+    public String toDBVariable() {
+        return getName();
+    }
+    
     /**
      * Attach a port to the switch
      * @return true if successful

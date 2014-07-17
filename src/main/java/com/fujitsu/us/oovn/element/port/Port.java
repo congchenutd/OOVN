@@ -81,7 +81,7 @@ public class Port<SwitchType extends Switch, LinkType extends Link> implements J
         return link.getOtherPort(this);
     }
 
-    public String getName() {
+    public String toDBVariable() {
         return getSwitch().getName() + "P" + getNumber();
     }
     

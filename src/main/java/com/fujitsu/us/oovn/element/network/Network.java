@@ -105,6 +105,10 @@ public class Network<SwitchType extends Switch,
         return result;
     }
     
+    public String toDBVariable() {
+        return null;
+    }
+        
     public boolean activate()
     {
         return true;

@@ -1,5 +1,7 @@
 package com.fujitsu.us.oovn.element.network;
 
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+
 import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.address.MACAddress;
@@ -49,35 +51,21 @@ public class PhysicalNetwork extends Network<PhysicalSwitch, PhysicalLink, Physi
     
     @Override
     public String toDBMatch() {
-        return ":Physical";
+        return "(:Physical)";
     }
-    
+
     @Override
-    public String toDBCreate()
+    public void createSelf(ExecutionEngine engine)
     {
-        StringBuilder builder = new StringBuilder();
-        
-        int swIndex = 0;
         for(PhysicalSwitch sw: getSwitches().values())
-        {
-            if(swIndex++ > 0)
-                builder.append(",\n");
-            builder.append(sw.toDBCreate());
-        }
+            sw.createSelf(engine);
         
         for(PhysicalLink link: getLinks())
-        {
-            builder.append(",\n");
-            builder.append(link.toDBCreate() + ",\n");
-            builder.append("(" + link.getName() + ")-[:Connects]->(" + link.getSrcPort().getName() + ")" + ",\n");
-            builder.append("(" + link.getName() + ")-[:Connects]->(" + link.getDstPort().getName() + ")");
-        }
-        return builder.toString();
+            link.createSelf(engine);
     }
-    
+
     @Override
-    public String toDBMapping() {
-        return null;
+    public void createMapping(ExecutionEngine engine) {
     }
-    
+
 }

@@ -2,6 +2,8 @@ package com.fujitsu.us.oovn.element.datapath;
 
 import java.util.List;
 
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.port.VirtualPort;
@@ -21,4 +23,5 @@ public abstract class VirtualSwitch extends Switch<VirtualPort>
     }
 
     public abstract List<PhysicalSwitch> getPhysicalSwitches();
+    public abstract void createSelf(ExecutionEngine engine);
 }

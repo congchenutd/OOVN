@@ -2,6 +2,8 @@ package com.fujitsu.us.oovn.element.datapath;
 
 import java.util.List;
 
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.address.DPID;
 
@@ -21,6 +23,12 @@ public class BigSwitch extends VirtualSwitch {
     public List<PhysicalSwitch> getPhysicalSwitches() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public void createSelf(ExecutionEngine engine) {
+        // TODO Auto-generated method stub
+        
     }
 
 }
