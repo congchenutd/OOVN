@@ -66,19 +66,25 @@ public class VirtualLink extends Link<VirtualSwitch, VirtualPort> implements Per
     }
     
     @Override
-    public String toDBMatch() {
-        return  getName() + 
+    public String toDBCreate() {
+        return "(" + getName() + 
                 ":Virtual:Link " + "{" + 
                 "vnoid:" + getVNO().getID() + "," +
                 "srcSwitch:" + "\"" + getSrcSwitch().getDPID().toString() + "\", " +
                 "srcPort:" + getSrcPort().getNumber() + "," +
                 "dstSwitch:" + "\"" + getDstSwitch().getDPID().toString() + "\", " +
                 "dstPort:" + getDstPort().getNumber() +
-                "}";
+                "})";
     }
     
     @Override
-    public String toDBCreate() {
-        return "(" + toDBMatch() + ")";
+    public String toDBMatch() {
+        return toDBCreate();
     }
+    
+    @Override
+    public String toDBMapping() {
+        return null;
+    }
+    
 }

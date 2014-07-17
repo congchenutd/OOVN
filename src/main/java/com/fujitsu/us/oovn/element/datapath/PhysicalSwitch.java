@@ -15,7 +15,7 @@ public class PhysicalSwitch extends Switch<PhysicalPort> implements Persistable
     public String toDBCreate()
     {
         StringBuilder builder = new StringBuilder();
-        builder.append("(" + toDBMatch() + ")");
+        builder.append(toDBMatch());
         
         for(PhysicalPort port: getPorts().values())
         {
@@ -29,10 +29,15 @@ public class PhysicalSwitch extends Switch<PhysicalPort> implements Persistable
     
     @Override
     public String toDBMatch() {
-        return  getName() +
+        return  "(" + getName() +
                 ":Physical:Switch {" +
                 "dpid:\"" + getDPID().toString() + "\"," +
-                "name:\"" + getName() + "\"}";
+                "name:\"" + getName() + "\"})";
+    }
+    
+    @Override
+    public String toDBMapping() {
+        return null;
     }
     
 }

@@ -1,5 +1,6 @@
 package com.fujitsu.us.oovn.element.network;
 
+import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
@@ -12,6 +13,7 @@ import com.fujitsu.us.oovn.element.port.PhysicalPort;
  *
  */
 public class PhysicalNetwork extends Network<PhysicalSwitch, PhysicalLink, PhysicalPort>
+                             implements Persistable
 {
     // singleton
     public static PhysicalNetwork getInstance() {
@@ -45,10 +47,12 @@ public class PhysicalNetwork extends Network<PhysicalSwitch, PhysicalLink, Physi
         addLink(new PhysicalLink(sw2.getPort(2), sw3.getPort(1)));
     }
     
+    @Override
     public String toDBMatch() {
         return ":Physical";
     }
     
+    @Override
     public String toDBCreate()
     {
         StringBuilder builder = new StringBuilder();
@@ -69,6 +73,11 @@ public class PhysicalNetwork extends Network<PhysicalSwitch, PhysicalLink, Physi
             builder.append("(" + link.getName() + ")-[:Connects]->(" + link.getDstPort().getName() + ")");
         }
         return builder.toString();
+    }
+    
+    @Override
+    public String toDBMapping() {
+        return null;
     }
     
 }
