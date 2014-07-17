@@ -10,7 +10,8 @@ public interface Persistable
     public String toDBVariable();
     
     /**
-     * @return a Neo4j clause for matching the object, () included
+     * @return a Neo4j clause for matching the node, including ()
+     * Should include all the information of the node so that it can be used for creating the node
      */
     public String toDBMatch();
     
@@ -18,7 +19,7 @@ public interface Persistable
      * Create the node(s) (network, switch, link, port) in the db
      * @param engine execution engine of Neo4j
      */
-    public void createSelf(ExecutionEngine engine);
+    public void create(ExecutionEngine engine);
     
     /**
      * Create the mapping to the physical node(s) in the db

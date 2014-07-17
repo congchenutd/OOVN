@@ -8,7 +8,6 @@ import org.neo4j.cypher.javacompat.ExecutionEngine;
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.address.DPID;
-import com.fujitsu.us.oovn.element.port.VirtualPort;
 
 /**
  * A SingleSwitch maps to one physical switch
@@ -46,26 +45,6 @@ public class SingleSwitch extends VirtualSwitch implements Persistable
     }
 
     @Override
-    public void createSelf(ExecutionEngine engine)
-    {
-        // create the switch itself
-        engine.execute("CREATE " + toDBMatch());
-        
-        // create and connect ports
-        for(VirtualPort port: getPorts().values())
-        {
-            port.createSelf(engine);
-            engine.execute(
-                    "MATCH \n" +
-                    toDBMatch() + ",\n" +
-                    port.toDBMatch() + "\n" +
-                    "CREATE (" + toDBVariable() + ")-[:Has]->(" + port.toDBVariable() + ")");
-        }
-        
-        createMapping(engine);
-    }
-
-    @Override
     public void createMapping(ExecutionEngine engine)
     {
         // nothing to map to
@@ -79,5 +58,5 @@ public class SingleSwitch extends VirtualSwitch implements Persistable
                 "CREATE\n" +
                 "(" + toDBVariable() + ")-[:Maps]->(" + getPhysicalSwitch().toDBVariable() + ")");
     }
-   
+
 }

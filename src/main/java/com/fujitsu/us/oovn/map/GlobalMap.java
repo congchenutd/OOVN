@@ -1,5 +1,7 @@
 package com.fujitsu.us.oovn.map;
 
+import java.util.List;
+
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
@@ -30,7 +32,7 @@ import com.fujitsu.us.oovn.element.port.VirtualPort;
 public class GlobalMap
 {
     
-    public PhysicalSwitch getPhysicalSwitch(VirtualSwitch vsw)
+    public List<PhysicalSwitch> getPhysicalSwitches(VirtualSwitch vsw)
     {
         return null;
     }
@@ -93,7 +95,7 @@ public class GlobalMap
         
         try(Transaction tx = _graphDb.beginTx())
         {
-            vno.getNetwork().createSelf(_engine);
+            vno.getNetwork().create(_engine);
             tx.success();
         }
     }
@@ -106,6 +108,7 @@ public class GlobalMap
     {
         try(Transaction tx = _graphDb.beginTx())
         {
+            // remove all the virtual nodes with the given vno id
             _engine.execute("MATCH (n:Virtual {vnoid:" + vno.getID() +  
                             "}) OPTIONAL MATCH (n)-[r]-() DELETE n,r");
             tx.success();
@@ -124,6 +127,7 @@ public class GlobalMap
     private final GraphDatabaseService _graphDb;
     private final ExecutionEngine      _engine;
     
+    
     /**
      * Initiate the map from the PhysicalNetwork object
      */
@@ -136,7 +140,7 @@ public class GlobalMap
         try(Transaction tx = _graphDb.beginTx())
         {
             _engine.execute("MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r");
-            PhysicalNetwork.getInstance().createSelf(_engine);
+            PhysicalNetwork.getInstance().create(_engine);
             tx.success();
         }
     }

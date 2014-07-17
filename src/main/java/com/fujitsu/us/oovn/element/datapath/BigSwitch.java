@@ -21,14 +21,16 @@ public class BigSwitch extends VirtualSwitch {
 
     @Override
     public List<PhysicalSwitch> getPhysicalSwitches() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public void createSelf(ExecutionEngine engine) {
-        // TODO Auto-generated method stub
-        
+    public void create(ExecutionEngine engine) {
+    }
+
+    @Override
+    public String toDBMatch() {
+        return null;
     }
 
 }

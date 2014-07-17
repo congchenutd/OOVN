@@ -1,5 +1,7 @@
 package com.fujitsu.us.oovn.element.link;
 
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+
 import com.fujitsu.us.oovn.element.Jsonable;
 import com.fujitsu.us.oovn.element.datapath.Switch;
 import com.fujitsu.us.oovn.element.port.Port;
@@ -14,7 +16,7 @@ import com.google.gson.JsonObject;
  */
 
 @SuppressWarnings("rawtypes")
-public class Link<SwitchType extends Switch, PortType extends Port> implements Jsonable
+public abstract class Link<SwitchType extends Switch, PortType extends Port> implements Jsonable
 {
     protected PortType _srcPort;
     protected PortType _dstPort;
@@ -49,12 +51,18 @@ public class Link<SwitchType extends Switch, PortType extends Port> implements J
                                                                      : null; 
     }
     
+    /**
+     * @return whether srcPort and dstPort are connected by a link
+     */
     public static boolean isConnected(Port srcPort, Port dstPort)
     {
         Link link = srcPort.getLink();
         return link.getOtherPort(srcPort) == dstPort; 
     }
 
+    /**
+     * @return variable name for Neo4j query, in the form of S1P1S2P2
+     */
     public String toDBVariable() {
         return getSrcPort().toDBVariable() + getDstPort().toDBVariable();
     }
@@ -101,4 +109,26 @@ public class Link<SwitchType extends Switch, PortType extends Port> implements J
         return false;
     }
 
+    public abstract String toDBMatch();
+    
+    public void create(ExecutionEngine engine)
+    {
+        // create the link node itself
+        engine.execute("CREATE " + toDBMatch());
+        
+        // create the relationships to the 2 ports
+        engine.execute(
+                "MATCH \n" +
+                toDBMatch() + ",\n" +
+                getSrcPort().toDBMatch() + ",\n" +
+                getDstPort().toDBMatch() + "\n" +
+                "CREATE " + 
+                "(" + toDBVariable() + ")-[:Connects]->(" + getSrcPort().toDBVariable() + ")," +
+                "(" + toDBVariable() + ")-[:Connects]->(" + getDstPort().toDBVariable() + ")");
+        
+        createMapping(engine);
+    }
+    
+    public void createMapping(ExecutionEngine engine) {
+    }
 }

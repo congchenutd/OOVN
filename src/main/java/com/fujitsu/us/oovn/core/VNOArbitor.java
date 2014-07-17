@@ -51,6 +51,7 @@ public class VNOArbitor
     public boolean deactivateVNO(VNO vno)
     {
         boolean result = vno.getNetwork().deactivate();
+        GlobalMap.getInstance().unregisterVNO(vno);
         return result;
     }
     

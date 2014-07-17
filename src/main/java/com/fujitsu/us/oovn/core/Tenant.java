@@ -78,8 +78,8 @@ public class Tenant
         if(vno.verify())
         {
             vno.activate();
-            vno.deactivate();
-            vno.decommission();
+//            vno.deactivate();
+//            vno.decommission();
         }
     }
 }

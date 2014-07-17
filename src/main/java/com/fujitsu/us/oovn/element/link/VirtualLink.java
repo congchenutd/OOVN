@@ -30,6 +30,7 @@ public class VirtualLink extends Link<VirtualSwitch, VirtualPort> implements Per
         if(path.isEmpty())
             return;
         
+        // make sure that the ends of virtual link and path match
         if(path.get(0)            .getSrcPort().equals(getSrcPort().getPhysicalPort()) && 
            path.get(path.size()-1).getDstPort().equals(getDstPort().getPhysicalPort()))
            _path = path;
@@ -71,29 +72,12 @@ public class VirtualLink extends Link<VirtualSwitch, VirtualPort> implements Per
     public String toDBMatch() {
         return "(" + toDBVariable() + 
                 ":Virtual:Link " + "{" + 
-                "vnoid:" + getVNO().getID() + "," +
-                "srcSwitch:" + "\"" + getSrcSwitch().getDPID().toString() + "\", " +
-                "srcPort:" + getSrcPort().getNumber() + "," +
-                "dstSwitch:" + "\"" + getDstSwitch().getDPID().toString() + "\", " +
-                "dstPort:" + getDstPort().getNumber() +
+                    "vnoid:" + getVNO().getID() + "," +
+                    "srcSwitch:" + "\"" + getSrcSwitch().getDPID().toString() + "\", " +
+                    "srcPort:" + getSrcPort().getNumber() + "," +
+                    "dstSwitch:" + "\"" + getDstSwitch().getDPID().toString() + "\", " +
+                    "dstPort:" + getDstPort().getNumber() +
                 "})";
-    }
-
-    @Override
-    public void createSelf(ExecutionEngine engine)
-    {
-        engine.execute("CREATE " + toDBMatch());
-        
-        engine.execute(
-                "MATCH \n" +
-                toDBMatch() + ",\n" +
-                getSrcPort().toDBMatch() + ",\n" +
-                getDstPort().toDBMatch() + "\n" +
-                "CREATE " + 
-                "(" + toDBVariable() + ")-[:Connects]->(" + getSrcPort().toDBVariable() + ")," +
-                "(" + toDBVariable() + ")-[:Connects]->(" + getDstPort().toDBVariable() + ")");
-        
-        createMapping(engine);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.fujitsu.us.oovn.element.port;
 
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+
 import com.fujitsu.us.oovn.element.Jsonable;
 import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.datapath.Switch;
@@ -14,7 +16,7 @@ import com.google.gson.JsonObject;
  *
  */
 @SuppressWarnings("rawtypes")
-public class Port<SwitchType extends Switch, LinkType extends Link> implements Jsonable
+public abstract class Port<SwitchType extends Switch, LinkType extends Link> implements Jsonable
 {
     private int        _number;
     private MACAddress _mac;
@@ -72,6 +74,9 @@ public class Port<SwitchType extends Switch, LinkType extends Link> implements J
         _link = link;
     }
     
+    /**
+     * @return the port that this port connects to, or null if it's not connected
+     */
     public Port<SwitchType, LinkType> getNeighbor()
     {
         Link link = getLink();
@@ -81,10 +86,6 @@ public class Port<SwitchType extends Switch, LinkType extends Link> implements J
         return link.getOtherPort(this);
     }
 
-    public String toDBVariable() {
-        return getSwitch().getName() + "P" + getNumber();
-    }
-    
     @Override
     public String toString() {
         return  "PORT:" +
@@ -122,7 +123,23 @@ public class Port<SwitchType extends Switch, LinkType extends Link> implements J
         result.addProperty("number", getNumber());
         result.add        ("mac",    getMACAddress().toJson());
         return result;
+    }    
+    
+    public abstract String toDBMatch();
+    
+    /**
+     * @return variable name for Neo4j query, in the form of S1P1
+     */
+    public String toDBVariable() {
+        return getSwitch().getName() + "P" + getNumber();
     }
     
-    
+    public void create(ExecutionEngine engine)
+    {
+        engine.execute("CREATE " + toDBMatch());
+        createMapping(engine);
+    }
+
+    public void createMapping(ExecutionEngine engine) {
+    }
 }
