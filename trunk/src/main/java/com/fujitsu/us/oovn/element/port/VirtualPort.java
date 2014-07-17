@@ -65,9 +65,11 @@ public class VirtualPort extends Port<VirtualSwitch, VirtualLink>
         
         engine.execute(
                 "MATCH \n" + 
-                toDBMatch() + ",\n" +
-                getPhysicalPort().toDBMatch() + "\n" +
-                "CREATE (" + toDBVariable() + ")-[:Maps]->(" + getPhysicalPort().toDBVariable() + ")");
+                    toDBMatch() + ",\n" +
+                    getPhysicalPort().toDBMatch() + "\n" +
+                "CREATE \n" + 
+                    "(" + toDBVariable() + ")-[:Maps]->(" + 
+                    getPhysicalPort().toDBVariable() + ")");
     }
 
 }
