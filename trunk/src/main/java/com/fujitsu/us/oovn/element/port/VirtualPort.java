@@ -8,7 +8,8 @@ import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.datapath.VirtualSwitch;
 import com.fujitsu.us.oovn.element.link.VirtualLink;
 
-public class VirtualPort extends Port<VirtualSwitch, VirtualLink> implements Persistable
+public class VirtualPort extends Port<VirtualSwitch, VirtualLink> 
+                         implements Persistable
 {
     private PhysicalPort _physicalPort;
     
@@ -48,19 +49,13 @@ public class VirtualPort extends Port<VirtualSwitch, VirtualLink> implements Per
     public String toDBMatch() {
         return  "(" + toDBVariable() +
                 ":Virtual:Port {" +
-                "vnoid:" + getVNO().getID() + "," +
-                "switch:\"" + getSwitch().getDPID().toString() + "\"," +
-                "number:" + getNumber() + "," +
-                "mac:\""  + getMACAddress() + "\"})";
+                    "vnoid:" + getVNO().getID() + "," +
+                    "switch:\"" + getSwitch().getDPID().toString() + "\"," +
+                    "number:" + getNumber() + "," +
+                    "mac:\""  + getMACAddress() + "\"" + 
+                "})";
     }
     
-    @Override
-    public void createSelf(ExecutionEngine engine)
-    {
-        engine.execute("CREATE " + toDBMatch());
-        createMapping(engine);
-    }
-
     @Override
     public void createMapping(ExecutionEngine engine)
     {

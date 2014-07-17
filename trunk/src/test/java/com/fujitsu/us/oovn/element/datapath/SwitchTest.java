@@ -12,12 +12,12 @@ public class SwitchTest
     @Test
     public final void testEqualsObject()
     {
-        Assert.assertThat(    new Switch(new DPID("0:0:0:0:0:0:0:a"), "S1"), 
-                          is( new Switch(new DPID("0:0:0:0:0:0:0:a"), "S1")));
-        Assert.assertThat(    new Switch(new DPID("0:0:0:0:0:0:0:a"), "S1"), 
-                          not(new Switch(new DPID("0:0:0:0:0:0:0:b"), "S1")));
-        Assert.assertThat(    new Switch(new DPID("0:0:0:0:0:0:0:a"), "S1"), 
-                          not(new Switch(new DPID("0:0:0:0:0:0:0:a"), "S2")));
+        Assert.assertThat(    new PhysicalSwitch(new DPID("0:0:0:0:0:0:0:a"), "S1"), 
+                          is( new PhysicalSwitch(new DPID("0:0:0:0:0:0:0:a"), "S1")));
+        Assert.assertThat(    new PhysicalSwitch(new DPID("0:0:0:0:0:0:0:a"), "S1"), 
+                          not(new PhysicalSwitch(new DPID("0:0:0:0:0:0:0:b"), "S1")));
+        Assert.assertThat(    new PhysicalSwitch(new DPID("0:0:0:0:0:0:0:a"), "S1"), 
+                          not(new PhysicalSwitch(new DPID("0:0:0:0:0:0:0:a"), "S2")));
     }
 
 }

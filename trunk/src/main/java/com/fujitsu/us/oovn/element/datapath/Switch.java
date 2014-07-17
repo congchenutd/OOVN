@@ -3,6 +3,8 @@ package com.fujitsu.us.oovn.element.datapath;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+
 import com.fujitsu.us.oovn.element.Jsonable;
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.port.Port;
@@ -16,7 +18,7 @@ import com.google.gson.JsonObject;
  *
  */
 @SuppressWarnings("rawtypes")
-public class Switch<PortType extends Port> implements Jsonable
+public abstract class Switch<PortType extends Port> implements Jsonable
 {
     protected final DPID   _dpid;
     protected final String _name;
@@ -94,5 +96,31 @@ public class Switch<PortType extends Port> implements Jsonable
         return  this.getDPID() .equals(that.getDPID()) &&
                 this.getName() .equals(that.getName());        
     }
+    
+    public void create(ExecutionEngine engine)
+    {
+        // create the switch itself
+        engine.execute("CREATE " + toDBMatch());
+        
+        // create and connect ports
+        for(PortType port: getPorts().values())
+        {
+            port.create(engine);
+            engine.execute(
+                    "MATCH \n" +
+                    toDBMatch() + ",\n" +
+                    port.toDBMatch() + "\n" +
+                    "CREATE (" + toDBVariable() + ")-[:Has]->(" + port.toDBVariable() + ")");
+        }
+        
+        // create the mapping
+        createMapping(engine);
+    }
+    
+    // empty be default
+    public void createMapping(ExecutionEngine engine) {
+    }
+    
+    public abstract String toDBMatch();
     
 }

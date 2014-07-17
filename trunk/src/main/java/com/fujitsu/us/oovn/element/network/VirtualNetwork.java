@@ -3,8 +3,6 @@ package com.fujitsu.us.oovn.element.network;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.address.IPAddress;
@@ -80,20 +78,6 @@ public class VirtualNetwork extends Network<VirtualSwitch, VirtualLink, VirtualP
     @Override
     public String toDBMatch() {
         return "(:Virtual [vnoid=" + getVNOID() + "])";
-    }
-    
-    @Override
-    public void createSelf(ExecutionEngine engine)
-    {
-        for(VirtualSwitch sw: getSwitches().values())
-            sw.createSelf(engine);
-            
-        for(VirtualLink link: getLinks())
-            link.createSelf(engine);
-    }
-
-    @Override
-    public void createMapping(ExecutionEngine engine) {
     }
 
 }

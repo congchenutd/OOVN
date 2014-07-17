@@ -8,25 +8,25 @@ import org.junit.Test;
 
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.address.MACAddress;
-import com.fujitsu.us.oovn.element.datapath.Switch;
-import com.fujitsu.us.oovn.element.port.Port;
+import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
+import com.fujitsu.us.oovn.element.port.PhysicalPort;
 
 public class LinkTest
 {
-    private static Switch sw1;
-    private static Switch sw2;    
-    private static Link link;
+    private static PhysicalSwitch sw1;
+    private static PhysicalSwitch sw2;    
+    private static PhysicalLink link;
     
     @BeforeClass
     public static void setUpClass() throws Exception
     {
-        sw1 = new Switch(new DPID(1), "S1");
-        sw2 = new Switch(new DPID(2), "S2");
-        sw1.addPort(new Port(1, new MACAddress("0:0:0:0:0:1")));
-        sw1.addPort(new Port(2, new MACAddress("0:0:0:0:0:2")));
-        sw2.addPort(new Port(1, new MACAddress("0:0:0:0:0:3")));
-        sw2.addPort(new Port(2, new MACAddress("0:0:0:0:0:4")));
-        link = new Link(sw1.getPort(2), sw2.getPort(1));
+        sw1 = new PhysicalSwitch(new DPID(1), "S1");
+        sw2 = new PhysicalSwitch(new DPID(2), "S2");
+        sw1.addPort(new PhysicalPort(1, new MACAddress("0:0:0:0:0:1")));
+        sw1.addPort(new PhysicalPort(2, new MACAddress("0:0:0:0:0:2")));
+        sw2.addPort(new PhysicalPort(1, new MACAddress("0:0:0:0:0:3")));
+        sw2.addPort(new PhysicalPort(2, new MACAddress("0:0:0:0:0:4")));
+        link = new PhysicalLink(sw1.getPort(2), sw2.getPort(1));
     }
     
     @Test
@@ -75,10 +75,10 @@ public class LinkTest
     @Test
     public final void testEqualsObject()
     {
-        Assert.assertThat(link, is (new Link(sw1.getPort(2), sw2.getPort(1))));
-        Assert.assertThat(link, is (new Link(sw2.getPort(1), sw1.getPort(2))));
-        Assert.assertThat(link, not(new Link(sw1.getPort(1), sw2.getPort(1))));
-        Assert.assertThat(link, not(new Link(sw1.getPort(1), sw1.getPort(1))));
+        Assert.assertThat(link, is (new PhysicalLink(sw1.getPort(2), sw2.getPort(1))));
+        Assert.assertThat(link, is (new PhysicalLink(sw2.getPort(1), sw1.getPort(2))));
+        Assert.assertThat(link, not(new PhysicalLink(sw1.getPort(1), sw2.getPort(1))));
+        Assert.assertThat(link, not(new PhysicalLink(sw1.getPort(1), sw1.getPort(1))));
     }
 
 }

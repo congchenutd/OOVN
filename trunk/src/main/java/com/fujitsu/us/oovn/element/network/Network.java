@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+
 import com.fujitsu.us.oovn.element.Jsonable;
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.datapath.Switch;
@@ -21,7 +23,7 @@ import com.google.gson.JsonObject;
  *
  */
 @SuppressWarnings("rawtypes")
-public class Network<SwitchType extends Switch, 
+public abstract class Network<SwitchType extends Switch, 
                      LinkType extends Link, 
                      PortType extends Port> implements Jsonable
 {
@@ -105,10 +107,6 @@ public class Network<SwitchType extends Switch,
         return result;
     }
     
-    public String toDBVariable() {
-        return null;
-    }
-        
     public boolean activate()
     {
         return true;
@@ -118,4 +116,30 @@ public class Network<SwitchType extends Switch,
     {
         return true;
     }
+    
+    public abstract String toDBMatch();
+    
+    public String toDBVariable() {
+        return null;
+    }
+    
+    /**
+     * Mapping is done by the component objects (switch, link, port)
+     */
+    public void createMapping(ExecutionEngine engine) {
+    }
+    
+    /**
+     * Create the network in the db using the engine
+     * @param engine ExecutionEngine for running db queries
+     */
+    public void create(ExecutionEngine engine)
+    {
+        for(SwitchType sw: getSwitches().values())
+            sw.create(engine);
+        
+        for(LinkType link: getLinks())
+            link.create(engine);
+    }
+    
 }
