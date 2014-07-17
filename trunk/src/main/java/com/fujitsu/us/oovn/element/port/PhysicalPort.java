@@ -23,10 +23,12 @@ public class PhysicalPort extends Port<PhysicalSwitch, PhysicalLink> implements 
     
     @Override
     public String toDBMatch() {
-        return  getName() +
-                ":Physical:Port {" +
-                "switch:\"" + getSwitch().getDPID().toString() + "\"," + 
-                "number:" + getNumber() + "}";
+        return  toDBCreate();
+    }
+    
+    @Override
+    public String toDBMapping() {
+        return null;
     }
 
 }

@@ -54,10 +54,11 @@ public class VirtualPort extends Port<VirtualSwitch, VirtualLink> implements Per
     
     @Override
     public String toDBMatch() {
-        return  getName() +
-                ":Virtual:Port {" +
-                "vnoid:" + getVNO().getID() + "," +
-                "switch:\"" + getSwitch().getDPID().toString() + "\"," + 
-                "number:" + getNumber() + "}";
+        return toDBCreate();
+    }
+    
+    @Override
+    public String toDBMapping() {
+        return null;
     }
 }

@@ -11,18 +11,24 @@ public class PhysicalLink extends Link<PhysicalSwitch, PhysicalPort> implements 
     }
     
     @Override
-    public String toDBMatch() {
-        return  getName() + 
+    public String toDBCreate() {
+        return "(" + getName() + 
                 ":Physical:Link " + "{" + 
                 "srcSwitch:" + "\"" + getSrcSwitch().getDPID().toString() + "\", " +
                 "srcPort:" + getSrcPort().getNumber() + "," +
                 "dstSwitch:" + "\"" + getDstSwitch().getDPID().toString() + "\", " +
                 "dstPort:" + getDstPort().getNumber() +
-                "}";
+                "})";
+    }
+
+    @Override
+    public String toDBMatch() {
+        return  toDBCreate();
     }
     
     @Override
-    public String toDBCreate() {
-        return "(" + toDBMatch() + ")";
+    public String toDBMapping() {
+        return null;
     }
+    
 }
