@@ -37,6 +37,10 @@ import com.fujitsu.us.oovn.element.port.VirtualPort;
 public class GlobalMap
 {
     
+    /**
+     * @param vsw a VirtualSwitch
+     * @return a list of PhysicalSwitches vsw maps to
+     */
     public List<PhysicalSwitch> getPhysicalSwitches(VirtualSwitch vsw)
     {
         try(Transaction tx = _graphDb.beginTx())
@@ -59,6 +63,11 @@ public class GlobalMap
         }
     }
     
+    /**
+     * @param psw a PhysicalSwitch
+     * @param vno a VNO
+     * @return the VirtualSwitch of the vno that maps to maps to psw
+     */
     public VirtualSwitch getVirtualSwitch(PhysicalSwitch psw, VNO vno)
     {
         try(Transaction tx = _graphDb.beginTx())
@@ -78,6 +87,10 @@ public class GlobalMap
         }
     }
     
+    /**
+     * @param vPort a VirtualPort
+     * @return the PhysicalPort vPort maps to
+     */
     public PhysicalPort getPhysicalPort(VirtualPort vPort)
     {
         try(Transaction tx = _graphDb.beginTx())
@@ -98,6 +111,11 @@ public class GlobalMap
         }
     }
     
+    /**
+     * @param pPort a PhysicalPort
+     * @param vno a VNO
+     * @return the VirtualPort of vno that maps to pPort
+     */
     public VirtualPort getVirtualPort(PhysicalPort pPort, VNO vno)
     {
         try(Transaction tx = _graphDb.beginTx())
@@ -118,6 +136,10 @@ public class GlobalMap
         }
     }
     
+    /**
+     * @param vLink a VirtualLink
+     * @return a list of PhysicalLinks that vLink maps to
+     */
     public List<PhysicalLink> getPhysicalLinks(VirtualLink vLink)
     {
         try(Transaction tx = _graphDb.beginTx())
@@ -145,6 +167,11 @@ public class GlobalMap
         }
     }
     
+    /**
+     * @param pLink a PhysicalLink
+     * @param vno   a VNO
+     * @return the VirtualLink of the vno that maps to pLink
+     */
     public VirtualLink getVirtualLink(PhysicalLink pLink, VNO vno)
     {
         try(Transaction tx = _graphDb.beginTx())
@@ -167,12 +194,12 @@ public class GlobalMap
         }
     }
     
-    public PhysicalIPAddress getPhysicalIPAddress(VirtualIPAddress vip)
+    public PhysicalIPAddress getPhysicalIPAddress(VirtualIPAddress vIP)
     {
         return null;
     }
     
-    public VirtualIPAddress getVirtualIPAddress(PhysicalIPAddress pip, VNO vno)
+    public VirtualIPAddress getVirtualIPAddress(PhysicalIPAddress pIP, VNO vno)
     {
         return null;
     }
