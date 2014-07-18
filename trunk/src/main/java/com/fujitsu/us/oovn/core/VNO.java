@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 
 import com.fujitsu.us.oovn.element.network.VirtualNetwork;
 import com.fujitsu.us.oovn.exception.InvalidVNOOperationException;
+import com.fujitsu.us.oovn.map.LocalMap;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -25,12 +26,14 @@ public class VNO
     private VNOState             _state;
     private NetworkConfiguration _config;
     private VirtualNetwork       _network;
+    private final LocalMap       _map;
     
     public VNO(Tenant tenant)
     {
         _tenant = tenant;
         _id     = VNOCounter.getNextID();
-        _state = VNOState.UNCONFIGURED;
+        _state  = VNOState.UNCONFIGURED;
+        _map    = LocalMap.getInstance(this);
     }
      
     public int getID() {
@@ -83,6 +86,10 @@ public class VNO
      */
     public void setNetwork(VirtualNetwork network) {
         _network = network;
+    }
+    
+    private LocalMap getMap() {
+        return _map;
     }
     
     ///////////// The major APIs tenant can call ////////////////
@@ -167,7 +174,9 @@ public class VNO
                 if(VNOArbitor.getInstance().verifyVNO(vno))
                 {
                     vno.setVerified(true);
-                    vno.getTenant().registerVNO(vno);
+                    vno.getTenant().registerVNO(vno);          // register to tenant
+                    VNOArbitor.getInstance().registerVNO(vno); // to arbitor
+                    vno.getMap().registerVNO();                // to local map
                     vno.setState(INACTIVE);
                 }
                 return vno.isVerified();
@@ -181,17 +190,11 @@ public class VNO
             {
                 if(VNOArbitor.getInstance().activateVNO(vno))
                 {
+                    vno.getMap().activateVNO();
                     vno.setState(ACTIVE);
                     return true;
                 }
                 return false;
-            }
-            
-            @Override
-            public boolean decommission(VNO vno)
-            {
-                vno.setState(DECOMMISSIONED);
-                return true;
             }
         },
         ACTIVE
@@ -200,14 +203,8 @@ public class VNO
             public boolean deactivate(VNO vno)
             {
                 VNOArbitor.getInstance().deactivateVNO(vno);
+                vno.getMap().deactivateVNO();
                 vno.setState(INACTIVE);
-                return true;
-            }
-            
-            @Override
-            public boolean decommission(VNO vno)
-            {
-                vno.setState(DECOMMISSIONED);
                 return true;
             }
         },
@@ -231,8 +228,13 @@ public class VNO
             throw new InvalidVNOOperationException("The VNO is not activated yet");
         }
         
-        public boolean decommission(VNO vno) throws InvalidVNOOperationException {
-            throw new InvalidVNOOperationException("The VNO is not activated yet");
+        public boolean decommission(VNO vno) throws InvalidVNOOperationException
+        {
+            VNOArbitor.getInstance().decommssionVNO(vno);
+            vno.getMap().unregisterVNO();
+            vno.getTenant().unregisterVNO(vno);
+            vno.setState(DECOMMISSIONED);
+            return true;
         }
     }
 

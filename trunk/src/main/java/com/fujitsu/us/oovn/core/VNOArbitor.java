@@ -24,7 +24,7 @@ public class VNOArbitor
     private VNOArbitor() {}
     
     /**
-     * @return the allowable physical topology, may not be the actual one
+     * @return the allowable physical topology, which may not be the actual one
      */
     public NetworkConfiguration getPhysicalTopology()
     {
@@ -32,32 +32,58 @@ public class VNOArbitor
         return new NetworkConfiguration((JsonObject) pnw.toJson());
     }
     
+    /**
+     * Verify the vno
+     * @return true if verified
+     */
     public boolean verifyVNO(VNO vno) {
         return GlobalMap.getInstance().verifyVNO(vno);
     }
     
+    /**
+     * Add the vno to GlobalMap
+     * @return true if successful
+     */
+    public boolean registerVNO(VNO vno)
+    {
+        GlobalMap.getInstance().registerVNO(vno);
+        VNOPool  .getInstance().registerVNO(vno);
+        return true;
+    }
+    
+    /**
+     * Turn on the vno
+     * @return true if successful
+     */
     public boolean activateVNO(VNO vno)
     {
         // build a VirtualNetwork and assign it to VNO
         if(vno.getNetwork() == null)
-        {
             NetworkBuilder.getInstance().build(vno);
-            VNOPool.getInstance().registerVNO(vno);
-        }
-        GlobalMap.getInstance().registerVNO(vno);
+        
+        GlobalMap.getInstance().activateVNO(vno);
         return true;
     }
     
+    /**
+     * Turn off the vno
+     * @return true if successful
+     */
     public boolean deactivateVNO(VNO vno)
     {
         boolean result = vno.getNetwork().deactivate();
-        GlobalMap.getInstance().unregisterVNO(vno);
+        GlobalMap.getInstance().deactivateVNO(vno);
         return result;
     }
     
+    /**
+     * Permanently remove the vno
+     * @return true if successful
+     */
     public boolean decommssionVNO(VNO vno)
     {
-        VNOPool.getInstance().unregisterVNO(vno);
+        GlobalMap.getInstance().unregisterVNO(vno);
+        VNOPool  .getInstance().unregisterVNO(vno);
         return true;
     }
 
