@@ -46,6 +46,10 @@ public class VNOArbitor
      */
     public boolean registerVNO(VNO vno)
     {
+        // build a VirtualNetwork and assign it to VNO
+        if(vno.getNetwork() == null)
+            NetworkBuilder.getInstance().build(vno);
+        
         GlobalMap.getInstance().registerVNO(vno);
         VNOPool  .getInstance().registerVNO(vno);
         return true;
@@ -57,10 +61,6 @@ public class VNOArbitor
      */
     public boolean activateVNO(VNO vno)
     {
-        // build a VirtualNetwork and assign it to VNO
-        if(vno.getNetwork() == null)
-            NetworkBuilder.getInstance().build(vno);
-        
         GlobalMap.getInstance().activateVNO(vno);
         return true;
     }
