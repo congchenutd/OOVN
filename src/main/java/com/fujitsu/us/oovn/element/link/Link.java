@@ -21,6 +21,7 @@ public abstract class Link<SwitchType extends Switch, PortType extends Port> imp
     protected PortType _srcPort;
     protected PortType _dstPort;
     
+    @SuppressWarnings("unchecked")
     public Link(PortType src, PortType dst)
     {
         _srcPort = src;
@@ -37,10 +38,12 @@ public abstract class Link<SwitchType extends Switch, PortType extends Port> imp
         return _dstPort;
     }
     
+    @SuppressWarnings("unchecked")
     public SwitchType getSrcSwitch() {
         return (SwitchType) _srcPort.getSwitch();
     }
     
+    @SuppressWarnings("unchecked")
     public SwitchType getDstSwitch() {
         return (SwitchType) _dstPort.getSwitch();
     }
@@ -54,6 +57,7 @@ public abstract class Link<SwitchType extends Switch, PortType extends Port> imp
     /**
      * @return whether srcPort and dstPort are connected by a link
      */
+    @SuppressWarnings("unchecked")
     public static boolean isConnected(Port srcPort, Port dstPort)
     {
         Link link = srcPort.getLink();

@@ -47,6 +47,7 @@ public abstract class Switch<PortType extends Port> implements Jsonable
      * Attach a port to the switch
      * @return true if successful
      */
+    @SuppressWarnings("unchecked")
     public boolean addPort(PortType port)
     {
         if(_ports.containsKey(port.getNumber()))
