@@ -64,7 +64,7 @@ public abstract class Network<SwitchType extends Switch,
         return _links.remove(link);
     }
     
-    public Switch getSwitch(DPID dpid) {
+    public SwitchType getSwitch(DPID dpid) {
         return _switches.containsKey(dpid.toInt()) ? _switches.get(dpid.toInt()) 
                                                    : null;
     }
@@ -73,6 +73,14 @@ public abstract class Network<SwitchType extends Switch,
         return Collections.unmodifiableMap(_switches);
     }
     
+    @SuppressWarnings("unchecked")
+    public LinkType getLink(DPID srcDPID, int srcNumber, DPID dstDPID, int dstNumber)
+    {
+        return getLink((PortType) getSwitch(srcDPID).getPort(srcNumber),
+                       (PortType) getSwitch(dstDPID).getPort(dstNumber));
+    }
+    
+    @SuppressWarnings("unchecked")
     public LinkType getLink(PortType srcPort, PortType dstPort)
     {
         LinkType link = (LinkType) srcPort.getLink();
@@ -85,6 +93,7 @@ public abstract class Network<SwitchType extends Switch,
         return Collections.unmodifiableSet(_links);
     }
     
+    @SuppressWarnings("unchecked")
     public PortType getNeighborPort(PortType port) {
         return (PortType) port.getLink().getOtherPort(port);
     }

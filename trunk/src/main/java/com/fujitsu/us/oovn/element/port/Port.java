@@ -77,9 +77,10 @@ public abstract class Port<SwitchType extends Switch, LinkType extends Link> imp
     /**
      * @return the port that this port connects to, or null if it's not connected
      */
-    public Port<SwitchType, LinkType> getNeighbor()
+    @SuppressWarnings("unchecked")
+    public Port getNeighbor()
     {
-        Link link = getLink();
+        LinkType link = getLink();
         if(link == null)
             return null;
         
