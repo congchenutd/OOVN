@@ -155,12 +155,12 @@ public class MapBase
             while(it.hasNext())
             {
                 Node node = it.next();
-                DPID srcDPID = new DPID(node.getProperty("srcSwitch").toString());
-                DPID dstDPID = new DPID(node.getProperty("dstSwitch").toString());
+                String srcDPID = node.getProperty("srcSwitch").toString();
+                String dstDPID = node.getProperty("dstSwitch").toString();
                 int  srcNumber = Integer.valueOf(node.getProperty("srcPort").toString());
                 int  dstNumber = Integer.valueOf(node.getProperty("dstPort").toString());
                 links.add(PhysicalNetwork.getInstance()
-                                                        .getLink(srcDPID, srcNumber, dstDPID, dstNumber));
+                                         .getLink(srcDPID, srcNumber, dstDPID, dstNumber));
             }
 
             return links;
@@ -186,8 +186,8 @@ public class MapBase
                 return null;
 
             Node node = it.next();
-            DPID srcDPID = new DPID(node.getProperty("srcSwitch").toString());
-            DPID dstDPID = new DPID(node.getProperty("dstSwitch").toString());
+            String srcDPID = node.getProperty("srcSwitch").toString();
+            String dstDPID = node.getProperty("dstSwitch").toString();
             int  srcNumber = Integer.valueOf(node.getProperty("srcPort").toString());
             int  dstNumber = Integer.valueOf(node.getProperty("dstPort").toString());
             return vno.getNetwork().getLink(srcDPID, srcNumber, dstDPID, dstNumber);

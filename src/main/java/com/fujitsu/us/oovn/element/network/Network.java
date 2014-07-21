@@ -13,6 +13,7 @@ import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.datapath.Switch;
 import com.fujitsu.us.oovn.element.link.Link;
 import com.fujitsu.us.oovn.element.port.Port;
+import com.fujitsu.us.oovn.exception.InvalidDPIDException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -36,45 +37,50 @@ public abstract class Network<SwitchType extends Switch,
         _links    = new HashSet<LinkType>();
     }
     
-    public boolean addSwitch(SwitchType sw)
+    public void addSwitch(SwitchType sw) {
+        if(sw != null)
+            _switches.put(sw.getDPID().toInt(), sw);
+    }
+    
+    public void removeSwitch(SwitchType sw) {
+        if(sw != null)
+            _switches.remove(sw.getDPID());
+    }
+    
+    public void addLink(LinkType link) {
+        if(link != null)
+            _links.add(link);
+    }
+    
+    public void removeLink(LinkType link) {
+        if(link != null)
+            _links.remove(link);
+    }
+    
+    /**
+     * For convenience
+     */
+    public SwitchType getSwitch(String id) throws InvalidDPIDException {
+        return getSwitch(new DPID(id));
+    }
+    
+    public SwitchType getSwitch(DPID dpid) throws InvalidDPIDException
     {
-        if(_switches.containsKey(sw.getDPID().toInt()))
-            return false;
-        _switches.put(sw.getDPID().toInt(), sw);
-        return true;
-    }
-    
-    public boolean removeSwitch(SwitchType sw)
-    {
-        if(!_switches.containsKey(sw.getDPID().toInt()))
-            return false;
-        _switches.remove(sw.getDPID());
-        return true;
-    }
-    
-    public boolean addLink(LinkType link)
-    {
-        if(_links.contains(link))
-            return false;
-        _links.add(link);
-        return true;
-    }
-    
-    public boolean removeLink(LinkType link) {
-        return _links.remove(link);
-    }
-    
-    public SwitchType getSwitch(DPID dpid) {
-        return _switches.containsKey(dpid.toInt()) ? _switches.get(dpid.toInt()) 
-                                                   : null;
+        if(dpid == null || !_switches.containsKey(dpid))
+            throw new InvalidDPIDException("DPID " + dpid + " doesn't exist");
+            
+        return _switches.get(dpid.toInt());
     }
     
     public Map<Long, SwitchType> getSwitches() {
         return Collections.unmodifiableMap(_switches);
     }
     
+    /**
+     * For convenience
+     */
     @SuppressWarnings("unchecked")
-    public LinkType getLink(DPID srcDPID, int srcNumber, DPID dstDPID, int dstNumber)
+    public LinkType getLink(String srcDPID, int srcNumber, String dstDPID, int dstNumber)
     {
         return getLink((PortType) getSwitch(srcDPID).getPort(srcNumber),
                        (PortType) getSwitch(dstDPID).getPort(dstNumber));
@@ -83,7 +89,11 @@ public abstract class Network<SwitchType extends Switch,
     @SuppressWarnings("unchecked")
     public LinkType getLink(PortType srcPort, PortType dstPort)
     {
+        if(srcPort == null || dstPort == null)
+            return null;
         LinkType link = (LinkType) srcPort.getLink();
+        if(link == null)
+            return null;
         if(link.getOtherPort(srcPort).equals(dstPort))
             return link;
         return null;
@@ -94,7 +104,10 @@ public abstract class Network<SwitchType extends Switch,
     }
     
     @SuppressWarnings("unchecked")
-    public PortType getNeighborPort(PortType port) {
+    public PortType getNeighborPort(PortType port)
+    {
+        if(port == null)
+            return null;
         return (PortType) port.getLink().getOtherPort(port);
     }
     
@@ -129,7 +142,7 @@ public abstract class Network<SwitchType extends Switch,
     public abstract String toDBMatch();
     
     public String toDBVariable() {
-        return null;
+        return "";
     }
     
     /**

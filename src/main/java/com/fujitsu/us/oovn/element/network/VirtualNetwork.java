@@ -50,12 +50,9 @@ public class VirtualNetwork extends Network<VirtualSwitch, VirtualLink, VirtualP
         return _mask;
     }
     
-    public boolean addHost(Host host)
-    {
-        if(_hosts.containsKey(host.getID()))
-            return false;
-        _hosts.put(host.getID(), host);
-        return true;
+    public void addHost(Host host) {
+        if(host != null)
+            _hosts.put(host.getID(), host);
     }
     
     @Override

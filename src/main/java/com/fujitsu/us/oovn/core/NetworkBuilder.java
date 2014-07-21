@@ -1,5 +1,6 @@
 package com.fujitsu.us.oovn.core;
 
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import com.fujitsu.us.oovn.element.host.*;
 import com.fujitsu.us.oovn.element.link.*;
 import com.fujitsu.us.oovn.element.network.*;
 import com.fujitsu.us.oovn.element.port.*;
+import com.fujitsu.us.oovn.exception.*;
 import com.google.gson.*;
 
 /**
@@ -35,10 +37,12 @@ public class NetworkBuilder
      * @param vno the VNO the virtual network is built for
      * @return a new virtual network object for the VNO 
      */
-    public boolean build(VNO vno)
+    public boolean build(VNO vno) throws InvalidVNOConfigurationException
     {
         JsonObject json    = vno.getConfiguration().toJson();
         JsonObject vnoJson = json.getAsJsonObject("vno");
+        if(vnoJson.isJsonNull())
+            throw new InvalidVNOConfigurationException("No vno object in the json file");
         
         // global
         String address = vnoJson.get("address").getAsString();
@@ -48,6 +52,9 @@ public class NetworkBuilder
         
         // switches
         JsonArray switchesJson = vnoJson.getAsJsonArray("switches");
+        if(switchesJson.isJsonNull())
+            throw new InvalidVNOConfigurationException("No switches defined");
+        
         for(JsonElement e: switchesJson)
         {
             JsonObject swJson = (JsonObject) e;
@@ -82,26 +89,37 @@ public class NetworkBuilder
      * @return a SingleSwitch object
      */
     private SingleSwitch buildSingleSwitch(JsonObject json, VNO vno)
+                                throws InvalidVNOConfigurationException
     {
-        DPID dpid   = new DPID(json.get("dpid").getAsString());
+        // find physical switch
+        DPID phyID = new DPID(json.get("physical").getAsString());
+        PhysicalSwitch psw = PhysicalNetwork.getInstance().getSwitch(phyID);
+        if(psw == null)
+            throw new InvalidVNOConfigurationException(
+                    "Mapped to none-existing physical switch: " +
+                    phyID.toString());
+        
+        // create virtual switch
+        DPID   dpid = new DPID(json.get("dpid").getAsString());
         String name = json.get("name").getAsString();
         SingleSwitch vsw = new SingleSwitch(vno, dpid, name);
-        
-        // map to physical switch
-        DPID phyID = new DPID(json.get("physical").getAsString());
-        PhysicalSwitch psw = (PhysicalSwitch) PhysicalNetwork.getInstance().getSwitch(phyID);
         vsw.setPhysicalSwitch(psw);
         
-        // virtual ports
+        // add virtual ports
         JsonArray portsJson = json.get("ports").getAsJsonArray();
         
         int index = 0;
         for(JsonElement e: portsJson)
         {
             int number = e.getAsInt();
-            PhysicalPort port  = psw.getPort(number);
+            PhysicalPort port = psw.getPort(number);
+            if(port == null)
+                throw new InvalidVNOConfigurationException(
+                        "Mapped to none-existing physical port: " +
+                        "dpid: " + dpid.toString() + " " +
+                        "port: " + number);
             
-            // QUESTION: is it OK to reuse physical MAC address? OVX does so.
+            // XXX: is it OK to reuse physical MAC address? OVX does so.
             VirtualPort  vPort = new VirtualPort(++index, port.getMACAddress());
             vPort.setPhysicalPort(port);
             vsw.addPort(vPort);
@@ -125,8 +143,10 @@ public class NetworkBuilder
      * based on the given Json configuration
      * @param json the Json segment for the switch
      * @return a VirtualSwitch object
+     * @throws InvalidVNOConfigurationException 
      */
-    private VirtualSwitch buildSwitch(JsonObject json, VNO vno) {
+    private VirtualSwitch buildSwitch(JsonObject json, VNO vno) 
+                                throws InvalidVNOConfigurationException {
         return json.get("type").getAsString().equals("single") ? buildSingleSwitch(json, vno) 
                                                                : buildBigSwitch   (json, vno);
     }
@@ -141,7 +161,8 @@ public class NetworkBuilder
     {
         DPID dpid   = new DPID(json.get("switch").getAsString());
         int  number = json.get("number").getAsInt();
-        return (VirtualPort) vno.getNetwork().getSwitch(dpid).getPort(number);
+        VirtualSwitch vsw = vno.getNetwork().getSwitch(dpid);
+        return vno.getNetwork().getSwitch(dpid).getPort(number);
     }
     
     /**
@@ -153,7 +174,7 @@ public class NetworkBuilder
     {
         DPID dpid   = new DPID(json.get("switch").getAsString());
         int  number = json.get("number").getAsInt();
-        return (PhysicalPort) PhysicalNetwork.getInstance().getSwitch(dpid).getPort(number);
+        return PhysicalNetwork.getInstance().getSwitch(dpid).getPort(number);
     }
     
     /**

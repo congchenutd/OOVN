@@ -27,10 +27,10 @@ public class VirtualLink extends Link<VirtualSwitch, VirtualPort> implements Per
     
     public void setPath(List<PhysicalLink> path)
     {
-        if(path.isEmpty())
+        if(path == null || path.isEmpty())
             return;
         
-        // make sure that the ends of virtual link and path match
+        // the ends of the path should match those of the virtual link
         if(path.get(0)            .getSrcPort().equals(getSrcPort().getPhysicalPort()) && 
            path.get(path.size()-1).getDstPort().equals(getDstPort().getPhysicalPort()))
            _path = path;
