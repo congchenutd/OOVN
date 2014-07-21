@@ -24,8 +24,8 @@ import com.google.gson.JsonObject;
  */
 @SuppressWarnings("rawtypes")
 public abstract class Network<SwitchType extends Switch, 
-                     LinkType extends Link, 
-                     PortType extends Port> implements Jsonable
+                              LinkType   extends Link, 
+                              PortType   extends Port> implements Jsonable
 {
     protected Map<Long, SwitchType> _switches;    // dpid -> switch
     protected Set<LinkType>         _links;

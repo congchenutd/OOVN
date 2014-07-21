@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class VNOPool
 {
-    private final Map<Integer, VNO> _vnos;
+    private final Map<Integer, VNO> _vnos;  // vno id -> vno
     
     // singleton
     public static VNOPool getInstance() {

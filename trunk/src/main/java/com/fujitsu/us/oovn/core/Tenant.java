@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fujitsu.us.oovn.exception.InvalidVNOOperationException;
+
 
 /**
  * Represent a tenant for demo purpose
@@ -73,14 +75,18 @@ public class Tenant
 //        NetworkConfiguration topo = vno.getPhysicalTopology();
 //        System.out.println(topo.toString());
         
-        vno.init("VirtualConfig.json");
+        try {
+            vno.init("VirtualConfig.json");
 //        System.out.println(vno.getConfiguration().toString());
-        
-        if(vno.verify())
-        {
-            vno.activate();
+
+            if(vno.verify())
+            {
+                vno.activate();
 //            vno.deactivate();
 //            vno.decommission();
+            }
+        } catch (InvalidVNOOperationException e) {
+            e.printStackTrace();
         }
     }
 }
