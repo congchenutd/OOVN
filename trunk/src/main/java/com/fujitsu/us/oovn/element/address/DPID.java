@@ -5,7 +5,6 @@ import com.fujitsu.us.oovn.util.HexString;
 /**
  * A DPID is a 8-byte, : separated HexString
  * @author Cong Chen <Cong.Chen@us.fujitsu.com>
- *
  */
 public class DPID extends HexString
 {

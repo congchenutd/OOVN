@@ -24,6 +24,8 @@ public abstract class Link<SwitchType extends Switch, PortType extends Port> imp
     @SuppressWarnings("unchecked")
     public Link(PortType src, PortType dst)
     {
+        if(src == null || dst == null)
+            return;
         _srcPort = src;
         _dstPort = dst;
         _srcPort.setLink(this);
@@ -60,8 +62,12 @@ public abstract class Link<SwitchType extends Switch, PortType extends Port> imp
     @SuppressWarnings("unchecked")
     public static boolean isConnected(Port srcPort, Port dstPort)
     {
+        if(srcPort == null || dstPort == null)
+            return false;
         Link link = srcPort.getLink();
-        return link.getOtherPort(srcPort) == dstPort; 
+        if(link == null)
+           return false;
+        return link.getOtherPort(srcPort).equals(dstPort); 
     }
 
     /**
@@ -118,7 +124,7 @@ public abstract class Link<SwitchType extends Switch, PortType extends Port> imp
     public void createInDB(ExecutionEngine engine)
     {
         // create the link node itself
-        engine.execute("CREATE " + toDBMatch());
+        engine.execute("MERGE " + toDBMatch());
         
         // create the relationships to the 2 ports
         engine.execute(

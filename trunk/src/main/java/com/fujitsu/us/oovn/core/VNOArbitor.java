@@ -1,6 +1,7 @@
 package com.fujitsu.us.oovn.core;
 
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
+import com.fujitsu.us.oovn.exception.InvalidVNOConfigurationException;
 import com.fujitsu.us.oovn.map.GlobalMap;
 import com.google.gson.JsonObject;
 
@@ -48,10 +49,14 @@ public class VNOArbitor
     {
         // build a VirtualNetwork and assign it to VNO
         if(vno.getNetwork() == null)
-            NetworkBuilder.getInstance().build(vno);
+            try {
+                NetworkBuilder.getInstance().build(vno);
+            } catch (InvalidVNOConfigurationException e) {
+                e.printStackTrace();
+            }
         
-        GlobalMap.getInstance().registerVNO(vno);
-        VNOPool  .getInstance().registerVNO(vno);
+        GlobalMap.getInstance().registerVNO(vno);   // add to global map
+        VNOPool  .getInstance().registerVNO(vno);   // add to pool
         return true;
     }
     

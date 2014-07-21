@@ -37,7 +37,6 @@ public class LocalMap extends MapBase
     
     public void registerVNO() {
         super.registerVNO(_vno);
-        GlobalMap.getInstance().registerVNO(_vno);
     }
     
     public void unregisterVNO() {

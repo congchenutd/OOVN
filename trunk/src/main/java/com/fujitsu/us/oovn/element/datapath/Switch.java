@@ -8,6 +8,7 @@ import org.neo4j.cypher.javacompat.ExecutionEngine;
 import com.fujitsu.us.oovn.element.Jsonable;
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.port.Port;
+import com.fujitsu.us.oovn.exception.InvalidPortNumberException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -48,18 +49,21 @@ public abstract class Switch<PortType extends Port> implements Jsonable
      * @return true if successful
      */
     @SuppressWarnings("unchecked")
-    public boolean addPort(PortType port)
+    public void addPort(PortType port)
     {
-        if(_ports.containsKey(port.getNumber()))
-            return false;
-        _ports.put(port.getNumber(), port);
-        port.setSwitch(this);
-        return true;
+        if(port != null)
+        {
+            _ports.put(port.getNumber(), port);
+            port.setSwitch(this);
+        }
     }
     
-    public PortType getPort(int id) {
-        return _ports.containsKey(id) ? _ports.get(id) 
-                                        : null;
+    public PortType getPort(int id) throws InvalidPortNumberException
+    {
+        if(!_ports.containsKey(id))
+            throw new InvalidPortNumberException("Switch " + toString() + 
+                                                 " has no such port " + id);
+        return _ports.get(id);
     }
     
     public Map<Integer, PortType> getPorts() {
@@ -101,7 +105,7 @@ public abstract class Switch<PortType extends Port> implements Jsonable
     public void createInDB(ExecutionEngine engine)
     {
         // create the switch itself
-        engine.execute("CREATE " + toDBMatch());
+        engine.execute("MERGE " + toDBMatch());
         
         // create and connect ports
         for(PortType port: getPorts().values())

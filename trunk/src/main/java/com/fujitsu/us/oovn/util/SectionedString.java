@@ -21,8 +21,8 @@ public abstract class SectionedString implements Jsonable
     
     /**
      * Construct the string using integer
-     * @param value the integer value
-     * @param length the number of sections
+     * @param value     the integer value
+     * @param length    the number of sections
      * @param separator
      */
     public SectionedString(long value, int length, char separator)
@@ -36,8 +36,8 @@ public abstract class SectionedString implements Jsonable
     
     /**
      * Construct the string using a separated string
-     * @param string
-     * @param length the number of sections
+     * @param string    the string representing the value
+     * @param length    the number of sections
      * @param separator
      */
     public SectionedString(String string, int length, char separator)
@@ -47,7 +47,7 @@ public abstract class SectionedString implements Jsonable
         if (string == null)
             throw new IllegalArgumentException("Null String");
         
-        // convert . to \\. because String.split only supports regex, not wildcard
+        // convert . to \\. because String.split() only supports regex, not wildcard
         String s = String.valueOf(_separator);
         if(s.equals("."))
             s = "\\.";
@@ -104,15 +104,15 @@ public abstract class SectionedString implements Jsonable
     
     /**
      * Template method. Subclasses determine how to print the section
-     * @param b
-     * @return
+     * @param b a byte to print
+     * @return the print
      */
     protected abstract String printSection(byte b);
     
     /**
      * Template method. Subclasses determine how to evaluate the section
-     * @param section
-     * @return
+     * @param section a section to evaluate
+     * @return the byte value of the section
      */
     protected abstract byte sectionValue(String section);
     

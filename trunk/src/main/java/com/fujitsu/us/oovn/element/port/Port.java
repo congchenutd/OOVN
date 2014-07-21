@@ -21,7 +21,7 @@ public abstract class Port<SwitchType extends Switch, LinkType extends Link> imp
     private int        _number;
     private MACAddress _mac;
     private SwitchType _switch;
-    private LinkType   _link;
+    private LinkType   _link;   // XXX: a port can connect to either a link or a host
     private Host       _host;
 
     public Port(int number, MACAddress mac)
@@ -42,8 +42,13 @@ public abstract class Port<SwitchType extends Switch, LinkType extends Link> imp
         return _host;
     }
     
-    public void setHost(Host host) {
-        _host = host;
+    public void setHost(Host host)
+    {
+        if(host != null)
+        {
+            _host = host;
+            _link = null;
+        }
     }
     
     public int getNumber() {
@@ -70,8 +75,13 @@ public abstract class Port<SwitchType extends Switch, LinkType extends Link> imp
         return _link;
     }
 
-    public void setLink(LinkType link) {
-        _link = link;
+    public void setLink(LinkType link)
+    {
+        if(link != null)
+        {
+            _link = link;
+            _host = null;
+        }
     }
     
     /**
@@ -90,10 +100,10 @@ public abstract class Port<SwitchType extends Switch, LinkType extends Link> imp
     @Override
     public String toString() {
         return  "PORT:" +
-                "\n- number: "      + getNumber() + 
-                "\n- switch: "      + getSwitch().getName() +
-                "\n- MACAddress: "  + getMACAddress() +
-                "\n- isEdge: "      + isEdge();
+                "\n- number: "     + getNumber() + 
+                "\n- switch: "     + getSwitch().getName() +
+                "\n- MACAddress: " + getMACAddress() +
+                "\n- isEdge: "     + isEdge();
     }
     
     @Override
@@ -117,10 +127,13 @@ public abstract class Port<SwitchType extends Switch, LinkType extends Link> imp
     public JsonElement toJson()
     {
         JsonObject result = new JsonObject();
+        
         if(getSwitch() != null)
             result.addProperty("switch", getSwitch().getDPID().toString());
+        
         if(getHost() != null)
             result.addProperty("host", getHost().getID());
+        
         result.addProperty("number", getNumber());
         result.add        ("mac",    getMACAddress().toJson());
         return result;
@@ -137,7 +150,7 @@ public abstract class Port<SwitchType extends Switch, LinkType extends Link> imp
     
     public void createInDB(ExecutionEngine engine)
     {
-        engine.execute("CREATE " + toDBMatch());
+        engine.execute("MERGE " + toDBMatch());
         createMapping(engine);
     }
 
