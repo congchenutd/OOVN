@@ -93,52 +93,24 @@ public class VNO
     }
     
     ///////////// The major APIs tenant can call ////////////////
-    public void init(String configFileName) {
+    public void init(String configFileName) throws InvalidVNOOperationException {
         _state.init(this, configFileName);
     }
     
-    public boolean verify()
-    {
-        try {
-            return _state.verify(this);
-        }
-        catch(InvalidVNOOperationException e) {
-            e.printStackTrace();
-        }
-        return false;
+    public boolean verify() throws InvalidVNOOperationException {
+        return _state.verify(this);
     }
     
-    public boolean activate()
-    {
-        try {
-            return _state.activate(this);
-        }
-        catch(InvalidVNOOperationException e) {
-            e.printStackTrace();
-        }
-        return false;
+    public boolean activate() throws InvalidVNOOperationException {
+        return _state.activate(this);
     }
     
-    public boolean deactivate()
-    {
-        try {
-            return _state.deactivate(this);
-        }
-        catch(InvalidVNOOperationException e) {
-            e.printStackTrace();
-        }
-        return true;
+    public boolean deactivate() throws InvalidVNOOperationException {
+        return _state.deactivate(this);
     }
     
-    public boolean decommission()
-    {
-        try {
-            return _state.decommission(this);
-        }
-        catch(InvalidVNOOperationException e) {
-            e.printStackTrace();
-        }
-        return true;
+    public boolean decommission() throws InvalidVNOOperationException {
+        return _state.decommission(this);
     }
     /////////////////////////////////////////////////////////////
 
@@ -157,13 +129,13 @@ public class VNO
                     String config = new String(Files.readAllBytes(Paths.get(configFileName)));
                     vno.setConfiguration(new NetworkConfiguration(
                                     (JsonObject) new JsonParser().parse(config)));
+
+                    // if the config is loaded successfully, go to the next state
+                    vno.setState(UNVERIFIED);
                 }
                 catch(IOException e) {
                     e.printStackTrace();
                 }
-                
-                // if the config is loaded successfully, go to the next state
-                vno.setState(UNVERIFIED);
             }
         },
         UNVERIFIED
