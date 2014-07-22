@@ -42,7 +42,10 @@ public class VirtualPort extends Port<VirtualSwitch, VirtualLink>
             return false;
         
         VirtualPort that = (VirtualPort) obj;
-        return this.getPhysicalPort().equals(that.getPhysicalPort());
+        PhysicalPort thisPhyPort = this.getPhysicalPort();
+        PhysicalPort thatPhyPort = that.getPhysicalPort();
+        return thisPhyPort == null && thatPhyPort == null ||
+               thisPhyPort != null && thatPhyPort != null && thisPhyPort.equals(thatPhyPort);
     }
     
     @Override
