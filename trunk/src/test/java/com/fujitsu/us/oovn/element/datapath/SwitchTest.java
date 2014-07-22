@@ -10,7 +10,7 @@ import com.fujitsu.us.oovn.element.address.DPID;
 public class SwitchTest
 {
     @Test
-    public final void testEqualsObject()
+    public final void testEquals()
     {
         Assert.assertThat(    new PhysicalSwitch(new DPID("0:0:0:0:0:0:0:a"), "S1"), 
                           is( new PhysicalSwitch(new DPID("0:0:0:0:0:0:0:a"), "S1")));

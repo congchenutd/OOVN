@@ -43,6 +43,24 @@ public class VirtualLink extends Link<VirtualSwitch, VirtualPort> implements Per
     public VNO getVNO() {
         return _vno;
     }
+    
+    @Override
+    public boolean equals(Object obj)
+    {
+        if(this == obj)
+            return true;
+        
+        if(!super.equals(obj))
+            return false;
+        
+        if(!(obj instanceof VirtualLink))
+            return false;
+        
+        VirtualLink that = (VirtualLink) obj;
+        return  this.getVNO() == null && that.getVNO() == null ||
+                this.getVNO() != null && that.getVNO() != null && 
+                this.getVNO().equals(that.getVNO());
+    }
 
     @Override
     public String toString()
