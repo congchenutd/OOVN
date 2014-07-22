@@ -3,6 +3,8 @@ package com.fujitsu.us.oovn.core;
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.exception.InvalidVNOConfigurationException;
 import com.fujitsu.us.oovn.map.GlobalMap;
+import com.fujitsu.us.oovn.verification.TopologyVerifier;
+import com.fujitsu.us.oovn.verification.VerificationResult;
 import com.google.gson.JsonObject;
 
 /**
@@ -35,10 +37,10 @@ public class VNOArbitor
     
     /**
      * Verify the vno
-     * @return true if verified
+     * @return a VerificationResult
      */
-    public boolean verifyVNO(VNO vno) {
-        return GlobalMap.getInstance().verifyVNO(vno);
+    public VerificationResult verifyVNO(VNO vno) {
+        return new TopologyVerifier(null).verify(vno);
     }
     
     /**
