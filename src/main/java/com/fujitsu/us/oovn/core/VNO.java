@@ -64,20 +64,8 @@ public class VNO
         return VNOArbitor.getInstance().getPhysicalTopology();
     }
     
-    /**
-     * The tenant sets requested virtual topology here
-     * @param config
-     */
-    public void setConfiguration(NetworkConfiguration config) {
-        _config = config;
-    }
-
     public boolean isVerified() {
         return getConfiguration().isVerified();
-    }
-    
-    private void setVerified(boolean verified) {
-        getConfiguration().setVerified(verified);
     }
     
     /**
@@ -86,6 +74,16 @@ public class VNO
      */
     public void setNetwork(VirtualNetwork network) {
         _network = network;
+    }
+    
+    private void setConfiguration(NetworkConfiguration config)
+    {
+        _config = config;
+        setVerified(false);
+    }
+    
+    private void setVerified(boolean verified) {
+        getConfiguration().setVerified(verified);
     }
     
     private LocalMap getMap() {
@@ -143,7 +141,7 @@ public class VNO
             @Override
             public boolean verify(VNO vno)
             {
-                if(VNOArbitor.getInstance().verifyVNO(vno))
+                if(VNOArbitor.getInstance().verifyVNO(vno).isPassed())
                 {
                     vno.setVerified(true);
                     vno.getTenant().registerVNO(vno);          // register to tenant

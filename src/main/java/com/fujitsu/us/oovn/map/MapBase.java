@@ -22,6 +22,8 @@ import com.fujitsu.us.oovn.element.link.VirtualLink;
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
 import com.fujitsu.us.oovn.element.port.VirtualPort;
+import com.fujitsu.us.oovn.verification.VerificationResult;
+import com.fujitsu.us.oovn.verification.Verifier;
 
 /**
  * A graph holding all the mapping information
@@ -53,11 +55,7 @@ public class MapBase
             ResourceIterator<Node> it = result.columnAs("psw");
             List<PhysicalSwitch> switches = new LinkedList<PhysicalSwitch>();
             while(it.hasNext())
-            {
-                Node node = it.next();
-                DPID dpid = new DPID(node.getProperty("dpid").toString());
-                switches.add(PhysicalNetwork.getInstance().getSwitch(dpid));
-            }
+                switches.add(PhysicalSwitch.fromNode(it.next()));
 
             return switches;
         }
@@ -101,13 +99,8 @@ public class MapBase
                                 "RETURN pPort");
             
             ResourceIterator<Node> it = result.columnAs("pPort");
-            if(!it.hasNext())
-                return null;
-            
-            Node node   = it.next();
-            DPID dpid   = new DPID(node.getProperty("switch").toString());
-            int  number = Integer.valueOf(node.getProperty("number").toString());
-            return PhysicalNetwork.getInstance().getSwitch(dpid).getPort(number);
+            return it.hasNext() ? PhysicalPort.fromNode(it.next())
+                                : null;
         }
     }
     
@@ -153,15 +146,7 @@ public class MapBase
             ResourceIterator<Node> it = result.columnAs("pLink");
             List<PhysicalLink> links = new LinkedList<PhysicalLink>();
             while(it.hasNext())
-            {
-                Node node = it.next();
-                String srcDPID = node.getProperty("srcSwitch").toString();
-                String dstDPID = node.getProperty("dstSwitch").toString();
-                int  srcNumber = Integer.valueOf(node.getProperty("srcPort").toString());
-                int  dstNumber = Integer.valueOf(node.getProperty("dstPort").toString());
-                links.add(PhysicalNetwork.getInstance()
-                                         .getLink(srcDPID, srcNumber, dstDPID, dstNumber));
-            }
+                links.add(PhysicalLink.fromNode(it.next()));
 
             return links;
         }
@@ -203,7 +188,16 @@ public class MapBase
     {
         return null;
     }
-
+    
+    /**
+     * XXX: ugly! Shouldn't expose the query engine. But Verifiers may need to query
+     *      the db directly, much more efficient 
+     * @return
+     */
+    public ExecutionEngine getExecutionEngine() {
+        return _engine;
+    }
+    
     /**
      * Add a VNO to the map 
      * @param vno

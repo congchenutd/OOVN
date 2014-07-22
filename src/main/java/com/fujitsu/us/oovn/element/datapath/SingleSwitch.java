@@ -48,7 +48,7 @@ public class SingleSwitch extends VirtualSwitch implements Persistable
     public void createMapping(ExecutionEngine engine)
     {
         // nothing to map to
-        if(getPhysicalSwitches().isEmpty())
+        if(getPhysicalSwitch() == null)
             return;
         
         engine.execute(

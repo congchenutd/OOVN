@@ -1,9 +1,13 @@
 package com.fujitsu.us.oovn.element.port;
 
+import org.neo4j.graphdb.Node;
+
 import com.fujitsu.us.oovn.element.Persistable;
+import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
 import com.fujitsu.us.oovn.element.link.PhysicalLink;
+import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 
 public class PhysicalPort extends Port<PhysicalSwitch, PhysicalLink> 
                           implements Persistable
@@ -20,6 +24,13 @@ public class PhysicalPort extends Port<PhysicalSwitch, PhysicalLink>
                     "number:" + getNumber() + "," +
                     "mac:\""  + getMACAddress() + "\"" +
                 "})";
+    }
+    
+    public static PhysicalPort fromNode(Node node)
+    {
+        DPID dpid   = new DPID       (node.getProperty("switch").toString());
+        int  number = Integer.valueOf(node.getProperty("number").toString());
+        return PhysicalNetwork.getInstance().getSwitch(dpid).getPort(number);
     }
 
 }

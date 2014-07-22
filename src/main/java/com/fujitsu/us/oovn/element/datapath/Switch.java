@@ -122,7 +122,7 @@ public abstract class Switch<PortType extends Port> implements Jsonable
         createMapping(engine);
     }
     
-    // empty be default
+    // empty by default
     public void createMapping(ExecutionEngine engine) {
     }
     
