@@ -62,12 +62,27 @@ public abstract class Switch<PortType extends Port> implements Jsonable
     {
         if(!_ports.containsKey(id))
             throw new InvalidPortNumberException("Switch " + toString() + 
-                                                 " has no such port " + id);
+                                                 " has no port numbered " + id);
         return _ports.get(id);
     }
     
     public Map<Integer, PortType> getPorts() {
         return _ports;
+    }
+    
+    @Override
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append("dpid: " + getDPID() + "\n" +
+                       "name: " + getName() + "\n");
+        if(_ports.size() > 0)
+        {
+            builder.append("ports:\n");
+            for(Port port: _ports.values())
+                builder.append(port.toString() + "\n");
+        }
+        return builder.toString();
     }
     
     @Override

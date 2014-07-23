@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import com.fujitsu.us.oovn.element.network.VirtualNetwork;
 import com.fujitsu.us.oovn.exception.InvalidVNOOperationException;
 import com.fujitsu.us.oovn.map.LocalMap;
+import com.fujitsu.us.oovn.verification.VerificationResult;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -95,7 +96,7 @@ public class VNO
         _state.init(this, configFileName);
     }
     
-    public boolean verify() throws InvalidVNOOperationException {
+    public VerificationResult verify() throws InvalidVNOOperationException {
         return _state.verify(this);
     }
     
@@ -139,9 +140,10 @@ public class VNO
         UNVERIFIED
         {
             @Override
-            public boolean verify(VNO vno)
+            public VerificationResult verify(VNO vno)
             {
-                if(VNOArbitor.getInstance().verifyVNO(vno).isPassed())
+                VerificationResult result = VNOArbitor.getInstance().verifyVNO(vno);
+                if(result.isPassed())
                 {
                     vno.setVerified(true);
                     vno.getTenant().registerVNO(vno);          // register to tenant
@@ -149,7 +151,7 @@ public class VNO
                     vno.getMap().registerVNO();                // to local map
                     vno.setState(INACTIVE);
                 }
-                return vno.isVerified();
+                return result;
             }
             
         },
@@ -186,7 +188,7 @@ public class VNO
         public void init(VNO vno, String configFileName) {
         }
         
-        public boolean verify(VNO vno) throws InvalidVNOOperationException {
+        public VerificationResult verify(VNO vno) throws InvalidVNOOperationException {
             throw new InvalidVNOOperationException("The VNO is not initialized (configured) yet");
         }
         

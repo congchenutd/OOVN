@@ -37,12 +37,14 @@ public class VirtualPort extends Port<VirtualSwitch, VirtualLink>
         if(this == obj)
             return true;
         
+        // this ensures that they both belong to the same switch
         if(!super.equals(obj))
             return false;
         
         if(!(obj instanceof VirtualPort))
             return false;
         
+        // same physical port
         VirtualPort that = (VirtualPort) obj;
         PhysicalPort thisPhyPort = this.getPhysicalPort();
         PhysicalPort thatPhyPort = that.getPhysicalPort();

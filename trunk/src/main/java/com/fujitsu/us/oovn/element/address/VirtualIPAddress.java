@@ -28,8 +28,8 @@ public class VirtualIPAddress extends IPAddress implements Jsonable
     public JsonElement toJson()
     {
         JsonObject result = new JsonObject();
-        result.addProperty("vno id", getVNO().getID());
-        result.addProperty("address",   toString());
+        result.addProperty("vno id",  getVNO().getID());
+        result.addProperty("address", toString());
         return result;
     }
     
@@ -45,7 +45,10 @@ public class VirtualIPAddress extends IPAddress implements Jsonable
         if(!super.equals(obj))
             return false;
         
+        // same VNO
         VirtualIPAddress that = (VirtualIPAddress) obj;
-        return this.getVNO().equals(that.getVNO());
+        return  this.getVNO() == null && that.getVNO() == null      ||
+                this.getVNO() != null && that.getVNO() != null &&
+                this.getVNO().equals(that.getVNO());
     }
 }

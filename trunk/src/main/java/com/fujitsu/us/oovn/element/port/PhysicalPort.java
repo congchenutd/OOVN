@@ -26,6 +26,9 @@ public class PhysicalPort extends Port<PhysicalSwitch, PhysicalLink>
                 "})";
     }
     
+    /**
+     * Create a PhysicalPort object from a Neo4j node representing the port
+     */
     public static PhysicalPort fromNode(Node node)
     {
         DPID dpid   = new DPID       (node.getProperty("switch").toString());

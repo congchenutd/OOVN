@@ -35,4 +35,26 @@ public abstract class VirtualSwitch extends Switch<VirtualPort>
         DPID dpid = new DPID(node.getProperty("dpid").toString());
         return vno.getNetwork().getSwitch(dpid);
     }
+    
+    @Override
+    public boolean equals(Object obj)
+    {
+        if(this == obj)
+            return true;
+        
+        if(!super.equals(obj))
+            return false;
+        
+        if(!(obj instanceof VirtualSwitch))
+            return false;
+        
+        // same vno
+        VirtualSwitch that = (VirtualSwitch) obj;
+        if(!this.getVNO().equals(that.getVNO()))
+            return false;
+        
+        // same physical switches
+        // XXX: Bug: order matters!!
+        return this.getPhysicalSwitches().equals(that.getPhysicalSwitches());        
+    }
 }

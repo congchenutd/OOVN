@@ -11,6 +11,10 @@ import com.fujitsu.us.oovn.core.VNO;
  *    (TODO: or add error info and return by the end of the chain)
  * 3. otherwise, return super.verify() to continue the chain until the end
  * 
+ * The client should use the verifiers in this way:
+ * Verifier v = new VerifierA(new VerifierB(new VerifierC(null));
+ * VerificationResult r = v.verify(vno);
+ * 
  * @author Cong Chen <Cong.Chen@us.fujitsu.com>
  */
 public class Verifier implements Verifiable

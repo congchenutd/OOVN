@@ -25,13 +25,15 @@ public class VirtualLink extends Link<VirtualSwitch, VirtualPort> implements Per
         _vno  = vno;
         _path = new LinkedList<PhysicalLink>();
     }
-    
+
+    /**
+     * The ends of the path should match those of the virtual link
+     */
     public void setPath(List<PhysicalLink> path)
     {
         if(path == null || path.isEmpty())
             return;
         
-        // the ends of the path should match those of the virtual link
         if(path.get(0)            .getSrcPort().equals(getSrcPort().getPhysicalPort()) && 
            path.get(path.size()-1).getDstPort().equals(getDstPort().getPhysicalPort()))
            _path = path;
@@ -58,9 +60,17 @@ public class VirtualLink extends Link<VirtualSwitch, VirtualPort> implements Per
             return false;
         
         VirtualLink that = (VirtualLink) obj;
-        return  this.getVNO() == null && that.getVNO() == null ||
-                this.getVNO() != null && that.getVNO() != null && 
-                this.getVNO().equals(that.getVNO());
+        
+        // same VNO
+        if(this.getVNO() == null && that.getVNO() != null   ||
+           this.getVNO() != null && that.getVNO() == null   ||
+           this.getVNO() != null && that.getVNO() != null && 
+           !this.getVNO().equals(that.getVNO()))
+           return false;
+        
+        // same path
+        // NOTE: order matters
+        return this.getPath().equals(that.getPath());
     }
 
     @Override

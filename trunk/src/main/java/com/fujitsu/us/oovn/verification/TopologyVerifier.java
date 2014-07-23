@@ -12,7 +12,6 @@ import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
 import com.fujitsu.us.oovn.element.link.PhysicalLink;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
-import com.fujitsu.us.oovn.exception.InvalidVNOConfigurationException;
 import com.fujitsu.us.oovn.map.GlobalMap;
 
 /**
@@ -36,7 +35,7 @@ public class TopologyVerifier extends Verifier
         // this will check for wrong mappings
         try {
             NetworkBuilder.getInstance().build(vno);
-        } catch (InvalidVNOConfigurationException e) {
+        } catch (Exception e) {
             return new VerificationResult(false, e.getMessage());
         }
         
@@ -44,9 +43,9 @@ public class TopologyVerifier extends Verifier
         ExecutionEngine engine = GlobalMap.getInstance().getExecutionEngine();
         ExecutionResult result = engine.execute(
                 "MATCH (v:Virtual {vnoid:" + vno.getID() + "})-[:Maps]->(p:Physical)" +
-                "WITH p, count(v) AS mapCount" +
-                "WHERE mapCount > 1" +
-                "return p");
+                " WITH p, count(v) AS mapCount" +
+                " WHERE mapCount > 1" +
+                " RETURN p");
         ResourceIterator<Node> it = result.columnAs("p");
         if(it.hasNext())
             return new VerificationResult(false, 

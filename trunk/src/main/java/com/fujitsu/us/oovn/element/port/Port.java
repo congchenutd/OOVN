@@ -100,10 +100,10 @@ public abstract class Port<SwitchType extends Switch, LinkType extends Link> imp
     @Override
     public String toString() {
         return  "PORT:" +
-                "\n- number: "     + getNumber() + 
-                "\n- switch: "     + getSwitch().getName() +
-                "\n- MACAddress: " + getMACAddress() +
-                "\n- isEdge: "     + isEdge();
+                "\n- switch: " + getSwitch().getName() +
+                "\n- number: " + getNumber() + 
+                "\n- mac:    " + getMACAddress() +
+                "\n- isEdge: " + isEdge();
     }
     
     @Override
@@ -118,7 +118,7 @@ public abstract class Port<SwitchType extends Switch, LinkType extends Link> imp
         Port that = (Port) obj;
         return (this.getSwitch() == null && that.getSwitch() == null || 
                 this.getSwitch() != null && that.getSwitch() != null && 
-                this.getSwitch().equals(that.getSwitch())) && 
+                this.getSwitch()    .equals(that.getSwitch()))    && 
                 this.getMACAddress().equals(that.getMACAddress()) &&
                 this.getNumber() == that.getNumber();
     }
