@@ -12,7 +12,6 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
 import com.fujitsu.us.oovn.core.VNO;
-import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.address.PhysicalIPAddress;
 import com.fujitsu.us.oovn.element.address.VirtualIPAddress;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
@@ -22,8 +21,6 @@ import com.fujitsu.us.oovn.element.link.VirtualLink;
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
 import com.fujitsu.us.oovn.element.port.VirtualPort;
-import com.fujitsu.us.oovn.verification.VerificationResult;
-import com.fujitsu.us.oovn.verification.Verifier;
 
 /**
  * A graph holding all the mapping information
@@ -76,12 +73,8 @@ public class MapBase
                                 "RETURN vsw");
             
             ResourceIterator<Node> it = result.columnAs("vsw");
-            if(!it.hasNext())
-                return null;
-
-            Node node = it.next();
-            DPID dpid = new DPID(node.getProperty("dpid").toString());
-            return vno.getNetwork().getSwitch(dpid);
+            return it.hasNext() ? VirtualSwitch.fromNode(it.next(), vno)
+                                : null;
         }
     }
     
@@ -119,13 +112,8 @@ public class MapBase
                                 "RETURN vPort");
             
             ResourceIterator<Node> it = result.columnAs("vPort");
-            if(!it.hasNext())
-                return null;
-            
-            Node node   = it.next();
-            DPID dpid   = new DPID(node.getProperty("switch").toString());
-            int  number = Integer.valueOf(node.getProperty("number").toString());
-            return vno.getNetwork().getSwitch(dpid).getPort(number);
+            return it.hasNext() ? VirtualPort.fromNode(it.next(), vno)
+                                : null;
         }
     }
     
@@ -167,15 +155,8 @@ public class MapBase
                                 "RETURN vLink");
             
             ResourceIterator<Node> it = result.columnAs("vLink");
-            if(!it.hasNext())
-                return null;
-
-            Node node = it.next();
-            String srcDPID = node.getProperty("srcSwitch").toString();
-            String dstDPID = node.getProperty("dstSwitch").toString();
-            int  srcNumber = Integer.valueOf(node.getProperty("srcPort").toString());
-            int  dstNumber = Integer.valueOf(node.getProperty("dstPort").toString());
-            return vno.getNetwork().getLink(srcDPID, srcNumber, dstDPID, dstNumber);
+            return it.hasNext() ? VirtualLink.fromNode(it.next(), vno)
+                                : null;
         }
     }
     

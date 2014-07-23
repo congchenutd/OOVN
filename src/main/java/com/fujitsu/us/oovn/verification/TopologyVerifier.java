@@ -2,16 +2,21 @@ package com.fujitsu.us.oovn.verification;
 
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
+import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 
 import com.fujitsu.us.oovn.core.NetworkBuilder;
 import com.fujitsu.us.oovn.core.VNO;
+import com.fujitsu.us.oovn.element.Persistable;
+import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
+import com.fujitsu.us.oovn.element.link.PhysicalLink;
+import com.fujitsu.us.oovn.element.port.PhysicalPort;
 import com.fujitsu.us.oovn.exception.InvalidVNOConfigurationException;
 import com.fujitsu.us.oovn.map.GlobalMap;
 
 /**
- * Verify if the requested topology is correct
+ * Verify if a VNO has valid topology
  * i.e., no wrong mappings (to none-existing physical node) 
  *       or conflicted mappings (n virtual -> 1 physical)
  * 
@@ -44,14 +49,29 @@ public class TopologyVerifier extends Verifier
                 "return p");
         ResourceIterator<Node> it = result.columnAs("p");
         if(it.hasNext())
-        {
-//            String dpid = it.next().getProperty("dpid").toString();
-//            if(it.next().hasLabel("Switch"))
-//            return new VerificationResult(false, "Physical node")
-        }
+            return new VerificationResult(false, 
+                    "This physical node is mapped by more than one virtual node: " +
+                    fromNode(it.next()).toString());
         
         // pass the task to the next verifier
         return super.verify(vno);
+    }
+    
+    /**
+     * Generate a physical element from a db node
+     */
+    private Persistable fromNode(Node node)
+    {
+        if(node.hasLabel(DynamicLabel.label("Physical")))
+        {
+            if(node.hasLabel(DynamicLabel.label("Switch")))
+                return PhysicalSwitch.fromNode(node);
+            else if(node.hasLabel(DynamicLabel.label("Link")))
+                return PhysicalLink.fromNode(node);
+            else if(node.hasLabel(DynamicLabel.label("Port")))
+                return PhysicalPort.fromNode(node);
+        }
+        return null;
     }
 
 }

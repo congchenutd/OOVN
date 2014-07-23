@@ -38,7 +38,7 @@ public class SingleSwitch extends VirtualSwitch implements Persistable
     @Override
     public String toDBMatch() {
         return  "(" + toDBVariable() +
-                ":Virtual:Switch {" +
+                ":Virtual:Switch:Single {" +
                 "vnoid:" + getVNO().getID() + "," +
                 "dpid:\"" + getDPID().toString() + "\"," +
                 "name:\"" + getName() + "\"})";
