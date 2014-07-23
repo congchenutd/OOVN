@@ -2,7 +2,7 @@ package com.fujitsu.us.oovn.verification;
 
 /**
  * Currently only shows a message 
- * TODO: return alternative topology if fails
+ * TODO: contain alternative topologies if the requested topo fails the verification
  * 
  * @author Cong Chen <Cong.Chen@us.fujitsu.com>
  */

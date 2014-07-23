@@ -14,6 +14,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+/**
+ * Each VNO holds a VirtualNetwork
+ * @author Cong Chen <Cong.Chen@us.fujitsu.com>
+ */
 public class VirtualNetwork extends Network<VirtualSwitch, VirtualLink, VirtualPort>
                             implements Persistable
 {

@@ -24,6 +24,9 @@ public class PhysicalLink extends Link<PhysicalSwitch, PhysicalPort> implements 
                 "})";
     }
     
+    /**
+     * Create a PhysicalLink object from a Neo4j node representing the link
+     */
     public static PhysicalLink fromNode(Node node)
     {
         String srcDPID = node.getProperty("srcSwitch").toString();

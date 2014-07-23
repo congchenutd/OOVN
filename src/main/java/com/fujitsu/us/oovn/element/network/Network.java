@@ -66,7 +66,7 @@ public abstract class Network<SwitchType extends Switch,
     
     public SwitchType getSwitch(DPID dpid) throws InvalidDPIDException
     {
-        if(dpid == null || !_switches.containsKey(dpid))
+        if(dpid == null || !_switches.containsKey(dpid.toInt()))
             throw new InvalidDPIDException("DPID " + dpid + " doesn't exist");
             
         return _switches.get(dpid.toInt());

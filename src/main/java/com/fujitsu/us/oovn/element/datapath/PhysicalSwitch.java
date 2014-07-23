@@ -21,6 +21,9 @@ public class PhysicalSwitch extends Switch<PhysicalPort> implements Persistable
                 "name:\"" + getName() + "\"})";
     }
     
+    /**
+     * Create a PhysicalSwitch object from a Neo4j node representing the switch
+     */
     public static PhysicalSwitch fromNode(Node node)
     {
         DPID dpid = new DPID(node.getProperty("dpid").toString());

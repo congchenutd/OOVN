@@ -23,15 +23,12 @@ import com.fujitsu.us.oovn.element.port.PhysicalPort;
 import com.fujitsu.us.oovn.element.port.VirtualPort;
 
 /**
- * A graph holding all the mapping information
- * Possessed by VNOArbitor
+ * Base class for all the maps
  * 
- * A VNO holds a LocalMap, a subgraph of the GlobalMap
- * 
- * The GlobalMap and the LocalMaps are synced
+ * Internally a Neo4j graph holding all the mapping information
+ * All query operations are implemented using Neo4j queries
  * 
  * @author Cong Chen <Cong.Chen@us.fujitsu.com>
- *
  */
 public class MapBase
 {

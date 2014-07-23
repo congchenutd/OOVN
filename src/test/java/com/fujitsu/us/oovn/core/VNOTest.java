@@ -11,12 +11,18 @@ import com.fujitsu.us.oovn.exception.InvalidVNOOperationException;
 public class VNOTest
 {
 
+    /**
+     * Test the state transition of a VNO
+     * Any invalid operation should trigger a InvalidVNOOperationException
+     */
     @Test
     public void testState() throws InvalidVNOOperationException
     {
+        // unconfigured
         VNO vno = new VNO(new Tenant("Carl"));
         assertThat(vno.getState(), is(VNO.VNOState.UNCONFIGURED));
         
+        // should init first
         try
         {
             vno.verify();
@@ -25,12 +31,15 @@ public class VNOTest
             assertThat(e.getMessage(), is("The VNO is not initialized (configured) yet"));
         }
         
+        // failed init
         vno.init("NoSuchFile.json");
         assertThat(vno.getState(), is(VNO.VNOState.UNCONFIGURED));
         
-        vno.init("VirtualConfig.json");
+        // successful init
+        vno.init("VirtualConfig1.json");
         assertThat(vno.getState(), is(VNO.VNOState.UNVERIFIED));
         
+        // should verify() before activate()
         try
         {
             vno.activate();
@@ -39,9 +48,11 @@ public class VNOTest
             assertThat(e.getMessage(), is("The VNO is not verified yet"));
         }
         
+        // should pass verification
         vno.verify();
         assertThat(vno.getState(), is(VNO.VNOState.INACTIVE));
         
+        // cannot deactivate a non-active VNO
         try
         {
             vno.deactivate();

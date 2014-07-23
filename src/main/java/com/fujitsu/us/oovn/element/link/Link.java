@@ -11,6 +11,8 @@ import com.google.gson.JsonObject;
 /**
  * Base class for all the links
  * Switches are connected by Links, while hosts are not
+ * Links are all bi-directional
+ * 
  * @author Cong Chen <Cong.Chen@us.fujitsu.com>
  *
  */
@@ -102,21 +104,18 @@ public abstract class Link<SwitchType extends Switch, PortType extends Port> imp
         
         Link that = (Link) obj;
         
-        // both null
+        // both ports null
         if(this.getSrcPort() == null && this.getDstPort() == null && 
            that.getSrcPort() == null && that.getDstPort() == null)
             return true;
 
-        // same or same reversed ends
-        if(this.getSrcPort() != null && this.getDstPort() != null && 
-           that.getSrcPort() != null && that.getDstPort() != null)
-        {
-            return getSrcPort().equals(that.getSrcPort()) &&
-                   getDstPort().equals(that.getDstPort())    ||
-                   getSrcPort().equals(that.getDstPort()) &&
-                   getDstPort().equals(that.getSrcPort());
-        }
-        return false;
+        // same or reversed ports
+        return this.getSrcPort() != null && this.getDstPort() != null && 
+               that.getSrcPort() != null && that.getDstPort() != null &&
+               (getSrcPort().equals(that.getSrcPort()) &&
+                getDstPort().equals(that.getDstPort())    ||
+                getSrcPort().equals(that.getDstPort()) &&
+                getDstPort().equals(that.getSrcPort()));
     }
 
     public abstract String toDBMatch();

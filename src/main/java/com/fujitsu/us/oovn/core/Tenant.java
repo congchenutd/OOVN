@@ -79,7 +79,7 @@ public class Tenant
             vno.init("VirtualConfig.json");
 //        System.out.println(vno.getConfiguration().toString());
 
-            if(vno.verify())
+            if(vno.verify().isPassed())
             {
                 vno.activate();
 //            vno.deactivate();
