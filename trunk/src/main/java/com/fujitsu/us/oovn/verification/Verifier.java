@@ -9,7 +9,7 @@ import com.fujitsu.us.oovn.core.VNO;
  * 1. do its own verification
  * 2. if failed, return immediately 
  *    (TODO: or add error info and return by the end of the chain)
- * 3. otherwise, call super.verify() to continue the chain until the end
+ * 3. otherwise, return super.verify() to continue the chain until the end
  * 
  * @author Cong Chen <Cong.Chen@us.fujitsu.com>
  */

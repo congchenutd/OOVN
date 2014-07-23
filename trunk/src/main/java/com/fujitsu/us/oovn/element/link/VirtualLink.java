@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.neo4j.cypher.javacompat.ExecutionEngine;
+import org.neo4j.graphdb.Node;
 
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.Persistable;
@@ -116,6 +117,21 @@ public class VirtualLink extends Link<VirtualSwitch, VirtualPort> implements Per
                            link.toDBVariable() + "),");
         builder.deleteCharAt(builder.length() - 1);  // remove last comma
         engine.execute(builder.toString());    
+    }
+    
+    /**
+     * Find the virtual link in the VNO from a db node
+     * @param node  a Neo4j node representing a virtual link
+     * @param vno
+     * @return      the corresponding VirtualLink object
+     */
+    public static VirtualLink fromNode(Node node, VNO vno)
+    {
+        String srcDPID = node.getProperty("srcSwitch").toString();
+        String dstDPID = node.getProperty("dstSwitch").toString();
+        int  srcNumber = Integer.valueOf(node.getProperty("srcPort").toString());
+        int  dstNumber = Integer.valueOf(node.getProperty("dstPort").toString());
+        return vno.getNetwork().getLink(srcDPID, srcNumber, dstDPID, dstNumber);
     }
     
 }
