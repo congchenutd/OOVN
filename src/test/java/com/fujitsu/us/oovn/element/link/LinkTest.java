@@ -42,7 +42,7 @@ public class LinkTest
         _psw1.addPort(new PhysicalPort(2, new MACAddress("0:0:0:0:0:2")));
         _psw2.addPort(new PhysicalPort(1, new MACAddress("0:0:0:0:0:3")));
         _psw2.addPort(new PhysicalPort(2, new MACAddress("0:0:0:0:0:4")));
-        _pLink = new PhysicalLink(_psw1.getPort(2), _psw2.getPort(1));
+        _pLink = new PhysicalLink("L1", _psw1.getPort(2), _psw2.getPort(1));
         
         _vsw1 = new SingleSwitch(null, new DPID(1), "VS1");
         _vsw2 = new SingleSwitch(null, new DPID(2), "VS2");
@@ -62,7 +62,7 @@ public class LinkTest
         _vsw1.setPhysicalSwitch(_psw1);
         _vsw2.setPhysicalSwitch(_psw2);
         
-        _vLink = new VirtualLink(null, _vsw1.getPort(2), _vsw2.getPort(1));
+        _vLink = new VirtualLink(null, "VL1", _vsw1.getPort(2), _vsw2.getPort(1));
     }
     
     @Test
@@ -114,23 +114,23 @@ public class LinkTest
     @Test
     public final void testEquals()
     {
-        assertThat(_pLink, is (new PhysicalLink(_psw1.getPort(2), _psw2.getPort(1))));
-        assertThat(_pLink, is (new PhysicalLink(_psw2.getPort(1), _psw1.getPort(2))));
-        assertThat(_pLink, not(new PhysicalLink(_psw1.getPort(1), _psw2.getPort(1))));
-        assertThat(_pLink, not(new PhysicalLink(_psw1.getPort(1), _psw1.getPort(1))));
+        assertThat(_pLink, is (new PhysicalLink(null, _psw1.getPort(2), _psw2.getPort(1))));
+        assertThat(_pLink, is (new PhysicalLink(null,_psw2.getPort(1), _psw1.getPort(2))));
+        assertThat(_pLink, not(new PhysicalLink(null,_psw1.getPort(1), _psw2.getPort(1))));
+        assertThat(_pLink, not(new PhysicalLink(null,_psw1.getPort(1), _psw1.getPort(1))));
         
-        assertThat(_vLink, is (new VirtualLink(null, _vsw1.getPort(2), _vsw2.getPort(1))));
-        assertThat(_vLink, is (new VirtualLink(null, _vsw2.getPort(1), _vsw1.getPort(2))));
-        assertThat(_vLink, not(new VirtualLink(null, _vsw1.getPort(1), _vsw2.getPort(1))));
-        assertThat(_vLink, not(new VirtualLink(null, _vsw1.getPort(1), _vsw1.getPort(1))));
+        assertThat(_vLink, is (new VirtualLink(null, null, _vsw1.getPort(2), _vsw2.getPort(1))));
+        assertThat(_vLink, is (new VirtualLink(null, null, _vsw2.getPort(1), _vsw1.getPort(2))));
+        assertThat(_vLink, not(new VirtualLink(null, null, _vsw1.getPort(1), _vsw2.getPort(1))));
+        assertThat(_vLink, not(new VirtualLink(null, null, _vsw1.getPort(1), _vsw1.getPort(1))));
         
         // same VNO
         VNO vno = new VNO(new Tenant("Tenant"));
-        assertThat(_vLink, not(new VirtualLink(vno, _vsw1.getPort(2), _vsw2.getPort(1))));
+        assertThat(_vLink, not(new VirtualLink(vno, null, _vsw1.getPort(2), _vsw2.getPort(1))));
         
         // same path
         _vLink.setPath(new LinkedList<PhysicalLink>() {{add(_pLink);}});
-        assertThat(_vLink, not(new VirtualLink(null, _vsw1.getPort(2), _vsw2.getPort(1))));
+        assertThat(_vLink, not(new VirtualLink(null, null, _vsw1.getPort(2), _vsw2.getPort(1))));
     }
 
 }

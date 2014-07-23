@@ -9,14 +9,14 @@ import com.fujitsu.us.oovn.element.port.PhysicalPort;
 
 public class PhysicalLink extends Link<PhysicalSwitch, PhysicalPort> implements Persistable
 {
-    public PhysicalLink(PhysicalPort src, PhysicalPort dst) {
-        super(src, dst);
+    public PhysicalLink(String name, PhysicalPort src, PhysicalPort dst) {
+        super(name, src, dst);
     }
     
     @Override
     public String toDBMatch() {
         return "(" + toDBVariable() + 
-                ":Physical:Link " + "{" + 
+                ":ZPhysical:Link " + "{" + 
                     "srcSwitch:" + "\"" + getSrcSwitch().getDPID().toString() + "\", " +
                     "srcPort:" + getSrcPort().getNumber() + "," +
                     "dstSwitch:" + "\"" + getDstSwitch().getDPID().toString() + "\", " +

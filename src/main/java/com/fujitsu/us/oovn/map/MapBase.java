@@ -176,6 +176,17 @@ public class MapBase
         return _engine;
     }
     
+    public ExecutionResult query(String query)
+    {
+        ExecutionResult result;
+        try(Transaction tx = _graphDb.beginTx())
+        {
+            result = _engine.execute(query);
+            tx.success();
+        }
+        return result;
+    }
+    
     /**
      * Add a VNO to the map 
      * @param vno
@@ -271,3 +282,23 @@ public class MapBase
     }
 
 }
+
+//class LoggingExecutionEngine extends ExecutionEngine
+//{
+//    private final Logger _logger;
+//    
+//    public LoggingExecutionEngine(GraphDatabaseService database, Logger logger)
+//    {
+//        super(database);
+//        _logger = logger;
+//    }
+//    
+//    @Override
+//    public ExecutionResult execute(String query) throws CypherException
+//    {
+////        _logger.info(query);
+//        System.out.println(query);
+//        return super.execute(query);
+//    }
+//    
+//}

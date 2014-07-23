@@ -70,7 +70,7 @@ public class PortTest
         assertThat(pPort1.getNeighbor(), nullValue());
         
         // has neighbor
-        new PhysicalLink(pPort1, pPort2);
+        new PhysicalLink(null, pPort1, pPort2);
         assertThat((PhysicalPort) pPort1.getNeighbor(), is(pPort2));
         assertThat((PhysicalPort) pPort2.getNeighbor(), is(pPort1));
         
@@ -78,7 +78,7 @@ public class PortTest
         assertThat(vPort1.getNeighbor(), nullValue());
         
         // has neighbor
-        new VirtualLink(null, vPort1, vPort2);
+        new VirtualLink(null, null, vPort1, vPort2);
         assertThat((VirtualPort) vPort1.getNeighbor(), is(vPort2));
         assertThat((VirtualPort) vPort2.getNeighbor(), is(vPort1));
     }

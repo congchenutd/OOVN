@@ -43,13 +43,13 @@ public class PhysicalNetwork extends Network<PhysicalSwitch, PhysicalLink, Physi
         addSwitch(sw2);
         addSwitch(sw3);
         
-        addLink(new PhysicalLink(sw1.getPort(2), sw2.getPort(1)));
-        addLink(new PhysicalLink(sw2.getPort(2), sw3.getPort(1)));
+        addLink(new PhysicalLink("L1", sw1.getPort(2), sw2.getPort(1)));
+        addLink(new PhysicalLink("L2", sw2.getPort(2), sw3.getPort(1)));
     }
     
     @Override
     public String toDBMatch() {
-        return "(:Physical)";
+        return "(:ZPhysical)";
     }
 
 }

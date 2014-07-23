@@ -19,7 +19,7 @@ public class PhysicalPort extends Port<PhysicalSwitch, PhysicalLink>
     @Override
     public String toDBMatch() {
         return  "(" + toDBVariable() +
-                ":Physical:Port {" +
+                ":ZPhysical:Port {" +
                     "switch:\"" + getSwitch().getDPID().toString() + "\"," +
                     "number:" + getNumber() + "," +
                     "mac:\""  + getMACAddress() + "\"" +

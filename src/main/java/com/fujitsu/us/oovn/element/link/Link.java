@@ -20,18 +20,24 @@ import com.google.gson.JsonObject;
 @SuppressWarnings("rawtypes")
 public abstract class Link<SwitchType extends Switch, PortType extends Port> implements Jsonable
 {
+    protected String   _name;
     protected PortType _srcPort;
     protected PortType _dstPort;
     
     @SuppressWarnings("unchecked")
-    public Link(PortType src, PortType dst)
+    public Link(String name, PortType src, PortType dst)
     {
         if(src == null || dst == null)
             return;
+        _name    = name;
         _srcPort = src;
         _dstPort = dst;
         _srcPort.setLink(this);
         _dstPort.setLink(this);
+    }
+    
+    public String getName() {
+        return _name;
     }
     
     public PortType getSrcPort() {

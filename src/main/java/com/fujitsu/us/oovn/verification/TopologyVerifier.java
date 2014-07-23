@@ -1,6 +1,5 @@
 package com.fujitsu.us.oovn.verification;
 
-import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.Node;
@@ -39,14 +38,26 @@ public class TopologyVerifier extends Verifier
             return new VerificationResult(false, e.getMessage());
         }
         
+        // add this vno to global map for verification
+        GlobalMap.getInstance().registerVNO(vno);
+        
         // check for conflicted mappings
-        ExecutionEngine engine = GlobalMap.getInstance().getExecutionEngine();
-        ExecutionResult result = engine.execute(
-                "MATCH (v:Virtual {vnoid:" + vno.getID() + "})-[:Maps]->(p:Physical)" +
+        ExecutionResult result = GlobalMap.getInstance().query(
+                "MATCH (v:Virtual {vnoid:" + vno.getID() + "})-[:Maps]->(p:ZPhysical)" +
+                " WITH p, count(v) AS mapCount" +
+                " WHERE mapCount > 1" +
+                " RETURN p");
+        
+        System.out.println(
+                "MATCH (v:Virtual {vnoid:" + vno.getID() + "})-[:Maps]->(p:ZPhysical)" +
                 " WITH p, count(v) AS mapCount" +
                 " WHERE mapCount > 1" +
                 " RETURN p");
         ResourceIterator<Node> it = result.columnAs("p");
+        
+        // remove the vno from the global map
+//        GlobalMap.getInstance().unregisterVNO(vno);
+
         if(it.hasNext())
             return new VerificationResult(false, 
                     "This physical node is mapped by more than one virtual node: " +
@@ -61,7 +72,7 @@ public class TopologyVerifier extends Verifier
      */
     private Persistable fromNode(Node node)
     {
-        if(node.hasLabel(DynamicLabel.label("Physical")))
+        if(node.hasLabel(DynamicLabel.label("ZPhysical")))
         {
             if(node.hasLabel(DynamicLabel.label("Switch")))
                 return PhysicalSwitch.fromNode(node);
