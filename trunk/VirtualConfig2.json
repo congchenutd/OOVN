@@ -29,6 +29,7 @@
 		],
 		"links" : [
 			{
+				"name" : "VL1",
 				"src" :
 				{
 					"switch" : "a:b:c:0:0:0:0:3",

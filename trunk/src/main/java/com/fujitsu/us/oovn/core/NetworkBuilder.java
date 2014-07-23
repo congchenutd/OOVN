@@ -209,6 +209,7 @@ public class NetworkBuilder
         JsonObject vDstJson = json.get("dst").getAsJsonObject();
         
         VirtualLink result = new VirtualLink(vno,
+                                             json.get("name").getAsString(),
                                              buildVirtualPort(vSrcJson, vno),
                                              buildVirtualPort(vDstJson, vno));
         
@@ -219,7 +220,8 @@ public class NetworkBuilder
             JsonObject linkJson = (JsonObject) e;
             JsonObject pSrcJson = linkJson.get("src").getAsJsonObject();
             JsonObject pDstJson = linkJson.get("dst").getAsJsonObject();
-            PhysicalLink pLink = new PhysicalLink(buildPhysicalPort(pSrcJson), 
+            PhysicalLink pLink = new PhysicalLink(linkJson.get("name").getAsString(), 
+                                                  buildPhysicalPort(pSrcJson), 
                                                   buildPhysicalPort(pDstJson));
             path.add(pLink);
         }

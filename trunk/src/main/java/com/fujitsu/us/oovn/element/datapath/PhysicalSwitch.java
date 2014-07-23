@@ -16,7 +16,7 @@ public class PhysicalSwitch extends Switch<PhysicalPort> implements Persistable
     @Override
     public String toDBMatch() {
         return  "(" + toDBVariable() +
-                ":Physical:Switch {" +
+                ":ZPhysical:Switch {" +
                 "dpid:\"" + getDPID().toString() + "\"," +
                 "name:\"" + getName() + "\"})";
     }

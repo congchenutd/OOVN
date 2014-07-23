@@ -19,9 +19,9 @@ public class VirtualLink extends Link<VirtualSwitch, VirtualPort> implements Per
     private final VNO          _vno;
     private List<PhysicalLink> _path;
     
-    public VirtualLink(VNO vno, VirtualPort src, VirtualPort dst)
+    public VirtualLink(VNO vno, String name, VirtualPort src, VirtualPort dst)
     {
-        super(src, dst);
+        super(name, src, dst);
         _vno  = vno;
         _path = new LinkedList<PhysicalLink>();
     }
