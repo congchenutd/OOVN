@@ -3,12 +3,11 @@ package com.fujitsu.us.oovn.element.datapath;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-
 import com.fujitsu.us.oovn.element.Jsonable;
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.port.Port;
 import com.fujitsu.us.oovn.exception.InvalidPortNumberException;
+import com.fujitsu.us.oovn.map.MapBase;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -23,7 +22,7 @@ public abstract class Switch<PortType extends Port> implements Jsonable
 {
     protected final DPID   _dpid;
     protected final String _name;
-    protected Map<Integer, PortType> _ports;  // port number -> port
+    protected final Map<Integer, PortType> _ports;  // port number -> port
     
     public Switch(DPID dpid, String name)
     {
@@ -117,16 +116,16 @@ public abstract class Switch<PortType extends Port> implements Jsonable
                 this.getName() .equals(that.getName());        
     }
     
-    public void createInDB(ExecutionEngine engine)
+    public void createInDB(MapBase map)
     {
         // create the switch itself
-        engine.execute("MERGE " + toDBMatch());
+        map.query("MERGE " + toDBMatch());
         
         // create and connect ports
         for(PortType port: getPorts().values())
         {
-            port.createInDB(engine);
-            engine.execute(
+            port.createInDB(map);
+            map.query(
                     "MATCH \n" +
                     toDBMatch() + ",\n" +
                     port.toDBMatch() + "\n" +
@@ -134,11 +133,11 @@ public abstract class Switch<PortType extends Port> implements Jsonable
         }
         
         // create the mapping
-        createMapping(engine);
+        createMapping(map);
     }
     
     // empty by default
-    public void createMapping(ExecutionEngine engine) {
+    public void createMapping(MapBase map) {
     }
     
     public abstract String toDBMatch();

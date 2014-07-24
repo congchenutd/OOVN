@@ -3,11 +3,10 @@ package com.fujitsu.us.oovn.element.datapath;
 import java.util.Arrays;
 import java.util.List;
 
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.address.DPID;
+import com.fujitsu.us.oovn.map.MapBase;
 
 /**
  * A SingleSwitch maps to one physical switch
@@ -45,13 +44,13 @@ public class SingleSwitch extends VirtualSwitch implements Persistable
     }
 
     @Override
-    public void createMapping(ExecutionEngine engine)
+    public void createMapping(MapBase map)
     {
         // nothing to map to
         if(getPhysicalSwitch() == null)
             return;
         
-        engine.execute(
+        map.query(
                 "MATCH\n" +
                     toDBMatch() + ",\n" +
                     getPhysicalSwitch().toDBMatch() + "\n" +

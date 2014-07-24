@@ -6,14 +6,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-
 import com.fujitsu.us.oovn.element.Jsonable;
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.datapath.Switch;
 import com.fujitsu.us.oovn.element.link.Link;
 import com.fujitsu.us.oovn.element.port.Port;
 import com.fujitsu.us.oovn.exception.InvalidDPIDException;
+import com.fujitsu.us.oovn.map.MapBase;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -148,20 +147,20 @@ public abstract class Network<SwitchType extends Switch,
     /**
      * Mapping is done by the component objects (switch, link, port)
      */
-    public void createMapping(ExecutionEngine engine) {
+    public void createMapping(MapBase map) {
     }
     
     /**
      * Create the network in the db using the engine
      * @param engine ExecutionEngine for running db queries
      */
-    public void createInDB(ExecutionEngine engine)
+    public void createInDB(MapBase map)
     {
         for(SwitchType sw: getSwitches().values())
-            sw.createInDB(engine);
+            sw.createInDB(map);
         
         for(LinkType link: getLinks())
-            link.createInDB(engine);
+            link.createInDB(map);
     }
     
 }

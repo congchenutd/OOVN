@@ -1,6 +1,5 @@
 package com.fujitsu.us.oovn.element.port;
 
-import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.graphdb.Node;
 
 import com.fujitsu.us.oovn.core.VNO;
@@ -9,6 +8,7 @@ import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.datapath.VirtualSwitch;
 import com.fujitsu.us.oovn.element.link.VirtualLink;
+import com.fujitsu.us.oovn.map.MapBase;
 
 public class VirtualPort extends Port<VirtualSwitch, VirtualLink> 
                          implements Persistable
@@ -64,13 +64,13 @@ public class VirtualPort extends Port<VirtualSwitch, VirtualLink>
     }
     
     @Override
-    public void createMapping(ExecutionEngine engine)
+    public void createMapping(MapBase map)
     {
         // nothing to map to
         if(getPhysicalPort() == null)
             return;
         
-        engine.execute(
+        map.query(
                 "MATCH \n" + 
                     toDBMatch() + ",\n" +
                     getPhysicalPort().toDBMatch() + "\n" +
