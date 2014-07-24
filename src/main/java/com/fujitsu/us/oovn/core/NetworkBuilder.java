@@ -96,8 +96,8 @@ public class NetworkBuilder
         PhysicalSwitch psw = PhysicalNetwork.getInstance().getSwitch(phyID);
         if(psw == null)
             throw new InvalidVNOConfigurationException(
-                    "Mapped to none-existing physical switch: " +
-                    phyID.toString());
+                            "Mapped to none-existing physical switch: " +
+                            phyID.toString());
         
         // create virtual switch
         DPID   dpid = new DPID(json.get("dpid").getAsString());
@@ -187,7 +187,7 @@ public class NetworkBuilder
         PhysicalSwitch psw = PhysicalNetwork.getInstance().getSwitch(dpid);
         if(psw == null)
             throw new InvalidVNOConfigurationException(
-                    "The switch " + dpid + " doesn't exist");
+                            "The switch " + dpid + " doesn't exist");
         
         return psw.getPort(number);
     }
@@ -220,10 +220,8 @@ public class NetworkBuilder
             JsonObject linkJson = (JsonObject) e;
             JsonObject pSrcJson = linkJson.get("src").getAsJsonObject();
             JsonObject pDstJson = linkJson.get("dst").getAsJsonObject();
-            PhysicalLink pLink = new PhysicalLink(linkJson.get("name").getAsString(), 
-                                                  buildPhysicalPort(pSrcJson), 
-                                                  buildPhysicalPort(pDstJson));
-            path.add(pLink);
+            path.add(PhysicalNetwork.getInstance().getLink(buildPhysicalPort(pSrcJson), 
+                                                           buildPhysicalPort(pDstJson)));
         }
         if(!path.isEmpty())
             result.setPath(path);
