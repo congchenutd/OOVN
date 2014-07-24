@@ -2,10 +2,9 @@ package com.fujitsu.us.oovn.element.datapath;
 
 import java.util.List;
 
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.address.DPID;
+import com.fujitsu.us.oovn.map.MapBase;
 
 /**
  * A BigSwitch consists of multiple physical switches
@@ -25,7 +24,7 @@ public class BigSwitch extends VirtualSwitch {
     }
 
     @Override
-    public void createInDB(ExecutionEngine engine) {
+    public void createInDB(MapBase map) {
     }
 
     @Override

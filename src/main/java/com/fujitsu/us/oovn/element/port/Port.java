@@ -1,12 +1,11 @@
 package com.fujitsu.us.oovn.element.port;
 
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-
 import com.fujitsu.us.oovn.element.Jsonable;
 import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.datapath.Switch;
 import com.fujitsu.us.oovn.element.host.Host;
 import com.fujitsu.us.oovn.element.link.Link;
+import com.fujitsu.us.oovn.map.MapBase;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -148,12 +147,12 @@ public abstract class Port<SwitchType extends Switch, LinkType extends Link> imp
         return getSwitch().getName() + "P" + getNumber();
     }
     
-    public void createInDB(ExecutionEngine engine)
+    public void createInDB(MapBase map)
     {
-        engine.execute("MERGE " + toDBMatch());
-        createMapping(engine);
+        map.query("MERGE " + toDBMatch());
+        createMapping(map);
     }
 
-    public void createMapping(ExecutionEngine engine) {
+    public void createMapping(MapBase map) {
     }
 }

@@ -3,13 +3,13 @@ package com.fujitsu.us.oovn.element.link;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.graphdb.Node;
 
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.datapath.VirtualSwitch;
 import com.fujitsu.us.oovn.element.port.VirtualPort;
+import com.fujitsu.us.oovn.map.MapBase;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -102,6 +102,7 @@ public class VirtualLink extends Link<VirtualSwitch, VirtualPort> implements Per
         return "(" + toDBVariable() + 
                 ":Virtual:Link " + "{" + 
                     "vnoid:" + getVNO().getID() + "," +
+                    "name:" + "\"" + getName() + "\", " +
                     "srcSwitch:" + "\"" + getSrcSwitch().getDPID().toString() + "\", " +
                     "srcPort:" + getSrcPort().getNumber() + "," +
                     "dstSwitch:" + "\"" + getDstSwitch().getDPID().toString() + "\", " +
@@ -110,7 +111,7 @@ public class VirtualLink extends Link<VirtualSwitch, VirtualPort> implements Per
     }
 
     @Override
-    public void createMapping(ExecutionEngine engine)
+    public void createMapping(MapBase map)
     {
         if(getPath().isEmpty())
             return;
@@ -126,7 +127,7 @@ public class VirtualLink extends Link<VirtualSwitch, VirtualPort> implements Per
             builder.append("(" + toDBVariable() + ")-[:Maps {order:" + order++ + "}]->(" + 
                            link.toDBVariable() + "),");
         builder.deleteCharAt(builder.length() - 1);  // remove last comma
-        engine.execute(builder.toString());    
+        map.query(builder.toString());    
     }
     
     /**

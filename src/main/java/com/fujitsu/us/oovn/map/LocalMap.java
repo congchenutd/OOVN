@@ -32,7 +32,7 @@ public class LocalMap extends MapBase
      * @param vno a VNO
      * @return the LocalMap for the vno
      */
-    public static LocalMap getInstance(VNO vno)
+    public static synchronized LocalMap getInstance(VNO vno)
     {
         if(!_maps.containsKey(vno.getID()))
             _maps.put(vno.getID(), new LocalMap(vno));

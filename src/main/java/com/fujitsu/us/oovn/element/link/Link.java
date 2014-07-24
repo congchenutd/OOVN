@@ -1,10 +1,9 @@
 package com.fujitsu.us.oovn.element.link;
 
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-
 import com.fujitsu.us.oovn.element.Jsonable;
 import com.fujitsu.us.oovn.element.datapath.Switch;
 import com.fujitsu.us.oovn.element.port.Port;
+import com.fujitsu.us.oovn.map.MapBase;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -126,13 +125,13 @@ public abstract class Link<SwitchType extends Switch, PortType extends Port> imp
 
     public abstract String toDBMatch();
     
-    public void createInDB(ExecutionEngine engine)
+    public void createInDB(MapBase map)
     {
         // create the link node itself
-        engine.execute("MERGE " + toDBMatch());
+        map.query("MERGE " + toDBMatch());
         
         // create the relationships to the 2 ports
-        engine.execute(
+        map.query(
                 "MATCH \n" +
                 toDBMatch() + ",\n" +
                 getSrcPort().toDBMatch() + ",\n" +
@@ -141,9 +140,9 @@ public abstract class Link<SwitchType extends Switch, PortType extends Port> imp
                 "(" + toDBVariable() + ")-[:Connects]->(" + getSrcPort().toDBVariable() + ")," +
                 "(" + toDBVariable() + ")-[:Connects]->(" + getDstPort().toDBVariable() + ")");
         
-        createMapping(engine);
+        createMapping(map);
     }
     
-    public void createMapping(ExecutionEngine engine) {
+    public void createMapping(MapBase map) {
     }
 }

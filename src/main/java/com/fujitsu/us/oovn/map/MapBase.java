@@ -1,7 +1,10 @@
 package com.fujitsu.us.oovn.map;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
@@ -10,6 +13,13 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import org.neo4j.rest.graphdb.RestAPI;
+import org.neo4j.rest.graphdb.RestAPIFacade;
+import org.neo4j.rest.graphdb.RestGraphDatabase;
+import org.neo4j.rest.graphdb.query.RestCypherQueryEngine;
+import org.neo4j.rest.graphdb.query.RestQueryResult;
+import org.neo4j.rest.graphdb.util.ConvertedResult;
+import org.neo4j.rest.graphdb.util.QueryResult;
 
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.address.PhysicalIPAddress;
@@ -41,16 +51,15 @@ public class MapBase
     {
         try(Transaction tx = _graphDb.beginTx())
         {
-            ExecutionResult result = 
-                _engine.execute("MATCH " + vsw.toDBMatch() + 
-                                "-[:Maps]->(psw) " +
-                                "RETURN psw");
-            
-            ResourceIterator<Node> it = result.columnAs("psw");
+            RestQueryResult result = query(
+                    "MATCH " + vsw.toDBMatch() + "-[:Maps]->(psw) " + 
+                    "RETURN psw");
+    
+            Iterator<Node> it = result.to(Node.class).iterator();
             List<PhysicalSwitch> switches = new LinkedList<PhysicalSwitch>();
-            while(it.hasNext())
+            while (it.hasNext())
                 switches.add(PhysicalSwitch.fromNode(it.next()));
-
+    
             return switches;
         }
     }
@@ -64,12 +73,12 @@ public class MapBase
     {
         try(Transaction tx = _graphDb.beginTx())
         {
-            ExecutionResult result = 
-                _engine.execute("MATCH " + psw.toDBMatch() + 
-                                "<-[:Maps]-(vsw {vnoid:" + vno.getID() + "}) " +
-                                "RETURN vsw");
+            RestQueryResult result = query(
+                    "MATCH " + psw.toDBMatch() + 
+                    "<-[:Maps]-(vsw {vnoid:" + vno.getID() + "}) " +
+                    "RETURN vsw");
             
-            ResourceIterator<Node> it = result.columnAs("vsw");
+            Iterator<Node> it = result.to(Node.class).iterator();
             return it.hasNext() ? VirtualSwitch.fromNode(it.next(), vno)
                                 : null;
         }
@@ -83,12 +92,12 @@ public class MapBase
     {
         try(Transaction tx = _graphDb.beginTx())
         {
-            ExecutionResult result = 
-                _engine.execute("MATCH " + vPort.toDBMatch() + 
-                                "-[:Maps]->(pPort) " +
-                                "RETURN pPort");
+            RestQueryResult result = query(
+                    "MATCH " + vPort.toDBMatch() + 
+                    "-[:Maps]->(pPort) " +
+                    "RETURN pPort");
             
-            ResourceIterator<Node> it = result.columnAs("pPort");
+            Iterator<Node> it = result.to(Node.class).iterator();
             return it.hasNext() ? PhysicalPort.fromNode(it.next())
                                 : null;
         }
@@ -103,12 +112,12 @@ public class MapBase
     {
         try(Transaction tx = _graphDb.beginTx())
         {
-            ExecutionResult result = 
-                _engine.execute("MATCH " + pPort.toDBMatch() + 
-                                "<-[:Maps]-(vPort {vnoid:" + vno.getID() + "}) " +
-                                "RETURN vPort");
+            RestQueryResult result = query(
+                    "MATCH " + pPort.toDBMatch() + 
+                    "<-[:Maps]-(vPort {vnoid:" + vno.getID() + "}) " +
+                    "RETURN vPort");
             
-            ResourceIterator<Node> it = result.columnAs("vPort");
+            Iterator<Node> it = result.to(Node.class).iterator();
             return it.hasNext() ? VirtualPort.fromNode(it.next(), vno)
                                 : null;
         }
@@ -122,13 +131,13 @@ public class MapBase
     {
         try(Transaction tx = _graphDb.beginTx())
         {
-            ExecutionResult result = 
-                _engine.execute("MATCH " + vLink.toDBMatch() + 
-                                "-[m:Maps]->(pLink) " +
-                                "RETURN pLink " +
-                                "ORDER BY m.order");
+            RestQueryResult result = query(
+                    "MATCH " + vLink.toDBMatch() + 
+                    "-[m:Maps]->(pLink:ZPhysical:Link) " +
+                    "RETURN pLink " +
+                    "ORDER BY m.order");
             
-            ResourceIterator<Node> it = result.columnAs("pLink");
+            Iterator<Node> it = result.to(Node.class).iterator();
             List<PhysicalLink> links = new LinkedList<PhysicalLink>();
             while(it.hasNext())
                 links.add(PhysicalLink.fromNode(it.next()));
@@ -146,12 +155,12 @@ public class MapBase
     {
         try(Transaction tx = _graphDb.beginTx())
         {
-            ExecutionResult result = 
-                _engine.execute("MATCH " + pLink.toDBMatch() + 
-                                "<-[:Maps]-(vLink {vnoid:" + vno.getID() + "}) " +
-                                "RETURN vLink");
+            RestQueryResult result = query(
+                    "MATCH " + pLink.toDBMatch() + 
+                    "<-[:Maps]-(vLink {vnoid:" + vno.getID() + "}) " +
+                    "RETURN vLink");
             
-            ResourceIterator<Node> it = result.columnAs("vLink");
+            Iterator<Node> it = result.to(Node.class).iterator();
             return it.hasNext() ? VirtualLink.fromNode(it.next(), vno)
                                 : null;
         }
@@ -168,26 +177,6 @@ public class MapBase
     }
     
     /**
-     * XXX: ugly! Shouldn't expose the query engine. But Verifiers may need to query
-     *      the db directly, much more efficient 
-     * @return
-     */
-    public ExecutionEngine getExecutionEngine() {
-        return _engine;
-    }
-    
-    public ExecutionResult query(String query)
-    {
-        ExecutionResult result;
-        try(Transaction tx = _graphDb.beginTx())
-        {
-            result = _engine.execute(query);
-            tx.success();
-        }
-        return result;
-    }
-    
-    /**
      * Add a VNO to the map 
      * @param vno
      */
@@ -198,7 +187,7 @@ public class MapBase
         
         try(Transaction tx = _graphDb.beginTx())
         {
-            vno.getNetwork().createInDB(_engine);
+            vno.getNetwork().createInDB(this);
             tx.success();
         }
         
@@ -214,8 +203,9 @@ public class MapBase
         try(Transaction tx = _graphDb.beginTx())
         {
             // remove all the virtual nodes with the given vno id
-            _engine.execute("MATCH (n:Virtual {vnoid:" + vno.getID() +  
-                            "}) OPTIONAL MATCH (n)-[r]-() DELETE n,r");
+            query("MATCH (n:Virtual {vnoid:" + vno.getID() +  "})" +
+                  "OPTIONAL MATCH (n)-[r]-()" + 
+                  "DELETE n,r");
             tx.success();
         }
     }
@@ -227,8 +217,8 @@ public class MapBase
     {
         try(Transaction tx = _graphDb.beginTx())
         {
-            _engine.execute("MATCH (n:Virtual {vnoid:" + vno.getID() + "})" +
-                            "SET n.activated=true");
+            query("MATCH (n:Virtual {vnoid:" + vno.getID() + "})" +
+                  "SET n.activated=true");
             tx.success();
         }
     }
@@ -240,28 +230,33 @@ public class MapBase
     {
         try(Transaction tx = _graphDb.beginTx())
         {
-            _engine.execute("MATCH (n:Virtual {vnoid:" + vno.getID() + "})" +
-                            "SET n.activated=false");
+            query("MATCH (n:Virtual {vnoid:" + vno.getID() + "})" +
+                  "SET n.activated=false");
             tx.success();
         }
     }
     
-    protected final GraphDatabaseService _graphDb;
-    protected final ExecutionEngine      _engine;
+    protected final RestGraphDatabase     _graphDb;
+    protected final RestCypherQueryEngine _engine;
     
+    public RestQueryResult query(String query) {
+        System.out.println(query);
+        return (RestQueryResult) _engine.query(query, null);
+    }
+        
     /**
      * Initiate the map from the PhysicalNetwork object
      */
     protected MapBase(String dbPath)
     {
-        _graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(dbPath);
-        _engine  = new ExecutionEngine(_graphDb);
+        _graphDb = new RestGraphDatabase("http://localhost:7474/db/data");
+        _engine  = new RestCypherQueryEngine(_graphDb.getRestAPI());
         registerShutdownHook(_graphDb);
         
         try(Transaction tx = _graphDb.beginTx())
         {
-            _engine.execute("MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r");
-            PhysicalNetwork.getInstance().createInDB(_engine);
+            query("MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r");
+            PhysicalNetwork.getInstance().createInDB(this);
             tx.success();
         }
     }
@@ -280,6 +275,24 @@ public class MapBase
             }
         } );
     }
+    
+//    public static void main(String[] args)
+//    {
+//        RestCypherQueryEngine engine = new RestCypherQueryEngine(
+//                new RestAPIFacade("http://localhost:7474/db/data"));
+//        RestQueryResult result = (RestQueryResult) engine.query(
+//                "MATCH (n:Switch) return n;",
+//                new HashMap<String, Object>());
+//
+//        ConvertedResult<Node> r = result.to(Node.class);
+//        Iterator<Node> it = r.iterator();
+//        while(it.hasNext())
+//        {
+//            Node n = it.next();
+//            System.out.println(n.getProperty("dpid"));
+//            System.out.println(n.getProperty("name"));
+//        }
+//    }
 
 }
 

@@ -16,7 +16,8 @@ public class PhysicalLink extends Link<PhysicalSwitch, PhysicalPort> implements 
     @Override
     public String toDBMatch() {
         return "(" + toDBVariable() + 
-                ":ZPhysical:Link " + "{" + 
+                ":ZPhysical:Link " + "{" +
+                    "name:" + "\"" + getName() + "\", " + 
                     "srcSwitch:" + "\"" + getSrcSwitch().getDPID().toString() + "\", " +
                     "srcPort:" + getSrcPort().getNumber() + "," +
                     "dstSwitch:" + "\"" + getDstSwitch().getDPID().toString() + "\", " +
@@ -36,4 +37,5 @@ public class PhysicalLink extends Link<PhysicalSwitch, PhysicalPort> implements 
         return PhysicalNetwork.getInstance()
                               .getLink(srcDPID, srcNumber, dstDPID, dstNumber);
     }
+
 }
