@@ -1,5 +1,9 @@
 package com.fujitsu.us.oovn.map;
 
+import org.neo4j.graphdb.Transaction;
+
+import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
+
 /**
  * A graph holding all the mapping information
  * 
@@ -21,8 +25,15 @@ public class GlobalMap extends MapBase
         private static final GlobalMap _instance = new GlobalMap();
     }
     
-    private GlobalMap() {
-        super("GlobalMap");
+    private GlobalMap()
+    {
+        super();
+        try(Transaction tx = _graphDb.beginTx())
+        {
+            query("MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r");
+            PhysicalNetwork.getInstance().createInDB(this);
+            tx.success();
+        }
     }
 
 }

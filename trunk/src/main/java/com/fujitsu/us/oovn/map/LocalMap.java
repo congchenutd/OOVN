@@ -15,10 +15,7 @@ import com.fujitsu.us.oovn.element.port.VirtualPort;
 
 /**
  * Each VNO holds a local map
- * 
- * All local maps should be synced with the global map
- * 
- * Internally a subgraph of the global map, 
+ * A local map is a local view (subgraph) of the global map,
  * consisting of all the virtual nodes of the VNO, all physical nodes, and their mappings
  * 
  * @author Cong Chen <Cong.Chen@us.fujitsu.com>
@@ -29,8 +26,9 @@ public class LocalMap extends MapBase
     private static Map<Integer, LocalMap> _maps = new HashMap<Integer, LocalMap>();
     
     /**
-     * @param vno a VNO
-     * @return the LocalMap for the vno
+     * A multiton
+     * @param vno   a VNO
+     * @return      the LocalMap for the vno
      */
     public static synchronized LocalMap getInstance(VNO vno)
     {
@@ -41,7 +39,7 @@ public class LocalMap extends MapBase
     
     private LocalMap(VNO vno)
     {
-        super("LocalMapDB" + vno.getID());
+        super();
         _vno = vno;
     }
     

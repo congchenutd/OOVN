@@ -51,11 +51,14 @@ public class VNOArbitor
     {
         // build a VirtualNetwork and assign it to VNO
         if(vno.getNetwork() == null)
+        {
             try {
                 NetworkBuilder.getInstance().build(vno);
             } catch (InvalidVNOConfigurationException e) {
                 e.printStackTrace();
+                return false;
             }
+        }
         
         GlobalMap.getInstance().registerVNO(vno);   // add to global map
         VNOPool  .getInstance().registerVNO(vno);   // add to pool

@@ -56,11 +56,11 @@ public class MapTest
         _vno1.activate();
         _vnw1 = _vno1.getNetwork();
         
-//        _vno2 = new VNO(new Tenant("Carl"));
-//        _vno2.init("VirtualConfig2.json");
-//        _vno2.verify();
-//        _vno2.activate();
-//        _vnw2 = _vno2.getNetwork();
+        _vno2 = new VNO(new Tenant("Carl"));
+        _vno2.init("VirtualConfig2.json");
+        _vno2.verify();
+        _vno2.activate();
+        _vnw2 = _vno2.getNetwork();
     }
     
     @AfterClass
@@ -93,27 +93,27 @@ public class MapTest
         pPort = _pnw .getSwitch("0:0:0:0:0:0:0:3").getPort(2);
         assertThat(_globalMap.getPhysicalPort(vPort),        is(pPort));
         assertThat(_globalMap.getVirtualPort (pPort, _vno1), is(vPort));
-//        
-//        // vno 2
-//        vPort = _vnw2.getSwitch("a:b:c:0:0:0:0:3").getPort(1);
-//        pPort = _pnw .getSwitch("0:0:0:0:0:0:0:1").getPort(1);
-//        assertThat(_globalMap.getPhysicalPort(vPort),        is(pPort));
-//        assertThat(_globalMap.getVirtualPort (pPort, _vno2), is(vPort));
-//        
-//        vPort = _vnw2.getSwitch("a:b:c:0:0:0:0:3").getPort(2);
-//        pPort = _pnw .getSwitch("0:0:0:0:0:0:0:1").getPort(2);
-//        assertThat(_globalMap.getPhysicalPort(vPort),        is(pPort));
-//        assertThat(_globalMap.getVirtualPort (pPort, _vno2), is(vPort));
-//        
-//        vPort = _vnw2.getSwitch("a:b:c:0:0:0:0:4").getPort(1);
-//        pPort = _pnw .getSwitch("0:0:0:0:0:0:0:2").getPort(1);
-//        assertThat(_globalMap.getPhysicalPort(vPort),        is(pPort));
-//        assertThat(_globalMap.getVirtualPort (pPort, _vno2), is(vPort));
-//        
-//        vPort = _vnw2.getSwitch("a:b:c:0:0:0:0:4").getPort(2);
-//        pPort = _pnw .getSwitch("0:0:0:0:0:0:0:2").getPort(2);
-//        assertThat(_globalMap.getPhysicalPort(vPort),        is(pPort));
-//        assertThat(_globalMap.getVirtualPort (pPort, _vno2), is(vPort));
+        
+        // vno 2
+        vPort = _vnw2.getSwitch("a:b:c:0:0:0:0:3").getPort(1);
+        pPort = _pnw .getSwitch("0:0:0:0:0:0:0:1").getPort(1);
+        assertThat(_globalMap.getPhysicalPort(vPort),        is(pPort));
+        assertThat(_globalMap.getVirtualPort (pPort, _vno2), is(vPort));
+        
+        vPort = _vnw2.getSwitch("a:b:c:0:0:0:0:3").getPort(2);
+        pPort = _pnw .getSwitch("0:0:0:0:0:0:0:1").getPort(2);
+        assertThat(_globalMap.getPhysicalPort(vPort),        is(pPort));
+        assertThat(_globalMap.getVirtualPort (pPort, _vno2), is(vPort));
+        
+        vPort = _vnw2.getSwitch("a:b:c:0:0:0:0:4").getPort(1);
+        pPort = _pnw .getSwitch("0:0:0:0:0:0:0:2").getPort(1);
+        assertThat(_globalMap.getPhysicalPort(vPort),        is(pPort));
+        assertThat(_globalMap.getVirtualPort (pPort, _vno2), is(vPort));
+        
+        vPort = _vnw2.getSwitch("a:b:c:0:0:0:0:4").getPort(2);
+        pPort = _pnw .getSwitch("0:0:0:0:0:0:0:2").getPort(2);
+        assertThat(_globalMap.getPhysicalPort(vPort),        is(pPort));
+        assertThat(_globalMap.getVirtualPort (pPort, _vno2), is(vPort));
     }
     
     @Test
@@ -133,17 +133,17 @@ public class MapTest
                            is(vsw));
         
         // vno 2
-//        vsw = (SingleSwitch) _vnw2.getSwitch("a:b:c:0:0:0:0:3");
-//        psw = _pnw.getSwitch("0:0:0:0:0:0:0:1");
-//        assertThat(_globalMap.getPhysicalSwitches(vsw).get(0), is(psw));
-//        assertThat((SingleSwitch) _globalMap.getVirtualSwitch(psw, _vno2),
-//                           is(vsw));
-//        
-//        vsw = (SingleSwitch) _vnw2.getSwitch("a:b:c:0:0:0:0:4");
-//        psw = _pnw.getSwitch("0:0:0:0:0:0:0:2");
-//        assertThat(_globalMap.getPhysicalSwitches(vsw).get(0), is(psw));
-//        assertThat((SingleSwitch) _globalMap.getVirtualSwitch(psw, _vno2),
-//                           is(vsw));
+        vsw = (SingleSwitch) _vnw2.getSwitch("a:b:c:0:0:0:0:3");
+        psw = _pnw.getSwitch("0:0:0:0:0:0:0:1");
+        assertThat(_globalMap.getPhysicalSwitches(vsw).get(0), is(psw));
+        assertThat((SingleSwitch) _globalMap.getVirtualSwitch(psw, _vno2),
+                           is(vsw));
+        
+        vsw = (SingleSwitch) _vnw2.getSwitch("a:b:c:0:0:0:0:4");
+        psw = _pnw.getSwitch("0:0:0:0:0:0:0:2");
+        assertThat(_globalMap.getPhysicalSwitches(vsw).get(0), is(psw));
+        assertThat((SingleSwitch) _globalMap.getVirtualSwitch(psw, _vno2),
+                           is(vsw));
     }
 
     @Test
@@ -164,29 +164,29 @@ public class MapTest
         assertThat(_globalMap.getVirtualLink(pLink2, _vno1), is(vLink));
         
         // vno 2
-//        pLink1 = _pnw.getLink("0:0:0:0:0:0:0:1", 2, 
-//                              "0:0:0:0:0:0:0:2", 1);
-//        vLink = _vnw2.getLink("a:b:c:0:0:0:0:3", 2, 
-//                              "a:b:c:0:0:0:0:4", 1);
-//        links = _globalMap.getPhysicalLinks(vLink);
-//        assertThat(links.get(0), is(pLink1));
-//        
-//        assertThat(_globalMap.getVirtualLink(pLink1, _vno2), is(vLink));
+        pLink1 = _pnw.getLink("0:0:0:0:0:0:0:1", 2, 
+                              "0:0:0:0:0:0:0:2", 1);
+        vLink = _vnw2.getLink("a:b:c:0:0:0:0:3", 2, 
+                              "a:b:c:0:0:0:0:4", 1);
+        links = _globalMap.getPhysicalLinks(vLink);
+        assertThat(links.get(0), is(pLink1));
+        
+        assertThat(_globalMap.getVirtualLink(pLink1, _vno2), is(vLink));
     }
     
-//    @Test
+    @Test
     public void testWrongMapping() throws InvalidVNOOperationException
     {
-//        VNO vno3 = new VNO(new Tenant("Tenant"));
-//
-//        // mapping to a non-existing physical switch
-//        vno3.init("WrongMappingConfig.json");
-//        assertThat(vno3.verify().isPassed(), is(false));
-//        
-//        // two virtual switches map to the same physical switch
-//        vno3.init("ConflictedMappingConfig.json");
-//        assertThat(vno3.verify().isPassed(), is(false));
-//        
-//        vno3.decommission();
+        VNO vno3 = new VNO(new Tenant("Tenant"));
+
+        // mapping to a non-existing physical switch
+        vno3.init("WrongMappingConfig.json");
+        assertThat(vno3.verify().isPassed(), is(false));
+        
+        // two virtual switches map to the same physical switch
+        vno3.init("ConflictedMappingConfig.json");
+        assertThat(vno3.verify().isPassed(), is(false));
+        
+        vno3.decommission();
     }
 }
