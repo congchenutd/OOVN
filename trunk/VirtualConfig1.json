@@ -7,7 +7,7 @@
 		"mask" : 24,
 		"switches" : [
 			{
-				"type" : "single",
+				"type" : "SingleSwitch",
 				"name" : "VS1",
 				"dpid" : "a:b:c:0:0:0:0:1",
 				"physical" : "0:0:0:0:0:0:0:1",
@@ -17,7 +17,7 @@
 				]
 			},
 			{
-				"type" : "single",
+				"type" : "SingleSwitch",
 				"name" : "VS2",
 				"dpid" : "a:b:c:0:0:0:0:2",
 				"physical" : "0:0:0:0:0:0:0:3",
@@ -29,14 +29,17 @@
 		],
 		"links" : [
 			{
+				"type": "VirtualLink",
 				"name" : "VL1",
 				"src" :
 				{
+					"type" : "VirtualPort",
 					"switch" : "a:b:c:0:0:0:0:1",
 					"number" : 2
 				},
 				"dst" :
 				{
+					"type" : "VirtualPort",
 					"switch" : "a:b:c:0:0:0:0:2",
 					"number" : 1
 				},
@@ -44,11 +47,13 @@
 					{
 						"src" :
 						{
+							"type" : "PhysicalPort",
 							"switch" : "00:00:00:00:00:00:00:01",
 							"number" : 2
 						},
 						"dst" :
 						{
+							"type" : "PhysicalPort",
 							"switch" : "00:00:00:00:00:00:00:02",
 							"number" : 1
 						}
@@ -56,11 +61,13 @@
 					{
 						"src" :
 						{
+							"type" : "PhysicalPort",
 							"switch" : "00:00:00:00:00:00:00:02",
 							"number" : 2
 						},
 						"dst" :
 						{
+							"type" : "PhysicalPort",
 							"switch" : "00:00:00:00:00:00:00:03",
 							"number" : 1
 						}
@@ -70,23 +77,27 @@
 		],
 		"hosts" : [
 			{
+				"type": "Host",
 				"id" : 1,
 				"name" : "h1",
 				"mac" : "0a:00:00:00:00:01",
 				"ip" : "192.168.1.101",
 				"port" :
 				{
+					"type" : "VirtualPort",
 					"switch" : "a:b:c:0:0:0:0:1",
 					"number" : 1
 				}
 			},
 			{
+				"type": "Host",
 				"id" : 2,
 				"name" : "h2",
 				"mac" : "0a:00:00:00:00:02",
 				"ip" : "192.168.1.102",
 				"port" :
 				{
+					"type" : "VirtualPort",
 					"switch" : "a:b:c:0:0:0:0:2",
 					"number" : 2
 				}

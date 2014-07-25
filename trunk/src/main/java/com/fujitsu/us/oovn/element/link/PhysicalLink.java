@@ -6,9 +6,15 @@ import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
+import com.fujitsu.us.oovn.factory.ElementFactory;
+import com.fujitsu.us.oovn.factory.PhysicalLinkFactory;
 
 public class PhysicalLink extends Link<PhysicalSwitch, PhysicalPort> implements Persistable
 {
+    static {
+        ElementFactory.registerElement(PhysicalLink.class, new PhysicalLinkFactory());
+    }
+    
     public PhysicalLink(String name, PhysicalPort src, PhysicalPort dst) {
         super(name, src, dst);
     }
@@ -17,6 +23,7 @@ public class PhysicalLink extends Link<PhysicalSwitch, PhysicalPort> implements 
     public String toDBMatch() {
         return "(" + toDBVariable() + 
                 ":ZPhysical:Link " + "{" +
+                    "type:\"PhysicalLink\"," +
                     "name:" + "\"" + getName() + "\", " + 
                     "srcSwitch:" + "\"" + getSrcSwitch().getDPID().toString() + "\", " +
                     "srcPort:" + getSrcPort().getNumber() + "," +

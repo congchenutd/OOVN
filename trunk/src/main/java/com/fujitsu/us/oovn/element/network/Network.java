@@ -75,6 +75,10 @@ public abstract class Network<SwitchType extends Switch,
         return Collections.unmodifiableMap(_switches);
     }
     
+    public PortType getPort(DPID dpid, int number) {
+        return (PortType) getSwitch(dpid).getPort(number);
+    }
+    
     /**
      * For convenience
      */

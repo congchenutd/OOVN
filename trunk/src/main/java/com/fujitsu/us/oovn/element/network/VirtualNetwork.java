@@ -78,7 +78,7 @@ public class VirtualNetwork extends Network<VirtualSwitch, VirtualLink, VirtualP
     
     @Override
     public String toDBMatch() {
-        return "(:Virtual [vnoid=" + getVNOID() + "])";
+        return "(:Virtual {type:\"VirtualNetwork\", vnoid:" + getVNOID() + "})";
     }
 
 }

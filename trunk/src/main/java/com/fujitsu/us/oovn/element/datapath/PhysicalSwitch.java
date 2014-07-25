@@ -6,9 +6,15 @@ import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
+import com.fujitsu.us.oovn.factory.ElementFactory;
+import com.fujitsu.us.oovn.factory.PhysicalSwitchFactory;
 
 public class PhysicalSwitch extends Switch<PhysicalPort> implements Persistable
 {
+    static {
+        ElementFactory.registerElement(PhysicalSwitch.class, new PhysicalSwitchFactory());
+    }
+    
     public PhysicalSwitch(DPID dpid, String name) {
         super(dpid, name);
     }
@@ -17,8 +23,10 @@ public class PhysicalSwitch extends Switch<PhysicalPort> implements Persistable
     public String toDBMatch() {
         return  "(" + toDBVariable() +
                 ":ZPhysical:Switch {" +
-                "dpid:\"" + getDPID().toString() + "\"," +
-                "name:\"" + getName() + "\"})";
+                    "type:\"PhysicalSwitch\"," +
+                    "dpid:\"" + getDPID().toString() + "\"," +
+                    "name:\"" + getName() + 
+                "\"})";
     }
     
     /**
