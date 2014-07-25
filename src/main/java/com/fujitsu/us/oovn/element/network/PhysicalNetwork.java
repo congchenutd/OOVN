@@ -49,7 +49,7 @@ public class PhysicalNetwork extends Network<PhysicalSwitch, PhysicalLink, Physi
     
     @Override
     public String toDBMatch() {
-        return "(:ZPhysical)";
+        return "(:ZPhysical {type:\"PhysicalNetwork\"})";
     }
 
 }

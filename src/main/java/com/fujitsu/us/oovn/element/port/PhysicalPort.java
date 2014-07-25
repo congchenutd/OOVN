@@ -8,10 +8,16 @@ import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
 import com.fujitsu.us.oovn.element.link.PhysicalLink;
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
+import com.fujitsu.us.oovn.factory.ElementFactory;
+import com.fujitsu.us.oovn.factory.PhysicalPortFactory;
 
 public class PhysicalPort extends Port<PhysicalSwitch, PhysicalLink> 
                           implements Persistable
 {
+    static {
+        ElementFactory.registerElement(PhysicalPort.class, new PhysicalPortFactory());
+    }
+    
     public PhysicalPort(int number, MACAddress mac) {
         super(number, mac);
     }
@@ -20,6 +26,7 @@ public class PhysicalPort extends Port<PhysicalSwitch, PhysicalLink>
     public String toDBMatch() {
         return  "(" + toDBVariable() +
                 ":ZPhysical:Port {" +
+                    "type:\"PhysicalPort\"," +
                     "switch:\"" + getSwitch().getDPID().toString() + "\"," +
                     "number:" + getNumber() + "," +
                     "mac:\""  + getMACAddress() + "\"" +

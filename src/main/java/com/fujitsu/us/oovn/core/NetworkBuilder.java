@@ -89,15 +89,10 @@ public class NetworkBuilder
      * @return a SingleSwitch object
      */
     private SingleSwitch buildSingleSwitch(JsonObject json, VNO vno)
-                                throws InvalidVNOConfigurationException
     {
         // find physical switch
         DPID phyID = new DPID(json.get("physical").getAsString());
         PhysicalSwitch psw = PhysicalNetwork.getInstance().getSwitch(phyID);
-        if(psw == null)
-            throw new InvalidVNOConfigurationException(
-                            "Mapped to none-existing physical switch: " +
-                            phyID.toString());
         
         // create virtual switch
         DPID   dpid = new DPID(json.get("dpid").getAsString());
@@ -113,11 +108,6 @@ public class NetworkBuilder
         {
             int number = e.getAsInt();
             PhysicalPort port = psw.getPort(number);
-            if(port == null)
-                throw new InvalidVNOConfigurationException(
-                        "Mapped to none-existing physical port: " +
-                        "dpid: " + dpid.toString() + " " +
-                        "port: " + number);
             
             // XXX: is it OK to reuse physical MAC address? OVX does so.
             VirtualPort  vPort = new VirtualPort(++index, port.getMACAddress());
@@ -133,8 +123,7 @@ public class NetworkBuilder
      * @param json the Json segment for the switch
      * @return a BigSwitch object
      */
-    private BigSwitch buildBigSwitch(JsonObject json, VNO vno)
-    {
+    private BigSwitch buildBigSwitch(JsonObject json, VNO vno) {
         return null;
     }
     
@@ -143,12 +132,11 @@ public class NetworkBuilder
      * based on the given Json configuration
      * @param json the Json segment for the switch
      * @return a VirtualSwitch object
-     * @throws InvalidVNOConfigurationException 
      */
-    private VirtualSwitch buildSwitch(JsonObject json, VNO vno) 
-                                        throws InvalidVNOConfigurationException {
-        return json.get("type").getAsString().equals("single") ? buildSingleSwitch(json, vno) 
-                                                               : buildBigSwitch   (json, vno);
+    private VirtualSwitch buildSwitch(JsonObject json, VNO vno) {
+        return json.get("type").getAsString().equals("SingleSwitch")
+                ? buildSingleSwitch(json, vno) 
+                : buildBigSwitch   (json, vno);
     }
     
     /**
@@ -156,19 +144,13 @@ public class NetworkBuilder
      * @param json the segment of the configuration for the port
      * @param vnw the VirtualNetwork of this port
      * @return a VirtualPort object
-     * @throws InvalidVNOConfigurationException 
      */
     private VirtualPort buildVirtualPort(JsonObject json, VNO vno) 
-                                        throws InvalidVNOConfigurationException
     {
         DPID dpid   = new DPID(json.get("switch").getAsString());
         int  number = json.get("number").getAsInt();
         
         VirtualSwitch vsw = vno.getNetwork().getSwitch(dpid);
-        if(vsw == null)
-            throw new InvalidVNOConfigurationException(
-                    "The switch " + dpid + " doesn't exist");
-                    
         return vsw.getPort(number);
     }
     
@@ -176,19 +158,13 @@ public class NetworkBuilder
      * Build a PhysicalPort based on the given Json configuration
      * @param json the segment of the configuration for the port
      * @return a VirtualPort object
-     * @throws InvalidVNOConfigurationException 
      */
     private PhysicalPort buildPhysicalPort(JsonObject json) 
-                                            throws InvalidVNOConfigurationException
     {
         DPID dpid   = new DPID(json.get("switch").getAsString());
         int  number = json.get("number").getAsInt();
         
         PhysicalSwitch psw = PhysicalNetwork.getInstance().getSwitch(dpid);
-        if(psw == null)
-            throw new InvalidVNOConfigurationException(
-                            "The switch " + dpid + " doesn't exist");
-        
         return psw.getPort(number);
     }
     
@@ -197,10 +173,8 @@ public class NetworkBuilder
      * @param json the segment of the configuration for the VirtualLink
      * @param vnw the VirtualNetwork of this port
      * @return a VirtualLink object
-     * @throws InvalidVNOConfigurationException 
      */
     private VirtualLink buildLink(JsonObject json, VNO vno) 
-                                    throws InvalidVNOConfigurationException
     {
         if(json.isJsonNull())
             return null;
@@ -234,10 +208,8 @@ public class NetworkBuilder
      * @param json the segment of the configuration for the Host
      * @param vnw the VirtualNetwork of this port
      * @return a Host object
-     * @throws InvalidVNOConfigurationException 
      */
     private Host buildHost(JsonObject json, VNO vno) 
-                            throws InvalidVNOConfigurationException
     {
         int              id   = json.get("id").getAsInt();
         String           name = json.get("name").getAsString();

@@ -1,8 +1,5 @@
 package com.fujitsu.us.oovn.element;
 
-import org.neo4j.graphdb.Node;
-
-import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.map.MapBase;
 
 /**

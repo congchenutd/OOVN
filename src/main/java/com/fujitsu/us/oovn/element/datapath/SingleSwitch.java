@@ -6,6 +6,8 @@ import java.util.List;
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.address.DPID;
+import com.fujitsu.us.oovn.factory.ElementFactory;
+import com.fujitsu.us.oovn.factory.SingleSwitchFactory;
 import com.fujitsu.us.oovn.map.MapBase;
 
 /**
@@ -16,6 +18,10 @@ import com.fujitsu.us.oovn.map.MapBase;
 public class SingleSwitch extends VirtualSwitch implements Persistable
 {
     private PhysicalSwitch _physicalSwitch;
+    
+    static {
+        ElementFactory.registerElement(SingleSwitch.class, new SingleSwitchFactory());
+    }
     
     public SingleSwitch(VNO vno, DPID dpid, String name) {
         super(vno, dpid, name);
@@ -38,9 +44,11 @@ public class SingleSwitch extends VirtualSwitch implements Persistable
     public String toDBMatch() {
         return  "(" + toDBVariable() +
                 ":Virtual:Switch:Single {" +
-                "vnoid:" + getVNO().getID() + "," +
-                "dpid:\"" + getDPID().toString() + "\"," +
-                "name:\"" + getName() + "\"})";
+                    "type:\"SingleSwitch\"," +
+                    "vnoid:" + getVNO().getID() + "," +
+                    "dpid:\"" + getDPID().toString() + "\"," +
+                    "name:\"" + getName() + 
+                "\"})";
     }
 
     @Override

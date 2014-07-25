@@ -1,15 +1,18 @@
 {
 	"switches" : [
 		{
+			"type" : "PhysicalSwitch",
 			"dpid" : "00:00:00:00:00:00:00:01",
 			"name" : "S1",
 			"ports" : [
 				{
+					"type" : "PhysicalPort",
 					"switch" : "00:00:00:00:00:00:00:01",
 					"number" : 1,
 					"mac" : "00:00:00:00:00:01"
 				},
 				{
+					"type" : "PhysicalPort",
 					"switch" : "00:00:00:00:00:00:00:01",
 					"number" : 2,
 					"mac" : "00:00:00:00:00:02"
@@ -17,15 +20,18 @@
 			]
 		},
 		{
+			"type" : "PhysicalSwitch",
 			"dpid" : "00:00:00:00:00:00:00:02",
 			"name" : "S2",
 			"ports" : [
 				{
+					"type" : "PhysicalPort",
 					"switch" : "00:00:00:00:00:00:00:02",
 					"number" : 1,
 					"mac" : "00:00:00:00:00:03"
 				},
 				{
+					"type" : "PhysicalPort",
 					"switch" : "00:00:00:00:00:00:00:02",
 					"number" : 2,
 					"mac" : "00:00:00:00:00:04"
@@ -33,15 +39,18 @@
 			]
 		},
 		{
+			"type" : "PhysicalSwitch",
 			"dpid" : "00:00:00:00:00:00:00:03",
 			"name" : "S3",
 			"ports" : [
 				{
+					"type" : "PhysicalPort",
 					"switch" : "00:00:00:00:00:00:00:03",
 					"number" : 1,
 					"mac" : "00:00:00:00:00:05"
 				},
 				{
+					"type" : "PhysicalPort",
 					"switch" : "00:00:00:00:00:00:00:03",
 					"number" : 2,
 					"mac" : "00:00:00:00:00:06"
@@ -51,30 +60,36 @@
 	],
 	"links" : [
 		{
+			"type" : "PhysicalLink",
 			"name" : "L1",
 			"src" :
 			{
+				"type" : "PhysicalPort",
 				"switch" : "00:00:00:00:00:00:00:02",
 				"number" : 2,
 				"mac" : "00:00:00:00:00:04"
 			},
 			"dst" :
 			{
+				"type" : "PhysicalPort",
 				"switch" : "00:00:00:00:00:00:00:03",
 				"number" : 1,
 				"mac" : "00:00:00:00:00:05"
 			}
 		},
 		{
+			"type" : "PhysicalLink",
 			"name" : "L2",
 			"src" :
 			{
+				"type" : "PhysicalPort",
 				"switch" : "00:00:00:00:00:00:00:01",
 				"number" : 2,
 				"mac" : "00:00:00:00:00:02"
 			},
 			"dst" :
 			{
+				"type" : "PhysicalPort",
 				"switch" : "00:00:00:00:00:00:00:02",
 				"number" : 1,
 				"mac" : "00:00:00:00:00:03"

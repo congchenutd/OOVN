@@ -7,7 +7,7 @@
 		"mask" : 24,
 		"switches" : [
 			{
-				"type" : "single",
+				"type" : "SingleSwitch",
 				"name" : "VS3",
 				"dpid" : "a:b:c:0:0:0:0:3",
 				"physical" : "0:0:0:0:0:0:0:1",
@@ -17,7 +17,7 @@
 				]
 			},
 			{
-				"type" : "single",
+				"type" : "SingleSwitch",
 				"name" : "VS4",
 				"dpid" : "a:b:c:0:0:0:0:4",
 				"physical" : "0:0:0:0:0:0:0:2",

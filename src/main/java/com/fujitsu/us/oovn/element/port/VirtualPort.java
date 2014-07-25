@@ -8,12 +8,18 @@ import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.datapath.VirtualSwitch;
 import com.fujitsu.us.oovn.element.link.VirtualLink;
+import com.fujitsu.us.oovn.factory.ElementFactory;
+import com.fujitsu.us.oovn.factory.VirtualPortFactory;
 import com.fujitsu.us.oovn.map.MapBase;
 
 public class VirtualPort extends Port<VirtualSwitch, VirtualLink> 
                          implements Persistable
 {
     private PhysicalPort _physicalPort;
+    
+    static {
+        ElementFactory.registerElement(VirtualPort.class, new VirtualPortFactory());
+    }
     
     public VirtualPort(int number, MACAddress mac) {
         super(number, mac);
@@ -56,6 +62,7 @@ public class VirtualPort extends Port<VirtualSwitch, VirtualLink>
     public String toDBMatch() {
         return  "(" + toDBVariable() +
                 ":Virtual:Port {" +
+                    "type:\"VirtualPort\"," + 
                     "vnoid:" + getVNO().getID() + "," +
                     "switch:\"" + getSwitch().getDPID().toString() + "\"," +
                     "number:" + getNumber() + "," +
