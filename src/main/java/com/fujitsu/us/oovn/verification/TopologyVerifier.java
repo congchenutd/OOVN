@@ -1,9 +1,10 @@
 package com.fujitsu.us.oovn.verification;
 
-import org.neo4j.cypher.javacompat.ExecutionResult;
+import java.util.Iterator;
+
 import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.ResourceIterator;
+import org.neo4j.rest.graphdb.query.RestQueryResult;
 
 import com.fujitsu.us.oovn.core.NetworkBuilder;
 import com.fujitsu.us.oovn.core.VNO;
@@ -30,40 +31,40 @@ public class TopologyVerifier extends Verifier
     @Override
     public VerificationResult verify(VNO vno)
     {
-//        // build the network based on the config
-//        // this will check for wrong mappings
-//        try {
-//            NetworkBuilder.getInstance().build(vno);
-//        } catch (Exception e) {
-//            return new VerificationResult(false, e.getMessage());
-//        }
-//
-//        // add this vno to global map for verification
-//        GlobalMap.getInstance().registerVNO(vno);
-//        
-//        // check for conflicted mappings
-//        ExecutionResult result = GlobalMap.getInstance().query(
-//                "MATCH (v:Virtual {vnoid:" + vno.getID() + "})-[:Maps]->(p:ZPhysical)" +
-//                " WITH p, count(v) AS mapCount" +
-//                " WHERE mapCount > 1" +
-//                " RETURN p");
-//        
-//        System.out.println(
-//                "MATCH (v:Virtual {vnoid:" + vno.getID() + "})-[:Maps]->(p:ZPhysical)" +
-//                " WITH p, count(v) AS mapCount" +
-//                " WHERE mapCount > 1" +
-//                " RETURN p");
-//        ResourceIterator<Node> it = result.columnAs("p");
-//        
-//        // remove the vno from the global map
-////        GlobalMap.getInstance().unregisterVNO(vno);
-//
-//        if(it.hasNext())
-//            return new VerificationResult(false, 
-//                    "This physical node is mapped by more than one virtual node: " +
-//                    fromNode(it.next()).toString());
-//
-//        // pass the task to the next verifier
+        // build the network based on the config
+        // this will check for wrong mappings
+        try {
+            NetworkBuilder.getInstance().build(vno);
+        } catch (Exception e) {
+            return new VerificationResult(false, e.getMessage());
+        }
+
+        // add this vno to global map for verification
+        GlobalMap.getInstance().registerVNO(vno);
+        
+        // check for conflicted mappings
+        RestQueryResult result = GlobalMap.getInstance().query(
+                "MATCH (v:Virtual {vnoid:" + vno.getID() + "})-[:Maps]->(p:ZPhysical)" +
+                " WITH p, count(v) AS mapCount" +
+                " WHERE mapCount > 1" +
+                " RETURN p");
+        
+        System.out.println(
+                "MATCH (v:Virtual {vnoid:" + vno.getID() + "})-[:Maps]->(p:ZPhysical)" +
+                " WITH p, count(v) AS mapCount" +
+                " WHERE mapCount > 1" +
+                " RETURN p");
+        Iterator<Node> it = result.to(Node.class).iterator();
+        
+        // remove the vno from the global map
+//        GlobalMap.getInstance().unregisterVNO(vno);
+
+        if(it.hasNext())
+            return new VerificationResult(false, 
+                    "This physical node is mapped by more than one virtual node: " +
+                    fromNode(it.next()).toString());
+
+        // pass the task to the next verifier
         return super.verify(vno);
     }
     

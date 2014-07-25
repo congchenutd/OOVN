@@ -1,25 +1,15 @@
 package com.fujitsu.us.oovn.map;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import org.neo4j.rest.graphdb.RestAPI;
-import org.neo4j.rest.graphdb.RestAPIFacade;
 import org.neo4j.rest.graphdb.RestGraphDatabase;
 import org.neo4j.rest.graphdb.query.RestCypherQueryEngine;
 import org.neo4j.rest.graphdb.query.RestQueryResult;
-import org.neo4j.rest.graphdb.util.ConvertedResult;
-import org.neo4j.rest.graphdb.util.QueryResult;
 
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.address.PhysicalIPAddress;
@@ -28,7 +18,6 @@ import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
 import com.fujitsu.us.oovn.element.datapath.VirtualSwitch;
 import com.fujitsu.us.oovn.element.link.PhysicalLink;
 import com.fujitsu.us.oovn.element.link.VirtualLink;
-import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
 import com.fujitsu.us.oovn.element.port.VirtualPort;
 
@@ -203,8 +192,8 @@ public class MapBase
         try(Transaction tx = _graphDb.beginTx())
         {
             // remove all the virtual nodes with the given vno id
-            query("MATCH (n:Virtual {vnoid:" + vno.getID() +  "})" +
-                  "OPTIONAL MATCH (n)-[r]-()" + 
+            query("MATCH (n:Virtual {vnoid:" + vno.getID() +  "}) " +
+                  "OPTIONAL MATCH (n)-[r]-() " + 
                   "DELETE n,r");
             tx.success();
         }
@@ -217,7 +206,7 @@ public class MapBase
     {
         try(Transaction tx = _graphDb.beginTx())
         {
-            query("MATCH (n:Virtual {vnoid:" + vno.getID() + "})" +
+            query("MATCH (n:Virtual {vnoid:" + vno.getID() + "}) " +
                   "SET n.activated=true");
             tx.success();
         }
@@ -230,7 +219,7 @@ public class MapBase
     {
         try(Transaction tx = _graphDb.beginTx())
         {
-            query("MATCH (n:Virtual {vnoid:" + vno.getID() + "})" +
+            query("MATCH (n:Virtual {vnoid:" + vno.getID() + "}) " +
                   "SET n.activated=false");
             tx.success();
         }
@@ -240,25 +229,15 @@ public class MapBase
     protected final RestCypherQueryEngine _engine;
     
     public RestQueryResult query(String query) {
-        System.out.println(query);
+//        System.out.println(query);
         return (RestQueryResult) _engine.query(query, null);
     }
         
-    /**
-     * Initiate the map from the PhysicalNetwork object
-     */
-    protected MapBase(String dbPath)
+    protected MapBase()
     {
-        _graphDb = new RestGraphDatabase("http://localhost:7474/db/data");
+        _graphDb = new RestGraphDatabase("http://localhost:7474/db/data/");
         _engine  = new RestCypherQueryEngine(_graphDb.getRestAPI());
         registerShutdownHook(_graphDb);
-        
-        try(Transaction tx = _graphDb.beginTx())
-        {
-            query("MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r");
-            PhysicalNetwork.getInstance().createInDB(this);
-            tx.success();
-        }
     }
     
     /**
@@ -275,43 +254,4 @@ public class MapBase
             }
         } );
     }
-    
-//    public static void main(String[] args)
-//    {
-//        RestCypherQueryEngine engine = new RestCypherQueryEngine(
-//                new RestAPIFacade("http://localhost:7474/db/data"));
-//        RestQueryResult result = (RestQueryResult) engine.query(
-//                "MATCH (n:Switch) return n;",
-//                new HashMap<String, Object>());
-//
-//        ConvertedResult<Node> r = result.to(Node.class);
-//        Iterator<Node> it = r.iterator();
-//        while(it.hasNext())
-//        {
-//            Node n = it.next();
-//            System.out.println(n.getProperty("dpid"));
-//            System.out.println(n.getProperty("name"));
-//        }
-//    }
-
 }
-
-//class LoggingExecutionEngine extends ExecutionEngine
-//{
-//    private final Logger _logger;
-//    
-//    public LoggingExecutionEngine(GraphDatabaseService database, Logger logger)
-//    {
-//        super(database);
-//        _logger = logger;
-//    }
-//    
-//    @Override
-//    public ExecutionResult execute(String query) throws CypherException
-//    {
-////        _logger.info(query);
-//        System.out.println(query);
-//        return super.execute(query);
-//    }
-//    
-//}

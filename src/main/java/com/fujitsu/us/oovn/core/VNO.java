@@ -147,8 +147,7 @@ public class VNO
                 {
                     vno.setVerified(true);
                     vno.getTenant().registerVNO(vno);          // register to tenant
-                    VNOArbitor.getInstance().registerVNO(vno); // to arbitor
-                    vno.getMap().registerVNO();                // to local map
+                    VNOArbitor.getInstance().registerVNO(vno); //          to arbitor
                     vno.setState(INACTIVE);
                 }
                 return result;
