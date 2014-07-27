@@ -93,6 +93,7 @@ public abstract class Link<SwitchType extends Switch, PortType extends Port> imp
     public JsonElement toJson()
     {
         JsonObject result = new JsonObject();
+        result.addProperty("name", getName());
         result.add("src", getSrcPort().toJson());
         result.add("dst", getDstPort().toJson());
         return result;

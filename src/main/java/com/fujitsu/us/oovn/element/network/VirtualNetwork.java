@@ -21,17 +21,21 @@ import com.google.gson.JsonObject;
 public class VirtualNetwork extends Network<VirtualSwitch, VirtualLink, VirtualPort>
                             implements Persistable
 {
-    private final VNO       _vno;
-    private final IPAddress _networkIP;
-    private final int       _mask;
-    private final Map<Integer, Host> _hosts;   // host id -> host
+    private final VNO _vno;
+    private IPAddress _networkIP;
+    private int       _mask;
+    private final Map<Integer, Host> _hosts = new HashMap<Integer, Host>();  // host id -> host
 
-    public VirtualNetwork(VNO vno, IPAddress ip, int mask)
-    {
-        _vno       = vno;
+    public VirtualNetwork(VNO vno) {
+        _vno = vno;
+    }
+    
+    public void setIP(IPAddress ip) {
         _networkIP = ip;
-        _mask      = mask;
-        _hosts     = new HashMap<Integer, Host>();
+    }
+    
+    public void setMask(int mask) {
+        _mask = mask;
     }
     
     public VNO getVNO() {

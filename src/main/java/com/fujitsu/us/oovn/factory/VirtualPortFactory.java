@@ -18,8 +18,10 @@ public class VirtualPortFactory extends ElementFactory {
     }
 
     @Override
-    protected Persistable create(JsonObject json, VNO vno) {
-        // TODO Auto-generated method stub
-        return null;
+    protected Persistable create(JsonObject json, VNO vno)
+    {
+        DPID dpid   = new DPID(json.get("switch").getAsString());
+        int  number = json.get("number").getAsInt();
+        return vno.getNetwork().getSwitch(dpid).getPort(number);
     }
 }

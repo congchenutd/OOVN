@@ -1,7 +1,7 @@
 package com.fujitsu.us.oovn.core;
 
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
-import com.fujitsu.us.oovn.exception.InvalidVNOConfigurationException;
+import com.fujitsu.us.oovn.exception.InvalidNetworkConfigurationException;
 import com.fujitsu.us.oovn.map.GlobalMap;
 import com.fujitsu.us.oovn.verification.TopologyVerifier;
 import com.fujitsu.us.oovn.verification.VerificationResult;
@@ -53,8 +53,8 @@ public class VNOArbitor
         if(vno.getNetwork() == null)
         {
             try {
-                NetworkBuilder.getInstance().build(vno);
-            } catch (InvalidVNOConfigurationException e) {
+                vno.build();
+            } catch (InvalidNetworkConfigurationException e) {
                 e.printStackTrace();
                 return false;
             }

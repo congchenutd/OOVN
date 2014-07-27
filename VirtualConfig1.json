@@ -45,6 +45,7 @@
 				},
 				"path" : [
 					{
+						"type" : "PhysicalLink",
 						"src" :
 						{
 							"type" : "PhysicalPort",
@@ -59,6 +60,7 @@
 						}
 					},
 					{
+						"type" : "PhysicalLink",
 						"src" :
 						{
 							"type" : "PhysicalPort",

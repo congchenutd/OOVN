@@ -48,8 +48,7 @@ public class MapBase
             Iterator<Node> it = result.to(Node.class).iterator();
             List<PhysicalSwitch> switches = new LinkedList<PhysicalSwitch>();
             while (it.hasNext())
-                switches.add(
-                    ElementFactory.fromNode(PhysicalSwitch.class, it.next()));
+                switches.add((PhysicalSwitch) ElementFactory.fromNode(it.next()));
     
             return switches;
         }
@@ -70,9 +69,8 @@ public class MapBase
                     "RETURN vsw");
             
             Iterator<Node> it = result.to(Node.class).iterator();
-            return it.hasNext() ? 
-                      ElementFactory.fromNode(VirtualSwitch.class, it.next(), vno)
-                    : null;
+            return it.hasNext() ? (VirtualSwitch) ElementFactory.fromNode(it.next(), vno)
+                                : null;
         }
     }
     
@@ -90,9 +88,8 @@ public class MapBase
                     "RETURN pPort");
             
             Iterator<Node> it = result.to(Node.class).iterator();
-            return it.hasNext() ? 
-                        ElementFactory.fromNode(PhysicalPort.class, it.next())
-                      : null;
+            return it.hasNext() ? (PhysicalPort) ElementFactory.fromNode(it.next())
+                                : null;
         }
     }
     
@@ -111,9 +108,8 @@ public class MapBase
                     "RETURN vPort");
             
             Iterator<Node> it = result.to(Node.class).iterator();
-            return it.hasNext() ? 
-                        ElementFactory.fromNode(VirtualPort.class, it.next(), vno)
-                      : null;
+            return it.hasNext() ? (VirtualPort) ElementFactory.fromNode(it.next(), vno)
+                                : null;
         }
     }
     
@@ -134,7 +130,7 @@ public class MapBase
             Iterator<Node> it = result.to(Node.class).iterator();
             List<PhysicalLink> links = new LinkedList<PhysicalLink>();
             while(it.hasNext())
-                links.add(ElementFactory.fromNode(PhysicalLink.class, it.next()));
+                links.add((PhysicalLink) ElementFactory.fromNode(it.next()));
 
             return links;
         }
@@ -155,9 +151,8 @@ public class MapBase
                     "RETURN vLink");
             
             Iterator<Node> it = result.to(Node.class).iterator();
-            return it.hasNext() ? 
-                        ElementFactory.fromNode(VirtualLink.class, it.next(), vno)
-                      : null;
+            return it.hasNext() ? (VirtualLink) ElementFactory.fromNode(it.next(), vno)
+                                : null;
         }
     }
     

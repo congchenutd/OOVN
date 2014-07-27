@@ -8,18 +8,14 @@ import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.datapath.VirtualSwitch;
 import com.fujitsu.us.oovn.element.link.VirtualLink;
-import com.fujitsu.us.oovn.factory.ElementFactory;
-import com.fujitsu.us.oovn.factory.VirtualPortFactory;
 import com.fujitsu.us.oovn.map.MapBase;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 public class VirtualPort extends Port<VirtualSwitch, VirtualLink> 
                          implements Persistable
 {
     private PhysicalPort _physicalPort;
-    
-    static {
-        ElementFactory.registerElement(VirtualPort.class, new VirtualPortFactory());
-    }
     
     public VirtualPort(int number, MACAddress mac) {
         super(number, mac);
@@ -97,6 +93,14 @@ public class VirtualPort extends Port<VirtualSwitch, VirtualLink>
         DPID dpid   = new DPID(node.getProperty("switch").toString());
         int  number = Integer.valueOf(node.getProperty("number").toString());
         return vno.getNetwork().getSwitch(dpid).getPort(number);
+    }
+    
+    @Override
+    public JsonElement toJson()
+    {
+        JsonObject result = (JsonObject) super.toJson();
+        result.addProperty("type", "VirtualPort");
+        return result;
     }
 
 }

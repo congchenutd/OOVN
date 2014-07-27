@@ -6,7 +6,6 @@ import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.Node;
 import org.neo4j.rest.graphdb.query.RestQueryResult;
 
-import com.fujitsu.us.oovn.core.NetworkBuilder;
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
@@ -31,10 +30,10 @@ public class TopologyVerifier extends Verifier
     @Override
     public VerificationResult verify(VNO vno)
     {
-        // build the network based on the config
+        // build the network based on its config
         // this will check for wrong mappings
         try {
-            NetworkBuilder.getInstance().build(vno);
+            vno.build();
         } catch (Exception e) {
             return new VerificationResult(false, e.getMessage());
         }

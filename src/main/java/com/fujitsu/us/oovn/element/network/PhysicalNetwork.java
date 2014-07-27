@@ -1,11 +1,17 @@
 package com.fujitsu.us.oovn.element.network;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import com.fujitsu.us.oovn.builder.PhysicalNetworkBuilder;
 import com.fujitsu.us.oovn.element.Persistable;
-import com.fujitsu.us.oovn.element.address.DPID;
-import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
 import com.fujitsu.us.oovn.element.link.PhysicalLink;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
+import com.fujitsu.us.oovn.exception.InvalidNetworkConfigurationException;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  * Should sync with real physical network
@@ -15,6 +21,22 @@ import com.fujitsu.us.oovn.element.port.PhysicalPort;
 public class PhysicalNetwork extends Network<PhysicalSwitch, PhysicalLink, PhysicalPort>
                              implements Persistable
 {
+    // initialize the network from a json configuration
+    // TODO: from discovery
+    static
+    {
+        try
+        {
+            String config = new String(Files.readAllBytes(Paths.get("PhysicalConfig.json")));
+            JsonObject json = (JsonObject) new JsonParser().parse(config);
+            PhysicalNetwork pnw = PhysicalNetwork.getInstance();
+            new PhysicalNetworkBuilder().build(json, pnw);
+        }
+        catch (IOException | InvalidNetworkConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
+    
     // singleton
     public static PhysicalNetwork getInstance() {
         return LazyHolder._instance;
@@ -24,28 +46,7 @@ public class PhysicalNetwork extends Network<PhysicalSwitch, PhysicalLink, Physi
         private static final PhysicalNetwork _instance = new PhysicalNetwork();
     }
     
-    // for testing
-    private PhysicalNetwork()
-    {
-        PhysicalSwitch sw1 = new PhysicalSwitch(new DPID(1), "S1");
-        sw1.addPort(new PhysicalPort(1, new MACAddress("0:0:0:0:0:1")));
-        sw1.addPort(new PhysicalPort(2, new MACAddress("0:0:0:0:0:2")));
-                
-        PhysicalSwitch sw2 = new PhysicalSwitch(new DPID(2), "S2");
-        sw2.addPort(new PhysicalPort(1, new MACAddress("0:0:0:0:0:3")));
-        sw2.addPort(new PhysicalPort(2, new MACAddress("0:0:0:0:0:4")));
-        
-        PhysicalSwitch sw3 = new PhysicalSwitch(new DPID(3), "S3");
-        sw3.addPort(new PhysicalPort(1, new MACAddress("0:0:0:0:0:5")));
-        sw3.addPort(new PhysicalPort(2, new MACAddress("0:0:0:0:0:6")));
-        
-        addSwitch(sw1);
-        addSwitch(sw2);
-        addSwitch(sw3);
-        
-        addLink(new PhysicalLink("L1", sw1.getPort(2), sw2.getPort(1)));
-        addLink(new PhysicalLink("L2", sw2.getPort(2), sw3.getPort(1)));
-    }
+    private PhysicalNetwork() {}
     
     @Override
     public String toDBMatch() {

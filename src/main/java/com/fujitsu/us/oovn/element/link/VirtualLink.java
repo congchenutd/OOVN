@@ -9,8 +9,6 @@ import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.datapath.VirtualSwitch;
 import com.fujitsu.us.oovn.element.port.VirtualPort;
-import com.fujitsu.us.oovn.factory.ElementFactory;
-import com.fujitsu.us.oovn.factory.VirtualLinkFactory;
 import com.fujitsu.us.oovn.map.MapBase;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -20,10 +18,6 @@ public class VirtualLink extends Link<VirtualSwitch, VirtualPort> implements Per
 {
     private final VNO          _vno;
     private List<PhysicalLink> _path;
-    
-    static {
-        ElementFactory.registerElement(VirtualLink.class, new VirtualLinkFactory());
-    }
     
     public VirtualLink(VNO vno, String name, VirtualPort src, VirtualPort dst)
     {
@@ -93,6 +87,7 @@ public class VirtualLink extends Link<VirtualSwitch, VirtualPort> implements Per
     public JsonElement toJson()
     {
         JsonObject result = (JsonObject) super.toJson();
+        result.addProperty("type", "VirtualLink");
         if(!getPath().isEmpty())
         {
             JsonArray path = new JsonArray();
