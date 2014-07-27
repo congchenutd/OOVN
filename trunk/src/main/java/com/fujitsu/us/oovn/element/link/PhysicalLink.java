@@ -6,15 +6,11 @@ import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
-import com.fujitsu.us.oovn.factory.ElementFactory;
-import com.fujitsu.us.oovn.factory.PhysicalLinkFactory;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 public class PhysicalLink extends Link<PhysicalSwitch, PhysicalPort> implements Persistable
 {
-    static {
-        ElementFactory.registerElement(PhysicalLink.class, new PhysicalLinkFactory());
-    }
-    
     public PhysicalLink(String name, PhysicalPort src, PhysicalPort dst) {
         super(name, src, dst);
     }
@@ -43,6 +39,14 @@ public class PhysicalLink extends Link<PhysicalSwitch, PhysicalPort> implements 
         int  dstNumber = Integer.valueOf(node.getProperty("dstPort").toString());
         return PhysicalNetwork.getInstance()
                               .getLink(srcDPID, srcNumber, dstDPID, dstNumber);
+    }
+    
+    @Override
+    public JsonElement toJson()
+    {
+        JsonObject result = (JsonObject) super.toJson();
+        result.addProperty("type", "PhysicalLink");
+        return result;
     }
 
 }

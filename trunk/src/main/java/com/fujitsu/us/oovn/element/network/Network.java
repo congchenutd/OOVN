@@ -22,7 +22,6 @@ import com.google.gson.JsonObject;
  * @author Cong Chen <Cong.Chen@us.fujitsu.com>
  *
  */
-@SuppressWarnings("rawtypes")
 public abstract class Network<SwitchType extends Switch, 
                               LinkType   extends Link, 
                               PortType   extends Port> implements Jsonable
@@ -75,6 +74,7 @@ public abstract class Network<SwitchType extends Switch,
         return Collections.unmodifiableMap(_switches);
     }
     
+    @SuppressWarnings("unchecked")
     public PortType getPort(DPID dpid, int number) {
         return (PortType) getSwitch(dpid).getPort(number);
     }
@@ -112,6 +112,21 @@ public abstract class Network<SwitchType extends Switch,
         if(port == null)
             return null;
         return (PortType) port.getLink().getOtherPort(port);
+    }
+    
+    @Override
+    public boolean equals(Object obj)
+    {
+        if(this == obj)
+            return true;
+        
+        if(!(obj instanceof Network))
+            return false;
+        
+        Network that = (Network) obj;
+        
+        return this._switches.values().equals(that._switches.values()) &&
+               this._links.equals(that._links);
     }
     
     @Override

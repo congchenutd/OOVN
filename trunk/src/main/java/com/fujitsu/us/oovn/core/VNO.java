@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import com.fujitsu.us.oovn.builder.VirtualNetworkBuilder;
 import com.fujitsu.us.oovn.element.network.VirtualNetwork;
+import com.fujitsu.us.oovn.exception.InvalidNetworkConfigurationException;
 import com.fujitsu.us.oovn.exception.InvalidVNOOperationException;
 import com.fujitsu.us.oovn.map.LocalMap;
 import com.fujitsu.us.oovn.verification.VerificationResult;
@@ -69,12 +71,10 @@ public class VNO
         return getConfiguration().isVerified();
     }
     
-    /**
-     * Attach a VirtualNetwork to this VNO, once it's created
-     * @param network
-     */
-    public void setNetwork(VirtualNetwork network) {
-        _network = network;
+    public void build() throws InvalidNetworkConfigurationException
+    {
+        _network = new VirtualNetwork(this);
+        new VirtualNetworkBuilder().build(this);
     }
     
     private void setConfiguration(NetworkConfiguration config)
@@ -90,6 +90,7 @@ public class VNO
     private LocalMap getMap() {
         return _map;
     }
+    
     
     ///////////// The major APIs tenant can call ////////////////
     public void init(String configFileName) throws InvalidVNOOperationException {

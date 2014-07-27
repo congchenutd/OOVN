@@ -8,16 +8,12 @@ import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
 import com.fujitsu.us.oovn.element.link.PhysicalLink;
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
-import com.fujitsu.us.oovn.factory.ElementFactory;
-import com.fujitsu.us.oovn.factory.PhysicalPortFactory;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 public class PhysicalPort extends Port<PhysicalSwitch, PhysicalLink> 
                           implements Persistable
 {
-    static {
-        ElementFactory.registerElement(PhysicalPort.class, new PhysicalPortFactory());
-    }
-    
     public PhysicalPort(int number, MACAddress mac) {
         super(number, mac);
     }
@@ -41,6 +37,14 @@ public class PhysicalPort extends Port<PhysicalSwitch, PhysicalLink>
         DPID dpid   = new DPID       (node.getProperty("switch").toString());
         int  number = Integer.valueOf(node.getProperty("number").toString());
         return PhysicalNetwork.getInstance().getSwitch(dpid).getPort(number);
+    }
+    
+    @Override
+    public JsonElement toJson()
+    {
+        JsonObject result = (JsonObject) super.toJson();
+        result.addProperty("type", "PhysicalPort");
+        return result;
     }
 
 }

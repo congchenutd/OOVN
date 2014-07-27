@@ -6,6 +6,7 @@ import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.link.PhysicalLink;
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
+import com.fujitsu.us.oovn.exception.InvalidNetworkConfigurationException;
 import com.google.gson.JsonObject;
 
 public class PhysicalLinkFactory extends ElementFactory {
@@ -22,19 +23,20 @@ public class PhysicalLinkFactory extends ElementFactory {
     }
 
     @Override
-    protected PhysicalLink create(JsonObject json, VNO vno)
+    protected PhysicalLink create(JsonObject json, VNO vno) 
+                                    throws InvalidNetworkConfigurationException
     {
         JsonObject srcJson = json.get("src").getAsJsonObject();
         JsonObject dstJson = json.get("dst").getAsJsonObject();
         
         PhysicalPort srcPort = (PhysicalPort) ElementFactory.fromJson(srcJson, null);
         PhysicalPort dstPort = (PhysicalPort) ElementFactory.fromJson(dstJson, null);
-        
-        try {
-            return PhysicalNetwork.getInstance().getLink(srcPort, dstPort);
-        } catch(Exception e) {
-            String name = json.get("name").getAsString();
-            return new PhysicalLink(name, srcPort, dstPort);
-        }
+
+        PhysicalLink link = PhysicalNetwork.getInstance().getLink(srcPort, dstPort);
+        if(link != null)
+            return link;
+
+        String name = json.get("name").getAsString();
+        return new PhysicalLink(name, srcPort, dstPort);
     }
 }

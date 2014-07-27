@@ -6,9 +6,9 @@ import java.util.List;
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.address.DPID;
-import com.fujitsu.us.oovn.factory.ElementFactory;
-import com.fujitsu.us.oovn.factory.SingleSwitchFactory;
 import com.fujitsu.us.oovn.map.MapBase;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 /**
  * A SingleSwitch maps to one physical switch
@@ -18,10 +18,6 @@ import com.fujitsu.us.oovn.map.MapBase;
 public class SingleSwitch extends VirtualSwitch implements Persistable
 {
     private PhysicalSwitch _physicalSwitch;
-    
-    static {
-        ElementFactory.registerElement(SingleSwitch.class, new SingleSwitchFactory());
-    }
     
     public SingleSwitch(VNO vno, DPID dpid, String name) {
         super(vno, dpid, name);
@@ -65,6 +61,14 @@ public class SingleSwitch extends VirtualSwitch implements Persistable
                 "CREATE\n" +
                     "(" + toDBVariable() + ")-[:Maps]->(" + 
                     getPhysicalSwitch().toDBVariable() + ")");
+    }
+    
+    @Override
+    public JsonElement toJson()
+    {
+        JsonObject result = (JsonObject) super.toJson();
+        result.addProperty("type", "SingleSwitch");
+        return result;
     }
 
 }
