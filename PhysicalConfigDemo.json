@@ -1,0 +1,315 @@
+{
+	"switches" : [
+		{
+			"type" : "PhysicalSwitch",
+			"dpid" : "00:00:00:00:00:00:00:01",
+			"name" : "A",
+			"ports" : [
+				{
+					"type" : "PhysicalPort",
+					"number" : 1,
+					"mac" : "00:00:00:00:00:01"
+				},
+				{
+					"type" : "PhysicalPort",
+					"number" : 2,
+					"mac" : "00:00:00:00:00:02"
+				}
+			]
+		},
+		{
+			"type" : "PhysicalSwitch",
+			"dpid" : "00:00:00:00:00:00:00:02",
+			"name" : "B",
+			"ports" : [
+				{
+					"type" : "PhysicalPort",
+					"number" : 1,
+					"mac" : "00:00:00:00:00:03"
+				},
+				{
+					"type" : "PhysicalPort",
+					"number" : 2,
+					"mac" : "00:00:00:00:00:04"
+				},
+				{
+					"type" : "PhysicalPort",
+					"number" : 3,
+					"mac" : "00:00:00:00:00:05"
+				},
+				{
+					"type" : "PhysicalPort",
+					"number" : 4,
+					"mac" : "00:00:00:00:00:06"
+				}
+			]
+		},
+		{
+			"type" : "PhysicalSwitch",
+			"dpid" : "00:00:00:00:00:00:00:03",
+			"name" : "C",
+			"ports" : [
+				{
+					"type" : "PhysicalPort",
+					"number" : 1,
+					"mac" : "00:00:00:00:00:07"
+				},
+				{
+					"type" : "PhysicalPort",
+					"number" : 2,
+					"mac" : "00:00:00:00:00:08"
+				},
+				{
+					"type" : "PhysicalPort",
+					"number" : 3,
+					"mac" : "00:00:00:00:00:09"
+				}
+			]
+		},
+		{
+			"type" : "PhysicalSwitch",
+			"dpid" : "00:00:00:00:00:00:00:04",
+			"name" : "D",
+			"ports" : [
+				{
+					"type" : "PhysicalPort",
+					"number" : 1,
+					"mac" : "00:00:00:00:00:0A"
+				},
+				{
+					"type" : "PhysicalPort",
+					"number" : 2,
+					"mac" : "00:00:00:00:00:0B"
+				},
+				{
+					"type" : "PhysicalPort",
+					"number" : 3,
+					"mac" : "00:00:00:00:00:0C"
+				},
+				{
+					"type" : "PhysicalPort",
+					"number" : 4,
+					"mac" : "00:00:00:00:00:0D"
+				}
+			]
+		},
+		{
+			"type" : "PhysicalSwitch",
+			"dpid" : "00:00:00:00:00:00:00:05",
+			"name" : "E",
+			"ports" : [
+				{
+					"type" : "PhysicalPort",
+					"number" : 1,
+					"mac" : "00:00:00:00:00:0E"
+				},
+				{
+					"type" : "PhysicalPort",
+					"number" : 2,
+					"mac" : "00:00:00:00:00:0F"
+				}
+			]
+		},
+		{
+			"type" : "PhysicalSwitch",
+			"dpid" : "00:00:00:00:00:00:00:06",
+			"name" : "F",
+			"ports" : [
+				{
+					"type" : "PhysicalPort",
+					"number" : 1,
+					"mac" : "00:00:00:00:00:10"
+				},
+				{
+					"type" : "PhysicalPort",
+					"number" : 2,
+					"mac" : "00:00:00:00:00:11"
+				}
+			]
+		},
+		{
+			"type" : "PhysicalSwitch",
+			"dpid" : "00:00:00:00:00:00:00:07",
+			"name" : "G",
+			"ports" : [
+				{
+					"type" : "PhysicalPort",
+					"number" : 1,
+					"mac" : "00:00:00:00:00:12"
+				},
+				{
+					"type" : "PhysicalPort",
+					"number" : 2,
+					"mac" : "00:00:00:00:00:13"
+				},
+				{
+					"type" : "PhysicalPort",
+					"number" : 3,
+					"mac" : "00:00:00:00:00:14"
+				}
+			]
+		}
+	],
+	"links" : [
+		{
+			"type" : "PhysicalLink",
+			"name" : "L1",
+			"src" :
+			{
+				"type" : "PhysicalPort",
+				"dpid" : "00:00:00:00:00:00:00:01",
+				"number" : 1
+			},
+			"dst" :
+			{
+				"type" : "PhysicalPort",
+				"dpid" : "00:00:00:00:00:00:00:05",
+				"number" : 1
+			}
+		},
+		{
+			"type" : "PhysicalLink",
+			"name" : "L2",
+			"src" :
+			{
+				"type" : "PhysicalPort",
+				"dpid" : "00:00:00:00:00:00:00:01",
+				"number" : 2
+			},
+			"dst" :
+			{
+				"type" : "PhysicalPort",
+				"dpid" : "00:00:00:00:00:00:00:02",
+				"number" : 1
+			}
+		},
+		{
+			"type" : "PhysicalLink",
+			"name" : "L3",
+			"src" :
+			{
+				"type" : "PhysicalPort",
+				"dpid" : "00:00:00:00:00:00:00:02",
+				"number" : 2
+			},
+			"dst" :
+			{
+				"type" : "PhysicalPort",
+				"dpid" : "00:00:00:00:00:00:00:04",
+				"number" : 2
+			}
+		},
+		{
+			"type" : "PhysicalLink",
+			"name" : "L4",
+			"src" :
+			{
+				"type" : "PhysicalPort",
+				"dpid" : "00:00:00:00:00:00:00:02",
+				"number" : 3
+			},
+			"dst" :
+			{
+				"type" : "PhysicalPort",
+				"dpid" : "00:00:00:00:00:00:00:03",
+				"number" : 2
+			}
+		},
+		{
+			"type" : "PhysicalLink",
+			"name" : "L5",
+			"src" :
+			{
+				"type" : "PhysicalPort",
+				"dpid" : "00:00:00:00:00:00:00:02",
+				"number" : 4
+			},
+			"dst" :
+			{
+				"type" : "PhysicalPort",
+				"dpid" : "00:00:00:00:00:00:00:07",
+				"number" : 1
+			}
+		},
+		{
+			"type" : "PhysicalLink",
+			"name" : "L6",
+			"src" :
+			{
+				"type" : "PhysicalPort",
+				"dpid" : "00:00:00:00:00:00:00:03",
+				"number" : 1
+			},
+			"dst" :
+			{
+				"type" : "PhysicalPort",
+				"dpid" : "00:00:00:00:00:00:00:04",
+				"number" : 4
+			}
+		},
+		{
+			"type" : "PhysicalLink",
+			"name" : "L7",
+			"src" :
+			{
+				"type" : "PhysicalPort",
+				"dpid" : "00:00:00:00:00:00:00:03",
+				"number" : 3
+			},
+			"dst" :
+			{
+				"type" : "PhysicalPort",
+				"dpid" : "00:00:00:00:00:00:00:06",
+				"number" : 2
+			}
+		},
+		{
+			"type" : "PhysicalLink",
+			"name" : "L8",
+			"src" :
+			{
+				"type" : "PhysicalPort",
+				"dpid" : "00:00:00:00:00:00:00:04",
+				"number" : 1
+			},
+			"dst" :
+			{
+				"type" : "PhysicalPort",
+				"dpid" : "00:00:00:00:00:00:00:05",
+				"number" : 2
+			}
+		},
+		{
+			"type" : "PhysicalLink",
+			"name" : "L9",
+			"src" :
+			{
+				"type" : "PhysicalPort",
+				"dpid" : "00:00:00:00:00:00:00:04",
+				"number" : 3
+			},
+			"dst" :
+			{
+				"type" : "PhysicalPort",
+				"dpid" : "00:00:00:00:00:00:00:07",
+				"number" : 2
+			}
+		},
+		{
+			"type" : "PhysicalLink",
+			"name" : "L10",
+			"src" :
+			{
+				"type" : "PhysicalPort",
+				"dpid" : "00:00:00:00:00:00:00:06",
+				"number" : 1
+			},
+			"dst" :
+			{
+				"type" : "PhysicalPort",
+				"dpid" : "00:00:00:00:00:00:00:07",
+				"number" : 3
+			}
+		}
+	]
+}
