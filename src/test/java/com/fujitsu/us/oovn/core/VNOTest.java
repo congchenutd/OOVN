@@ -83,8 +83,8 @@ public class VNOTest
         vno.deactivate();
         assertThat(vno.getState(), is(VNO.VNOState.INACTIVE));
         
-        vno.decommission();
-        assertThat(vno.getState(), is(VNO.VNOState.DECOMMISSIONED));
+//        vno.decommission();
+//        assertThat(vno.getState(), is(VNO.VNOState.DECOMMISSIONED));
     }
     
 }

@@ -65,7 +65,10 @@ public class VirtualLinkFactory extends ElementFactory {
         
         List<PhysicalLink> path = new LinkedList<PhysicalLink>();
         for (JsonElement e : pathJson)
-            path.add((PhysicalLink) ElementFactory.fromJson("PhysicalLink", (JsonObject) e, parentJson));
+        {
+            PhysicalLink plink = (PhysicalLink) ElementFactory.fromJson("PhysicalLink", (JsonObject) e, parentJson);
+            path.add(plink);
+        }
         if (!path.isEmpty())
             link.setPath(path);
 

@@ -1,15 +1,21 @@
 package com.fujitsu.us.oovn.demo;
 
 import java.io.*;
+import java.util.Map;
 
+import com.fujitsu.us.oovn.controller.LearningSwitchController;
 import com.fujitsu.us.oovn.core.Tenant;
 import com.fujitsu.us.oovn.core.VNO;
+import com.fujitsu.us.oovn.element.host.Host;
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.exception.InvalidVNOOperationException;
+import com.fujitsu.us.oovn.map.GlobalMap;
+import com.fujitsu.us.oovn.verification.VerificationResult;
 
 public class Demo
 {
     private static Tenant _tenant;
+    private static LearningSwitchController _controller;
     
     public static void menu()
     {
@@ -32,7 +38,7 @@ public class Demo
             switch(Integer.valueOf(read()))
             {
             case 0:
-                print("Bye!");
+                bye();
                 return;
             case 1:
                 create();
@@ -86,11 +92,27 @@ public class Demo
         if(vno == null)
             return;
         
+        VerificationResult verficationResult = null;
         try {
-            vno.verify();
-            print("VNO (ID = " + vno.getID() + ") verified.\n");
+            verficationResult = vno.verify();
         } catch (InvalidVNOOperationException e) {
             e.printStackTrace();
+        }
+        
+        if(!verficationResult.isPassed())
+        {
+            print("VNO (ID = " + vno.getID() + ") failed the verification\n");
+            print(verficationResult.toString() + "\n");
+            return;
+        }
+        
+        print("VNO (ID = " + vno.getID() + ") verified.\n");
+            
+        Map<Integer, Host> hosts = vno.getNetwork().getHosts();
+        for(Map.Entry<Integer, Host> entry: hosts.entrySet())
+        {
+            Host host = entry.getValue();
+            _controller.addToGroup(host.getIPAddress(), vno.getID());
         }
     }
     
@@ -136,6 +158,12 @@ public class Demo
         }
     }
     
+    private static void bye()
+    {
+        GlobalMap.getInstance().clear();
+        print("Bye!");
+    }
+    
     private static VNO chooseVNO()
     {
         print("VNO ID = ");
@@ -162,11 +190,13 @@ public class Demo
         }
     }
     
-//    public static void main(String[] args)
-//    {
-//        PhysicalNetwork.init("PhysicalConfigDemo.json");
-//        _tenant = new Tenant("Demo");
-//        menu();
-//    }
+    public static void main(String[] args) throws IOException
+    {
+        PhysicalNetwork.init("DemoP.json");
+        GlobalMap.getInstance();
+        _controller = new LearningSwitchController(6633);
+        _tenant = new Tenant("Demo");
+        menu();
+    }
 
 }

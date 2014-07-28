@@ -1,0 +1,158 @@
+{
+	"id" : 1,
+	"name" : "Carl",
+	"vno" :
+	{
+		"address" : "10.0.0.0",
+		"mask" : 24,
+		"switches" : [
+			{
+				"type" : "SingleSwitch",
+				"name" : "VS4",
+				"dpid" : "a:b:c:0:0:0:0:4",
+				"physical" : "0:0:0:0:0:0:0:4",
+				"ports" : [
+					3,
+					6
+				]
+			},
+			{
+				"type" : "SingleSwitch",
+				"name" : "VS5",
+				"dpid" : "a:b:c:0:0:0:0:5",
+				"physical" : "0:0:0:0:0:0:0:7",
+				"ports" : [
+					1,
+					2,
+					3
+				]
+			},
+			{
+				"type" : "SingleSwitch",
+				"name" : "VS6",
+				"dpid" : "a:b:c:0:0:0:0:6",
+				"physical" : "0:0:0:0:0:0:0:2",
+				"ports" : [
+					4,
+					6
+				]
+			},
+			{
+				"type" : "SingleSwitch",
+				"name" : "VS7",
+				"dpid" : "a:b:c:0:0:0:0:7",
+				"physical" : "0:0:0:0:0:0:0:6",
+				"ports" : [
+					1
+				]
+			}
+		],
+		"links" : [
+			{
+				"name" : "VL1",
+				"src" :
+				{
+					"dpid" : "a:b:c:0:0:0:0:5",
+					"number" : 1
+				},
+				"dst" :
+				{
+					"dpid" : "a:b:c:0:0:0:0:4",
+					"number" : 1
+				},
+				"path" : [
+					{
+						"src" :
+						{
+							"dpid" : "00:00:00:00:00:00:00:07",
+							"number" : 2
+						},
+						"dst" :
+						{
+							"dpid" : "00:00:00:00:00:00:00:04",
+							"number" : 3
+						}
+					}
+				]
+			},
+			{
+				"name" : "VL2",
+				"src" :
+				{
+					"dpid" : "a:b:c:0:0:0:0:5",
+					"number" : 2
+				},
+				"dst" :
+				{
+					"dpid" : "a:b:c:0:0:0:0:6",
+					"number" : 1
+				},
+				"path" : [
+					{
+						"src" :
+						{
+							"dpid" : "00:00:00:00:00:00:00:07",
+							"number" : 1
+						},
+						"dst" :
+						{
+							"dpid" : "00:00:00:00:00:00:00:02",
+							"number" : 4
+						}
+					}
+				]
+			},
+			{
+				"name" : "VL3",
+				"src" :
+				{
+					"dpid" : "a:b:c:0:0:0:0:5",
+					"number" : 3
+				},
+				"dst" :
+				{
+					"dpid" : "a:b:c:0:0:0:0:7",
+					"number" : 1
+				},
+				"path" : [
+					{
+						"src" :
+						{
+							"dpid" : "00:00:00:00:00:00:00:07",
+							"number" : 3
+						},
+						"dst" :
+						{
+							"dpid" : "00:00:00:00:00:00:00:06",
+							"number" : 1
+						}
+					}
+				]
+			}
+		],
+		"hosts" : [
+			{
+				"id" : 5,
+				"name" : "h5",
+				"mac" : "0a:00:00:00:00:05",
+				"ip" : "10.0.0.5",
+				"port" :
+				{
+					"dpid" : "a:b:c:0:0:0:0:4",
+					"number" : 2
+				}
+			},
+			{
+				"id" : 3,
+				"name" : "h2",
+				"mac" : "0a:00:00:00:00:03",
+				"ip" : "10.0.0.3",
+				"port" :
+				{
+					"dpid" : "a:b:c:0:0:0:0:6",
+					"number" : 2
+				}
+			}
+		]
+	}
+}

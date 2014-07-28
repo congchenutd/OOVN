@@ -3,7 +3,7 @@
 	"name" : "Carl",
 	"vno" :
 	{
-		"address" : "192.168.0.0",
+		"address" : "10.0.0.0",
 		"mask" : 24,
 		"switches" : [
 			{
@@ -13,7 +13,8 @@
 				"physical" : "0:0:0:0:0:0:0:1",
 				"ports" : [
 					1,
-					2
+					2,
+					3
 				]
 			},
 			{
@@ -23,7 +24,8 @@
 				"physical" : "0:0:0:0:0:0:0:2",
 				"ports" : [
 					1,
-					2
+					2,
+					5
 				]
 			},
 			{
@@ -33,38 +35,33 @@
 				"physical" : "0:0:0:0:0:0:0:4",
 				"ports" : [
 					1,
-					2
+					2,
+					5
 				]
 			}
 		],
 		"links" : [
 			{
-				"type": "VirtualLink",
 				"name" : "VL1",
 				"src" :
 				{
-					"type" : "VirtualPort",
 					"dpid" : "a:b:c:0:0:0:0:1",
 					"number" : 2
 				},
 				"dst" :
 				{
-					"type" : "VirtualPort",
 					"dpid" : "a:b:c:0:0:0:0:2",
 					"number" : 1
 				},
 				"path" : [
 					{
-						"type" : "PhysicalLink",
 						"src" :
 						{
-							"type" : "PhysicalPort",
 							"dpid" : "00:00:00:00:00:00:00:01",
 							"number" : 2
 						},
 						"dst" :
 						{
-							"type" : "PhysicalPort",
 							"dpid" : "00:00:00:00:00:00:00:02",
 							"number" : 1
 						}
@@ -72,47 +69,38 @@
 				]
 			},
 			{
-				"type": "VirtualLink",
 				"name" : "VL2",
 				"src" :
 				{
-					"type" : "VirtualPort",
 					"dpid" : "a:b:c:0:0:0:0:1",
 					"number" : 1
 				},
 				"dst" :
 				{
-					"type" : "VirtualPort",
 					"dpid" : "a:b:c:0:0:0:0:3",
 					"number" : 1
 				},
 				"path" : [
 					{
-						"type" : "PhysicalLink",
 						"src" :
 						{
-							"type" : "PhysicalPort",
 							"dpid" : "00:00:00:00:00:00:00:01",
 							"number" : 1
 						},
 						"dst" :
 						{
-							"type" : "PhysicalPort",
 							"dpid" : "00:00:00:00:00:00:00:05",
 							"number" : 1
 						}
 					},
 					{
-						"type" : "PhysicalLink",
 						"src" :
 						{
-							"type" : "PhysicalPort",
 							"dpid" : "00:00:00:00:00:00:00:05",
 							"number" : 2
 						},
 						"dst" :
 						{
-							"type" : "PhysicalPort",
 							"dpid" : "00:00:00:00:00:00:00:04",
 							"number" : 1
 						}
@@ -120,32 +108,26 @@
 				]
 			},
 			{
-				"type": "VirtualLink",
 				"name" : "VL3",
 				"src" :
 				{
-					"type" : "VirtualPort",
 					"dpid" : "a:b:c:0:0:0:0:2",
 					"number" : 2
 				},
 				"dst" :
 				{
-					"type" : "VirtualPort",
 					"dpid" : "a:b:c:0:0:0:0:3",
 					"number" : 2
 				},
 				"path" : [
 					{
-						"type" : "PhysicalLink",
 						"src" :
 						{
-							"type" : "PhysicalPort",
 							"dpid" : "00:00:00:00:00:00:00:02",
 							"number" : 2
 						},
 						"dst" :
 						{
-							"type" : "PhysicalPort",
 							"dpid" : "00:00:00:00:00:00:00:04",
 							"number" : 2
 						}
@@ -155,29 +137,36 @@
 		],
 		"hosts" : [
 			{
-				"type": "Host",
 				"id" : 1,
 				"name" : "h1",
 				"mac" : "0a:00:00:00:00:01",
-				"ip" : "192.168.1.101",
+				"ip" : "10.0.0.1",
 				"port" :
 				{
-					"type" : "VirtualPort",
 					"dpid" : "a:b:c:0:0:0:0:1",
-					"number" : 1
+					"number" : 3
 				}
 			},
 			{
-				"type": "Host",
 				"id" : 2,
 				"name" : "h2",
 				"mac" : "0a:00:00:00:00:02",
-				"ip" : "192.168.1.102",
+				"ip" : "10.0.0.2",
 				"port" :
 				{
-					"type" : "VirtualPort",
 					"dpid" : "a:b:c:0:0:0:0:2",
-					"number" : 2
+					"number" : 3
+				}
+			},
+			{
+				"id" : 3,
+				"name" : "h3",
+				"mac" : "0a:00:00:00:00:03",
+				"ip" : "10.0.0.3",
+				"port" :
+				{
+					"dpid" : "a:b:c:0:0:0:0:3",
+					"number" : 3
 				}
 			}
 		]

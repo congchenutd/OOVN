@@ -1,5 +1,6 @@
 package com.fujitsu.us.oovn.element.network;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,6 +62,10 @@ public class VirtualNetwork extends Network<VirtualSwitch, VirtualLink, VirtualP
     public void addHost(Host host) {
         if(host != null)
             _hosts.put(host.getID(), host);
+    }
+    
+    public Map<Integer, Host> getHosts() {
+        return Collections.unmodifiableMap(_hosts);
     }
     
     @Override

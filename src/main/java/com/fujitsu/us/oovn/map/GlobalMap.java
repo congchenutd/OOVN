@@ -30,7 +30,7 @@ public class GlobalMap extends MapBase
         super();
         try(Transaction tx = _graphDb.beginTx())
         {
-            query("MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r");
+            clear();
             PhysicalNetwork.getInstance().createInDB(this);
             tx.success();
         }

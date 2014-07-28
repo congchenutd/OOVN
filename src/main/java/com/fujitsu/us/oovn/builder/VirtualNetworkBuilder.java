@@ -6,6 +6,7 @@ import com.fujitsu.us.oovn.element.address.*;
 import com.fujitsu.us.oovn.element.datapath.Switch;
 import com.fujitsu.us.oovn.element.host.*;
 import com.fujitsu.us.oovn.element.link.Link;
+import com.fujitsu.us.oovn.element.link.VirtualLink;
 import com.fujitsu.us.oovn.element.network.*;
 import com.fujitsu.us.oovn.element.port.*;
 import com.fujitsu.us.oovn.exception.*;
@@ -45,8 +46,11 @@ public class VirtualNetworkBuilder implements NetworkBuilder
 
         JsonArray linksJson = vnoJson.get("links").getAsJsonArray();
         for (JsonElement e : linksJson)
-            network.addLink((Link) ElementFactory.fromJson(
-                    "VirtualLink", (JsonObject) e, null, vno));
+        {
+            VirtualLink link = (VirtualLink) ElementFactory.fromJson(
+                    "VirtualLink", (JsonObject) e, null, vno);
+            network.addLink(link);
+        }
         
         // hosts
         JsonArray hostsJson = vnoJson.getAsJsonArray("hosts");

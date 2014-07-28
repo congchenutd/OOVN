@@ -8,6 +8,7 @@ import org.neo4j.graphdb.Node;
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.NetworkElement;
 import com.fujitsu.us.oovn.element.datapath.VirtualSwitch;
+import com.fujitsu.us.oovn.element.port.PhysicalPort;
 import com.fujitsu.us.oovn.element.port.VirtualPort;
 import com.fujitsu.us.oovn.map.MapBase;
 import com.google.gson.JsonArray;
@@ -34,8 +35,14 @@ public class VirtualLink extends Link<VirtualSwitch, VirtualPort> implements Net
         if(path == null || path.isEmpty())
             return;
         
-        if(path.get(0)            .getSrcPort().equals(getSrcPort().getPhysicalPort()) && 
-           path.get(path.size()-1).getDstPort().equals(getDstPort().getPhysicalPort()))
+        PhysicalLink firstLink = path.get(0);
+        PhysicalLink lastLink  = path.get(path.size()-1);
+        
+        PhysicalPort srcPort = getSrcPort().getPhysicalPort();
+        PhysicalPort dstPort = getDstPort().getPhysicalPort();
+        
+        if(firstLink.contains(srcPort) && 
+           lastLink .contains(dstPort))
            _path = path;
     }
     

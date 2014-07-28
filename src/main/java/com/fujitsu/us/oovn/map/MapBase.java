@@ -226,6 +226,13 @@ public class MapBase
         }
     }
     
+    public void clear()
+    {
+        try(Transaction tx = _graphDb.beginTx()) {
+            query("MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n,r");
+        }
+    }
+    
     protected final RestGraphDatabase     _graphDb;
     protected final RestCypherQueryEngine _engine;
     

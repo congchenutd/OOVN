@@ -25,4 +25,8 @@ public class VerificationResult
         return _message;
     }
     
+    @Override
+    public String toString() {
+        return getMessage();
+    }
 }
