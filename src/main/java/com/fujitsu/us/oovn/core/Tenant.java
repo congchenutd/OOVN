@@ -1,5 +1,6 @@
 package com.fujitsu.us.oovn.core;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -85,7 +86,7 @@ public class Tenant
 //            vno.deactivate();
 //            vno.decommission();
             }
-        } catch (InvalidVNOOperationException e) {
+        } catch (InvalidVNOOperationException|IOException e) {
             e.printStackTrace();
         }
     }

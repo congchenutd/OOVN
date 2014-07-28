@@ -7,7 +7,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.rest.graphdb.query.RestQueryResult;
 
 import com.fujitsu.us.oovn.core.VNO;
-import com.fujitsu.us.oovn.element.Persistable;
+import com.fujitsu.us.oovn.element.NetworkElement;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
 import com.fujitsu.us.oovn.element.link.PhysicalLink;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
@@ -48,11 +48,11 @@ public class TopologyVerifier extends Verifier
                 " WHERE mapCount > 1" +
                 " RETURN p");
         
-        System.out.println(
-                "MATCH (v:Virtual {vnoid:" + vno.getID() + "})-[:Maps]->(p:ZPhysical)" +
-                " WITH p, count(v) AS mapCount" +
-                " WHERE mapCount > 1" +
-                " RETURN p");
+//        System.out.println(
+//                "MATCH (v:Virtual {vnoid:" + vno.getID() + "})-[:Maps]->(p:ZPhysical)" +
+//                " WITH p, count(v) AS mapCount" +
+//                " WHERE mapCount > 1" +
+//                " RETURN p");
         Iterator<Node> it = result.to(Node.class).iterator();
         
         // remove the vno from the global map
@@ -70,7 +70,7 @@ public class TopologyVerifier extends Verifier
     /**
      * Generate a physical element from a db node
      */
-    private Persistable fromNode(Node node)
+    private NetworkElement fromNode(Node node)
     {
         if(node.hasLabel(DynamicLabel.label("ZPhysical")))
         {

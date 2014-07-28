@@ -1,16 +1,25 @@
 package com.fujitsu.us.oovn.core;
 
+import java.io.IOException;
+
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.hamcrest.CoreMatchers.is;
 
+import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.exception.InvalidVNOOperationException;
 
 public class VNOTest
 {
-
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception
+    {
+        PhysicalNetwork.init("PhysicalConfig.json");
+    }
+    
     /**
      * Test the state transition of a VNO
      * Any invalid operation should trigger a InvalidVNOOperationException
@@ -32,11 +41,18 @@ public class VNOTest
         }
         
         // failed init
-        vno.init("NoSuchFile.json");
-        assertThat(vno.getState(), is(VNO.VNOState.UNCONFIGURED));
+        try {
+            vno.init("NoSuchFile.json");
+            fail("Expected an NoSuchFileException to be thrown");
+        } catch (IOException e) {
+            assertThat(vno.getState(), is(VNO.VNOState.UNCONFIGURED));
+        }
         
         // successful init
-        vno.init("VirtualConfig1.json");
+        try {
+            vno.init("VirtualConfig1.json");
+        } catch(Exception e) {
+        }
         assertThat(vno.getState(), is(VNO.VNOState.UNVERIFIED));
         
         // should verify() before activate()
