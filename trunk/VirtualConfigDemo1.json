@@ -1,0 +1,185 @@
+{
+	"id" : 1,
+	"name" : "Carl",
+	"vno" :
+	{
+		"address" : "192.168.0.0",
+		"mask" : 24,
+		"switches" : [
+			{
+				"type" : "SingleSwitch",
+				"name" : "VS1",
+				"dpid" : "a:b:c:0:0:0:0:1",
+				"physical" : "0:0:0:0:0:0:0:1",
+				"ports" : [
+					1,
+					2
+				]
+			},
+			{
+				"type" : "SingleSwitch",
+				"name" : "VS2",
+				"dpid" : "a:b:c:0:0:0:0:2",
+				"physical" : "0:0:0:0:0:0:0:2",
+				"ports" : [
+					1,
+					2
+				]
+			},
+			{
+				"type" : "SingleSwitch",
+				"name" : "VS3",
+				"dpid" : "a:b:c:0:0:0:0:3",
+				"physical" : "0:0:0:0:0:0:0:4",
+				"ports" : [
+					1,
+					2
+				]
+			}
+		],
+		"links" : [
+			{
+				"type": "VirtualLink",
+				"name" : "VL1",
+				"src" :
+				{
+					"type" : "VirtualPort",
+					"dpid" : "a:b:c:0:0:0:0:1",
+					"number" : 2
+				},
+				"dst" :
+				{
+					"type" : "VirtualPort",
+					"dpid" : "a:b:c:0:0:0:0:2",
+					"number" : 1
+				},
+				"path" : [
+					{
+						"type" : "PhysicalLink",
+						"src" :
+						{
+							"type" : "PhysicalPort",
+							"dpid" : "00:00:00:00:00:00:00:01",
+							"number" : 2
+						},
+						"dst" :
+						{
+							"type" : "PhysicalPort",
+							"dpid" : "00:00:00:00:00:00:00:02",
+							"number" : 1
+						}
+					}
+				]
+			},
+			{
+				"type": "VirtualLink",
+				"name" : "VL2",
+				"src" :
+				{
+					"type" : "VirtualPort",
+					"dpid" : "a:b:c:0:0:0:0:1",
+					"number" : 1
+				},
+				"dst" :
+				{
+					"type" : "VirtualPort",
+					"dpid" : "a:b:c:0:0:0:0:3",
+					"number" : 1
+				},
+				"path" : [
+					{
+						"type" : "PhysicalLink",
+						"src" :
+						{
+							"type" : "PhysicalPort",
+							"dpid" : "00:00:00:00:00:00:00:01",
+							"number" : 1
+						},
+						"dst" :
+						{
+							"type" : "PhysicalPort",
+							"dpid" : "00:00:00:00:00:00:00:05",
+							"number" : 1
+						}
+					},
+					{
+						"type" : "PhysicalLink",
+						"src" :
+						{
+							"type" : "PhysicalPort",
+							"dpid" : "00:00:00:00:00:00:00:05",
+							"number" : 2
+						},
+						"dst" :
+						{
+							"type" : "PhysicalPort",
+							"dpid" : "00:00:00:00:00:00:00:04",
+							"number" : 1
+						}
+					}
+				]
+			},
+			{
+				"type": "VirtualLink",
+				"name" : "VL3",
+				"src" :
+				{
+					"type" : "VirtualPort",
+					"dpid" : "a:b:c:0:0:0:0:2",
+					"number" : 2
+				},
+				"dst" :
+				{
+					"type" : "VirtualPort",
+					"dpid" : "a:b:c:0:0:0:0:3",
+					"number" : 2
+				},
+				"path" : [
+					{
+						"type" : "PhysicalLink",
+						"src" :
+						{
+							"type" : "PhysicalPort",
+							"dpid" : "00:00:00:00:00:00:00:02",
+							"number" : 2
+						},
+						"dst" :
+						{
+							"type" : "PhysicalPort",
+							"dpid" : "00:00:00:00:00:00:00:04",
+							"number" : 2
+						}
+					}
+				]
+			}
+		],
+		"hosts" : [
+			{
+				"type": "Host",
+				"id" : 1,
+				"name" : "h1",
+				"mac" : "0a:00:00:00:00:01",
+				"ip" : "192.168.1.101",
+				"port" :
+				{
+					"type" : "VirtualPort",
+					"dpid" : "a:b:c:0:0:0:0:1",
+					"number" : 1
+				}
+			},
+			{
+				"type": "Host",
+				"id" : 2,
+				"name" : "h2",
+				"mac" : "0a:00:00:00:00:02",
+				"ip" : "192.168.1.102",
+				"port" :
+				{
+					"type" : "VirtualPort",
+					"dpid" : "a:b:c:0:0:0:0:2",
+					"number" : 2
+				}
+			}
+		]
+	}
+}
