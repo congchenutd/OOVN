@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import com.fujitsu.us.oovn.builder.PhysicalNetworkBuilder;
-import com.fujitsu.us.oovn.element.Persistable;
+import com.fujitsu.us.oovn.element.NetworkElement;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
 import com.fujitsu.us.oovn.element.link.PhysicalLink;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
@@ -19,18 +19,20 @@ import com.google.gson.JsonParser;
  *
  */
 public class PhysicalNetwork extends Network<PhysicalSwitch, PhysicalLink, PhysicalPort>
-                             implements Persistable
+                             implements NetworkElement
 {
-    // initialize the network from a json configuration
-    // TODO: from discovery
-    static
+    /**
+     * initialize the network from a json configuration file
+     * TODO: from discovery
+     */
+    public static void init(String configFileName)
     {
         try
         {
-            String config = new String(Files.readAllBytes(Paths.get("PhysicalConfig.json")));
+            String config = new String(Files.readAllBytes(Paths.get(configFileName)));
             JsonObject json = (JsonObject) new JsonParser().parse(config);
             PhysicalNetwork pnw = PhysicalNetwork.getInstance();
-            new PhysicalNetworkBuilder().build(json, pnw);
+            new PhysicalNetworkBuilder().build(json, pnw, null);
         }
         catch (IOException | InvalidNetworkConfigurationException e) {
             e.printStackTrace();

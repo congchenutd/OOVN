@@ -3,7 +3,9 @@ package com.fujitsu.us.oovn.builder;
 
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.address.*;
+import com.fujitsu.us.oovn.element.datapath.Switch;
 import com.fujitsu.us.oovn.element.host.*;
+import com.fujitsu.us.oovn.element.link.Link;
 import com.fujitsu.us.oovn.element.network.*;
 import com.fujitsu.us.oovn.element.port.*;
 import com.fujitsu.us.oovn.exception.*;
@@ -15,14 +17,15 @@ import com.google.gson.*;
  * 
  * @author Cong Chen <Cong.Chen@us.fujitsu.com>
  */
-public class VirtualNetworkBuilder extends NetworkBuilder
+public class VirtualNetworkBuilder implements NetworkBuilder
 {
     public void build(VNO vno) throws InvalidNetworkConfigurationException {
         build(vno.getConfiguration().toJson(), vno.getNetwork(), vno);
     }
     
+    @SuppressWarnings("unchecked")
     @Override
-    protected void build(JsonObject json, Network network, VNO vno) 
+    public void build(JsonObject json, Network network, VNO vno) 
                                 throws InvalidNetworkConfigurationException
     {
         JsonObject vnoJson = json.getAsJsonObject("vno");
@@ -35,7 +38,15 @@ public class VirtualNetworkBuilder extends NetworkBuilder
         vnw.setMask(mask);
         
         // network
-        super.build(vnoJson, network, vno);
+        JsonArray switchesJson = vnoJson.get("switches").getAsJsonArray();
+        for (JsonElement e : switchesJson)
+            network.addSwitch((Switch) ElementFactory.fromJson(
+                    null, (JsonObject) e, null, vno));
+
+        JsonArray linksJson = vnoJson.get("links").getAsJsonArray();
+        for (JsonElement e : linksJson)
+            network.addLink((Link) ElementFactory.fromJson(
+                    "VirtualLink", (JsonObject) e, null, vno));
         
         // hosts
         JsonArray hostsJson = vnoJson.getAsJsonArray("hosts");
@@ -60,7 +71,7 @@ public class VirtualNetworkBuilder extends NetworkBuilder
         Host host = new Host(id, name, mac, ip);
         
         JsonObject portJson = json.get("port").getAsJsonObject();
-        host.setPort((VirtualPort) ElementFactory.fromJson(portJson, vno));
+        host.setPort((VirtualPort) ElementFactory.fromJson("VirtualPort", portJson, null, vno));
         
         return host;
     }

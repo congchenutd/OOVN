@@ -23,20 +23,30 @@ public class PhysicalLinkFactory extends ElementFactory {
     }
 
     @Override
-    protected PhysicalLink create(JsonObject json, VNO vno) 
+    protected PhysicalLink create(JsonObject json, JsonObject parentJson, VNO vno) 
                                     throws InvalidNetworkConfigurationException
     {
+        if(json == null)
+            throw new InvalidNetworkConfigurationException(
+                                    "No definition for this PhysicalLink");
+        
+        if(!json.has("src"))
+            throw new InvalidNetworkConfigurationException("No src port. Json: " + json);
+        if(!json.has("dst"))
+            throw new InvalidNetworkConfigurationException("No dst port. Json: " + json);
         JsonObject srcJson = json.get("src").getAsJsonObject();
         JsonObject dstJson = json.get("dst").getAsJsonObject();
         
-        PhysicalPort srcPort = (PhysicalPort) ElementFactory.fromJson(srcJson, null);
-        PhysicalPort dstPort = (PhysicalPort) ElementFactory.fromJson(dstJson, null);
+        PhysicalPort srcPort = (PhysicalPort) ElementFactory.fromJson("PhysicalPort", srcJson, null);
+        PhysicalPort dstPort = (PhysicalPort) ElementFactory.fromJson("PhysicalPort", dstJson, null);
 
         PhysicalLink link = PhysicalNetwork.getInstance().getLink(srcPort, dstPort);
         if(link != null)
             return link;
 
-        String name = json.get("name").getAsString();
+        // name is optional
+        String name = json.has("name") ? json.get("name").getAsString() 
+                                       : new String();
         return new PhysicalLink(name, srcPort, dstPort);
     }
 }

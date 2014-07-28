@@ -93,7 +93,7 @@ public class VNO
     
     
     ///////////// The major APIs tenant can call ////////////////
-    public void init(String configFileName) throws InvalidVNOOperationException {
+    public void init(String configFileName) throws InvalidVNOOperationException, IOException {
         _state.init(this, configFileName);
     }
     
@@ -123,19 +123,14 @@ public class VNO
         UNCONFIGURED
         {
             @Override
-            public void init(VNO vno, String configFileName)
+            public void init(VNO vno, String configFileName) throws IOException
             {
-                try {
-                    String config = new String(Files.readAllBytes(Paths.get(configFileName)));
-                    vno.setConfiguration(new NetworkConfiguration(
+                String config = new String(Files.readAllBytes(Paths.get(configFileName)));
+                vno.setConfiguration(new NetworkConfiguration(
                                     (JsonObject) new JsonParser().parse(config)));
 
-                    // if the config is loaded successfully, go to the next state
-                    vno.setState(UNVERIFIED);
-                }
-                catch(IOException e) {
-                    e.printStackTrace();
-                }
+                // if the config is loaded successfully, go to the next state
+                vno.setState(UNVERIFIED);
             }
         },
         UNVERIFIED
@@ -185,7 +180,7 @@ public class VNO
 
         };
         
-        public void init(VNO vno, String configFileName) {
+        public void init(VNO vno, String configFileName) throws IOException {
         }
         
         public VerificationResult verify(VNO vno) throws InvalidVNOOperationException {

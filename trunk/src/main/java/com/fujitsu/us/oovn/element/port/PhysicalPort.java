@@ -2,7 +2,7 @@ package com.fujitsu.us.oovn.element.port;
 
 import org.neo4j.graphdb.Node;
 
-import com.fujitsu.us.oovn.element.Persistable;
+import com.fujitsu.us.oovn.element.NetworkElement;
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
@@ -12,7 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class PhysicalPort extends Port<PhysicalSwitch, PhysicalLink> 
-                          implements Persistable
+                          implements NetworkElement
 {
     public PhysicalPort(int number, MACAddress mac) {
         super(number, mac);

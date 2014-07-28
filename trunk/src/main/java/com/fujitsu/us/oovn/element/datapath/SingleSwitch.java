@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.fujitsu.us.oovn.core.VNO;
-import com.fujitsu.us.oovn.element.Persistable;
+import com.fujitsu.us.oovn.element.NetworkElement;
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.map.MapBase;
 import com.google.gson.JsonElement;
@@ -15,7 +15,7 @@ import com.google.gson.JsonObject;
  * @author Cong Chen <Cong.Chen@us.fujitsu.com>
  *
  */
-public class SingleSwitch extends VirtualSwitch implements Persistable
+public class SingleSwitch extends VirtualSwitch implements NetworkElement
 {
     private PhysicalSwitch _physicalSwitch;
     

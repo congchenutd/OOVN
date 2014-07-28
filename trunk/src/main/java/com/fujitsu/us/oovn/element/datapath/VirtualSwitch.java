@@ -5,11 +5,10 @@ import java.util.List;
 import org.neo4j.graphdb.Node;
 
 import com.fujitsu.us.oovn.core.VNO;
-import com.fujitsu.us.oovn.element.Persistable;
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.port.VirtualPort;
 
-public abstract class VirtualSwitch extends Switch<VirtualPort> implements Persistable
+public abstract class VirtualSwitch extends Switch<VirtualPort>
 {
     protected final VNO _vno;
 

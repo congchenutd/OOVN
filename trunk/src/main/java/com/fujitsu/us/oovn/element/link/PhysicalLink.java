@@ -2,14 +2,14 @@ package com.fujitsu.us.oovn.element.link;
 
 import org.neo4j.graphdb.Node;
 
-import com.fujitsu.us.oovn.element.Persistable;
+import com.fujitsu.us.oovn.element.NetworkElement;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-public class PhysicalLink extends Link<PhysicalSwitch, PhysicalPort> implements Persistable
+public class PhysicalLink extends Link<PhysicalSwitch, PhysicalPort> implements NetworkElement
 {
     public PhysicalLink(String name, PhysicalPort src, PhysicalPort dst) {
         super(name, src, dst);

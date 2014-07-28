@@ -3,6 +3,7 @@ package com.fujitsu.us.oovn.map;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -46,6 +47,7 @@ public class MapTest
          * |  |  |  |  |  |  |
          * 1-VS3-2-----1-VS4-2
          */
+        PhysicalNetwork.init("PhysicalConfig.json");
         _pnw = PhysicalNetwork.getInstance();
         _globalMap = GlobalMap.getInstance();
         
@@ -175,7 +177,7 @@ public class MapTest
     }
     
     @Test
-    public void testWrongMapping() throws InvalidVNOOperationException
+    public void testWrongMapping() throws InvalidVNOOperationException, IOException
     {
         VNO vno3 = new VNO(new Tenant("Tenant"));
 
