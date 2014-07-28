@@ -3,8 +3,11 @@ package com.fujitsu.us.oovn.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
@@ -16,6 +19,8 @@ import org.openflow.protocol.action.OFAction;
 import org.openflow.protocol.action.OFActionOutput;
 import org.openflow.util.U16;
 
+import com.fujitsu.us.oovn.element.address.IPAddress;
+
 /**
  * Making a switch a learning switch
  * 
@@ -24,12 +29,29 @@ import org.openflow.util.U16;
  */
 public class LearningSwitchController extends Controller
 {
+    private final Map<IPAddress, Integer> _groups;
+    
+    
     /**
      * @param port
      * @throws IOException
      */
     public LearningSwitchController(int port) throws IOException {
         super(port);
+        _groups = new HashMap<IPAddress, Integer>();
+    }
+    
+    public void addToGroup(IPAddress ip, int vnoID) {
+        _groups.put(ip, vnoID);
+    }
+    
+    private boolean sameGroup(IPAddress ip1, IPAddress ip2)
+    {
+        if(!_groups.containsKey(ip1) || !_groups.containsKey(ip2))
+            return false;
+        int vnoID1 = _groups.get(ip1);
+        int vnoID2 = _groups.get(ip2);
+        return vnoID1 == vnoID2;
     }
     
     @Override
@@ -38,6 +60,13 @@ public class LearningSwitchController extends Controller
         // Build a Match object
         OFMatch match = new OFMatch();
         match.loadFromPacket(packetIn.getPacketData(), packetIn.getInPort());
+        
+        // get the src and dst ips
+        int srcIP = match.getNetworkSource();
+        int dstIP = match.getNetworkDestination();
+        if(!sameGroup(new IPAddress(srcIP), new IPAddress(dstIP)))
+            return;
+        
         byte[] dlDst = match.getDataLayerDestination();
         Integer dlDstKey = Arrays.hashCode(dlDst);
         byte[] dlSrc = match.getDataLayerSource();
@@ -147,7 +176,11 @@ public class LearningSwitchController extends Controller
     {
         try
         {
-            Controller controller = new LearningSwitchController(6634);
+            LearningSwitchController controller = new LearningSwitchController(6633);
+            controller.addToGroup(new IPAddress("10.0.0.1"), 1);
+            controller.addToGroup(new IPAddress("10.0.0.2"), 1);
+            controller.addToGroup(new IPAddress("10.0.0.3"), 2);
+            controller.addToGroup(new IPAddress("10.0.0.4"), 2);
             controller.run();
         }
         catch(IOException e) {

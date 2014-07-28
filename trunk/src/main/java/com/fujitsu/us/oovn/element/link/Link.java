@@ -63,6 +63,10 @@ public abstract class Link<SwitchType extends Switch, PortType extends Port> imp
                                                                      : null; 
     }
     
+    public boolean contains(PortType port) {
+        return getSrcPort().equals(port) || getDstPort().equals(port);
+    }
+    
     /**
      * @return whether srcPort and dstPort are connected by a link
      */

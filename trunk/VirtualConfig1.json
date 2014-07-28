@@ -29,7 +29,6 @@
 		],
 		"links" : [
 			{
-				"type": "VirtualLink",
 				"name" : "VL1",
 				"src" :
 				{

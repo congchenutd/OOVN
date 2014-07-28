@@ -12,14 +12,15 @@ public class IPAddress extends SectionedString
     public IPAddress(String ipString) {
         super(ipString, 4, '.');
     }
+    
+    public IPAddress(long ipValue) {
+        super(ipValue, 4, '.');
+    }
 
-//    @Override
-//    public int hashCode() {
-//        final int prime = 31;
-//        int result = 1;
-//        result = prime * result + _ip;
-//        return result;
-//    }
+    @Override
+    public int hashCode() {
+        return (int) toInt();
+    }
     
     @Override
     protected String printSection(byte b) {
