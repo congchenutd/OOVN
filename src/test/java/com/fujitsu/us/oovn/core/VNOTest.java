@@ -58,7 +58,7 @@ public class VNOTest
         // should verify() before activate()
         try
         {
-            vno.activate();
+            vno.start();
             fail("Expected an InvalidVNOOperationException to be thrown");
         } catch (InvalidVNOOperationException e) {
             assertThat(e.getMessage(), is("The VNO is not verified yet"));
@@ -71,16 +71,16 @@ public class VNOTest
         // cannot deactivate a non-active VNO
         try
         {
-            vno.deactivate();
+            vno.stop();
             fail("Expected an InvalidVNOOperationException to be thrown");
         } catch (InvalidVNOOperationException e) {
             assertThat(e.getMessage(), is("The VNO is not activated yet"));
         }
         
-        vno.activate();
+        vno.start();
         assertThat(vno.getState(), is(VNO.VNOState.ACTIVE));
         
-        vno.deactivate();
+        vno.stop();
         assertThat(vno.getState(), is(VNO.VNOState.INACTIVE));
         
 //        vno.decommission();

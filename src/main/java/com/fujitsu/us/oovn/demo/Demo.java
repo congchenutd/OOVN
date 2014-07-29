@@ -28,9 +28,8 @@ public class Demo
             print("* 2 - List           *\n");
             print("* 3 - Verify         *\n");
             print("* 4 - Start          *\n");
-            print("* 5 - Pause          *\n");
-            print("* 6 - Stop           *\n");
-            print("* 7 - Decommission   *\n");
+            print("* 5 - Stop           *\n");
+            print("* 6 - Decommission   *\n");
             print("* 0 - Exit the demo  *\n");
             print("**********************\n");
             print("Please choose your operation:\n");
@@ -50,14 +49,12 @@ public class Demo
                 verify();
                 break;
             case 4:
-                activate();
+                start();
                 break;
             case 5:
+                stop();
                 break;
             case 6:
-                deactivate();
-                break;
-            case 7:
                 decommission();
                 break;
             default:
@@ -116,28 +113,28 @@ public class Demo
         }
     }
     
-    private static void activate()
+    private static void start()
     {
         VNO vno = chooseVNO();
         if(vno == null)
             return;
         
         try {
-            vno.activate();
+            vno.start();
             print("VNO (ID = " + vno.getID() + ") activated.\n");
         } catch (InvalidVNOOperationException e) {
             e.printStackTrace();
         }
     }
     
-    private static void deactivate()
+    private static void stop()
     {
         VNO vno = chooseVNO();
         if(vno == null)
             return;
         
         try {
-            vno.deactivate();
+            vno.stop();
             print("VNO (ID = " + vno.getID() + ") deactivated.\n");
         } catch (InvalidVNOOperationException e) {
             e.printStackTrace();

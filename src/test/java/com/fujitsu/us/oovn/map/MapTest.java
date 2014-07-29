@@ -55,13 +55,13 @@ public class MapTest
         _vno1 = new VNO(new Tenant("Carl"));
         _vno1.init("VirtualConfig1.json");
         _vno1.verify();
-        _vno1.activate();
+        _vno1.start();
         _vnw1 = _vno1.getNetwork();
         
         _vno2 = new VNO(new Tenant("Carl"));
         _vno2.init("VirtualConfig2.json");
         _vno2.verify();
-        _vno2.activate();
+        _vno2.start();
         _vnw2 = _vno2.getNetwork();
     }
     

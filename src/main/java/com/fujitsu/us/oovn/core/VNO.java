@@ -101,12 +101,16 @@ public class VNO
         return _state.verify(this);
     }
     
-    public boolean activate() throws InvalidVNOOperationException {
-        return _state.activate(this);
+    public boolean start() throws InvalidVNOOperationException {
+        return _state.start(this);
     }
     
-    public boolean deactivate() throws InvalidVNOOperationException {
-        return _state.deactivate(this);
+    public boolean pause() throws InvalidVNOOperationException {
+        return _state.pause(this);
+    }
+    
+    public boolean stop() throws InvalidVNOOperationException {
+        return _state.stop(this);
     }
     
     public boolean decommission() throws InvalidVNOOperationException {
@@ -153,7 +157,7 @@ public class VNO
         INACTIVE
         {
             @Override
-            public boolean activate(VNO vno)
+            public boolean start(VNO vno)
             {
                 if(VNOArbitor.getInstance().activateVNO(vno))
                 {
@@ -167,7 +171,7 @@ public class VNO
         ACTIVE
         {
             @Override
-            public boolean deactivate(VNO vno)
+            public boolean stop(VNO vno)
             {
                 VNOArbitor.getInstance().deactivateVNO(vno);
                 vno.getMap().deactivateVNO();
@@ -187,12 +191,16 @@ public class VNO
             throw new InvalidVNOOperationException("The VNO is not initialized (configured) yet");
         }
         
-        public boolean activate(VNO vno) throws InvalidVNOOperationException {
+        public boolean start(VNO vno) throws InvalidVNOOperationException {
             throw new InvalidVNOOperationException("The VNO is not verified yet");
         }
         
-        public boolean deactivate(VNO vno) throws InvalidVNOOperationException {
-            throw new InvalidVNOOperationException("The VNO is not activated yet");
+        public boolean pause(VNO vno) throws InvalidVNOOperationException {
+            throw new InvalidVNOOperationException("The VNO is not started yet");
+        }
+        
+        public boolean stop(VNO vno) throws InvalidVNOOperationException {
+            throw new InvalidVNOOperationException("The VNO is not started yet");
         }
         
         public boolean decommission(VNO vno) throws InvalidVNOOperationException
