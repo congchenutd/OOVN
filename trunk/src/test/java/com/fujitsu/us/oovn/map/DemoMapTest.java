@@ -46,7 +46,7 @@ public class DemoMapTest
         _vno1 = new VNO(new Tenant("Carl"));
         _vno1.init("VirtualConfigDemo1.json");
         _vno1.verify();
-        _vno1.activate();
+        _vno1.start();
         _vnw1 = _vno1.getNetwork();
         
 //        _vno2 = new VNO(new Tenant("Carl"));

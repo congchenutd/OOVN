@@ -82,7 +82,7 @@ public class Tenant
 
             if(vno.verify().isPassed())
             {
-                vno.activate();
+                vno.start();
 //            vno.deactivate();
 //            vno.decommission();
             }
