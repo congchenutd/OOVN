@@ -47,7 +47,7 @@ public class SimpleController implements SelectListener {
     protected Map<SocketChannel,OFSwitch> switchSockets;
     protected Integer threadCount;
     protected int port;
-
+    
     protected class OFSwitch {
         protected SocketChannel sock;
         protected OFMessageAsyncStream stream;
@@ -58,7 +58,7 @@ public class SimpleController implements SelectListener {
             this.sock = sock;
             this.stream = stream;
         }
-
+        
         public void handlePacketIn(OFPacketIn pi) {
             // Build the Match
             OFMatch match = new OFMatch();

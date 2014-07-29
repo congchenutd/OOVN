@@ -16,6 +16,7 @@ public class Demo
 {
     private static Tenant _tenant;
     private static LearningSwitchController _controller;
+    private static Thread _thread;
     
     public static void menu()
     {
@@ -121,6 +122,7 @@ public class Demo
         
         try {
             vno.start();
+            _controller.start();
             print("VNO (ID = " + vno.getID() + ") activated.\n");
         } catch (InvalidVNOOperationException e) {
             e.printStackTrace();
@@ -135,6 +137,7 @@ public class Demo
         
         try {
             vno.stop();
+            _controller.stop();
             print("VNO (ID = " + vno.getID() + ") deactivated.\n");
         } catch (InvalidVNOOperationException e) {
             e.printStackTrace();
@@ -149,15 +152,19 @@ public class Demo
         
         try {
             vno.decommission();
+            _controller.stop();
             print("VNO (ID = " + vno.getID() + ") decommissioned.\n");
         } catch (InvalidVNOOperationException e) {
             e.printStackTrace();
         }
     }
     
+    @SuppressWarnings("deprecation")
     private static void bye()
     {
         GlobalMap.getInstance().clear();
+        _controller.stop();
+        _thread.stop();
         print("Bye!");
     }
     
@@ -191,8 +198,10 @@ public class Demo
     {
         PhysicalNetwork.init("DemoP.json");
         GlobalMap.getInstance();
-        _controller = new LearningSwitchController(6633);
         _tenant = new Tenant("Demo");
+        _controller = new LearningSwitchController(6633);
+        _thread = new Thread(_controller);
+        _thread.start();
         menu();
     }
 

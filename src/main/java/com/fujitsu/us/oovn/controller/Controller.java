@@ -84,7 +84,7 @@ public abstract class Controller implements EventHandler
         _channel2Switch.put(switchChannel, sw);
         
         // greet the switch
-        System.out.println("Got new connection from " + sw);
+//        System.out.println("Got new connection from " + sw);
         List<OFMessage> messages = new ArrayList<OFMessage>();
         messages.add(_factory.getMessage(OFType.HELLO));
         messages.add(_factory.getMessage(OFType.FEATURES_REQUEST));
@@ -132,7 +132,7 @@ public abstract class Controller implements EventHandler
                             
                             // simple events are handled here
                         case HELLO:
-                            System.out.println("GOT HELLO from " + sw);
+//                            System.out.println("GOT HELLO from " + sw);
                             break;
                         case ECHO_REQUEST:
                             OFEchoReply reply = (OFEchoReply) stream.getMessageFactory()
@@ -141,9 +141,10 @@ public abstract class Controller implements EventHandler
                             stream.write(reply);
                             break;
                         default:
-                            System.out.println("Unhandled OF message: " +
-                                                message.getType() + " from " +
-                                                channel.socket().getInetAddress());
+//                            System.out.println("Unhandled OF message: " +
+//                                                message.getType() + " from " +
+//                                                channel.socket().getInetAddress());
+                            break;
                     }
                 }
             }
