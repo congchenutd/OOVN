@@ -9,6 +9,7 @@ import java.util.List;
 import org.neo4j.graphdb.Node;
 
 import com.fujitsu.us.oovn.core.VNO;
+import com.fujitsu.us.oovn.element.NetworkElement;
 import com.fujitsu.us.oovn.element.link.PhysicalLink;
 import com.fujitsu.us.oovn.element.link.VirtualLink;
 import com.fujitsu.us.oovn.element.port.VirtualPort;
@@ -48,8 +49,8 @@ public class VirtualLinkFactory extends ElementFactory {
         JsonObject vSrcJson = json.get("src").getAsJsonObject();
         JsonObject vDstJson = json.get("dst").getAsJsonObject();
         
-        VirtualPort srcPort = (VirtualPort) ElementFactory.fromJson("VirtualPort", vSrcJson, parentJson, vno);
-        VirtualPort dstPort = (VirtualPort) ElementFactory.fromJson("VirtualPort", vDstJson, parentJson, vno);
+        VirtualPort srcPort = ElementFactory.fromJson(VirtualPort.class, vSrcJson, parentJson, vno);
+        VirtualPort dstPort = ElementFactory.fromJson(VirtualPort.class, vDstJson, parentJson, vno);
         
         // link exists
         VirtualLink link = vno.getNetwork().getLink(srcPort, dstPort);
@@ -66,13 +67,18 @@ public class VirtualLinkFactory extends ElementFactory {
         List<PhysicalLink> path = new LinkedList<PhysicalLink>();
         for (JsonElement e : pathJson)
         {
-            PhysicalLink plink = (PhysicalLink) ElementFactory.fromJson("PhysicalLink", (JsonObject) e, parentJson);
+            PhysicalLink plink = ElementFactory.fromJson(PhysicalLink.class, (JsonObject) e, parentJson, null);
             path.add(plink);
         }
         if (!path.isEmpty())
             link.setPath(path);
 
         return link;
+    }
+
+    @Override
+    protected Class<? extends NetworkElement> getProductType() {
+        return VirtualLink.class;
     }
 
 }

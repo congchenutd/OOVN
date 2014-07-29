@@ -23,6 +23,7 @@ public interface NetworkBuilder
      * @param vno       The VNO this network belongs to. Null for physical network
      * @throws InvalidNetworkConfigurationException
      */
+    @SuppressWarnings("rawtypes")
     public void build(JsonObject json, Network network, VNO vno) 
                                     throws InvalidNetworkConfigurationException;
 }

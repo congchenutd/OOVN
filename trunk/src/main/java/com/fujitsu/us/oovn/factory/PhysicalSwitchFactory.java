@@ -53,11 +53,16 @@ public class PhysicalSwitchFactory extends ElementFactory {
             for(JsonElement e: json.get("ports").getAsJsonArray())
             {
                 JsonObject jsonObj = e.getAsJsonObject();
-                result.addPort((PhysicalPort) ElementFactory.fromJson("PhysicalPort", jsonObj, json));
+                result.addPort(ElementFactory.fromJson(PhysicalPort.class, jsonObj, json, null));
             }
             
             return result;
         }
+    }
+    
+    @Override
+    public Class<PhysicalSwitch> getProductType() {
+        return PhysicalSwitch.class;
     }
 
 }

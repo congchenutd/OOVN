@@ -3,6 +3,7 @@ package com.fujitsu.us.oovn.factory;
 import org.neo4j.graphdb.Node;
 
 import com.fujitsu.us.oovn.core.VNO;
+import com.fujitsu.us.oovn.element.NetworkElement;
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
 import com.fujitsu.us.oovn.element.datapath.SingleSwitch;
@@ -78,6 +79,11 @@ public class SingleSwitchFactory extends ElementFactory {
             
             return vsw;
         }
+    }
+
+    @Override
+    protected Class<? extends NetworkElement> getProductType() {
+        return SingleSwitch.class;
     }
 
 }

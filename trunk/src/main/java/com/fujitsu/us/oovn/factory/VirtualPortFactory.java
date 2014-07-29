@@ -5,6 +5,7 @@ import org.neo4j.graphdb.Node;
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.NetworkElement;
 import com.fujitsu.us.oovn.element.address.DPID;
+import com.fujitsu.us.oovn.element.port.VirtualPort;
 import com.fujitsu.us.oovn.exception.InvalidNetworkConfigurationException;
 import com.google.gson.JsonObject;
 
@@ -43,5 +44,10 @@ public class VirtualPortFactory extends ElementFactory {
         
         int number = json.get("number").getAsInt();
         return vno.getNetwork().getSwitch(dpid).getPort(number);
+    }
+
+    @Override
+    protected Class<? extends NetworkElement> getProductType() {
+        return VirtualPort.class;
     }
 }
