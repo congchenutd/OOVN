@@ -3,6 +3,7 @@ package com.fujitsu.us.oovn.factory;
 import org.neo4j.graphdb.Node;
 
 import com.fujitsu.us.oovn.core.VNO;
+import com.fujitsu.us.oovn.element.NetworkElement;
 import com.fujitsu.us.oovn.element.link.PhysicalLink;
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
@@ -37,8 +38,8 @@ public class PhysicalLinkFactory extends ElementFactory {
         JsonObject srcJson = json.get("src").getAsJsonObject();
         JsonObject dstJson = json.get("dst").getAsJsonObject();
         
-        PhysicalPort srcPort = (PhysicalPort) ElementFactory.fromJson("PhysicalPort", srcJson, null);
-        PhysicalPort dstPort = (PhysicalPort) ElementFactory.fromJson("PhysicalPort", dstJson, null);
+        PhysicalPort srcPort = ElementFactory.fromJson(PhysicalPort.class, srcJson, null, null);
+        PhysicalPort dstPort = ElementFactory.fromJson(PhysicalPort.class, dstJson, null, null);
 
         PhysicalLink link = PhysicalNetwork.getInstance().getLink(srcPort, dstPort);
         if(link != null)
@@ -48,5 +49,10 @@ public class PhysicalLinkFactory extends ElementFactory {
         String name = json.has("name") ? json.get("name").getAsString() 
                                        : new String();
         return new PhysicalLink(name, srcPort, dstPort);
+    }
+
+    @Override
+    protected Class<? extends NetworkElement> getProductType() {
+        return PhysicalLink.class;
     }
 }

@@ -3,6 +3,7 @@ package com.fujitsu.us.oovn.factory;
 import org.neo4j.graphdb.Node;
 
 import com.fujitsu.us.oovn.core.VNO;
+import com.fujitsu.us.oovn.element.NetworkElement;
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
@@ -50,6 +51,11 @@ public class PhysicalPortFactory extends ElementFactory {
             String mac = json.get("mac").getAsString();
             return new PhysicalPort(number, new MACAddress(mac));
         }
+    }
+
+    @Override
+    protected Class<? extends NetworkElement> getProductType() {
+        return PhysicalPort.class;
     }
 
 }

@@ -5,7 +5,6 @@ import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.address.*;
 import com.fujitsu.us.oovn.element.datapath.Switch;
 import com.fujitsu.us.oovn.element.host.*;
-import com.fujitsu.us.oovn.element.link.Link;
 import com.fujitsu.us.oovn.element.link.VirtualLink;
 import com.fujitsu.us.oovn.element.network.*;
 import com.fujitsu.us.oovn.element.port.*;
@@ -24,7 +23,7 @@ public class VirtualNetworkBuilder implements NetworkBuilder
         build(vno.getConfiguration().toJson(), vno.getNetwork(), vno);
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void build(JsonObject json, Network network, VNO vno) 
                                 throws InvalidNetworkConfigurationException
@@ -47,8 +46,8 @@ public class VirtualNetworkBuilder implements NetworkBuilder
         JsonArray linksJson = vnoJson.get("links").getAsJsonArray();
         for (JsonElement e : linksJson)
         {
-            VirtualLink link = (VirtualLink) ElementFactory.fromJson(
-                    "VirtualLink", (JsonObject) e, null, vno);
+            VirtualLink link = ElementFactory.fromJson(
+                    VirtualLink.class, (JsonObject) e, null, vno);
             network.addLink(link);
         }
         
@@ -75,7 +74,7 @@ public class VirtualNetworkBuilder implements NetworkBuilder
         Host host = new Host(id, name, mac, ip);
         
         JsonObject portJson = json.get("port").getAsJsonObject();
-        host.setPort((VirtualPort) ElementFactory.fromJson("VirtualPort", portJson, null, vno));
+        host.setPort(ElementFactory.fromJson(VirtualPort.class, portJson, null, vno));
         
         return host;
     }
