@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.openflow.protocol.OFFlowMod;
 import org.openflow.protocol.OFMatch;
@@ -27,10 +25,10 @@ import com.fujitsu.us.oovn.element.address.IPAddress;
  * @author Cong Chen <Cong.Chen@us.fujitsu.com>
  *
  */
-public class LearningSwitchController extends Controller
+public class LearningSwitchController extends Controller implements Runnable
 {
     private final Map<IPAddress, Integer> _groups;
-    
+    private boolean _start = false;
     
     /**
      * @param port
@@ -54,9 +52,21 @@ public class LearningSwitchController extends Controller
         return vnoID1 == vnoID2;
     }
     
+    public void start() {
+        _start = true;
+    }
+    
+    public void stop() {
+        _start = false;
+    }
+    
+    
     @Override
     protected void handlePacketIn(OFSwitch sw, OFPacketIn packetIn)
     {
+        if(!_start)
+            return;
+        
         // Build a Match object
         OFMatch match = new OFMatch();
         match.loadFromPacket(packetIn.getPacketData(), packetIn.getInPort());
@@ -104,8 +114,8 @@ public class LearningSwitchController extends Controller
             flowMod.setCommand((short) 0);
             flowMod.setCookie(0);
             flowMod.setFlags((short) 0);
-            flowMod.setHardTimeout((short) 0);
-            flowMod.setIdleTimeout((short) 10);
+            flowMod.setHardTimeout((short) 5);
+            flowMod.setIdleTimeout((short) 5);
             match.setInputPort(packetIn.getInPort());
             match.setWildcards(0);
             flowMod.setMatch(match);
@@ -172,20 +182,21 @@ public class LearningSwitchController extends Controller
         }
     }
     
-    public static void main(String[] args)
-    {
-        try
-        {
-            LearningSwitchController controller = new LearningSwitchController(6633);
-            controller.addToGroup(new IPAddress("10.0.0.1"), 1);
-            controller.addToGroup(new IPAddress("10.0.0.2"), 1);
-            controller.addToGroup(new IPAddress("10.0.0.3"), 2);
-            controller.addToGroup(new IPAddress("10.0.0.4"), 2);
-            controller.run();
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public static void main(String[] args)
+//    {
+//        try
+//        {
+//            LearningSwitchController controller = new LearningSwitchController(6633);
+//            controller.addToGroup(new IPAddress("10.0.0.1"), 1);
+//            controller.addToGroup(new IPAddress("10.0.0.2"), 1);
+//            controller.addToGroup(new IPAddress("10.0.0.3"), 1);
+//            controller.addToGroup(new IPAddress("10.0.0.4"), 2);
+//            controller.addToGroup(new IPAddress("10.0.0.5"), 2);
+//            controller.run();
+//        }
+//        catch(IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 }
