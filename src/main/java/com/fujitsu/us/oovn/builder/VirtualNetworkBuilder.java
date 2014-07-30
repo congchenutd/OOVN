@@ -19,14 +19,14 @@ import com.google.gson.*;
  */
 public class VirtualNetworkBuilder implements NetworkBuilder
 {
-    public void build(VNO vno) throws InvalidNetworkConfigurationException {
+    public void build(VNO vno) throws InvalidConfigurationException {
         build(vno.getConfiguration().toJson(), vno.getNetwork(), vno);
     }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void build(JsonObject json, Network network, VNO vno) 
-                                throws InvalidNetworkConfigurationException
+                                throws InvalidConfigurationException
     {
         JsonObject vnoJson = json.getAsJsonObject("vno");
         
@@ -40,14 +40,15 @@ public class VirtualNetworkBuilder implements NetworkBuilder
         // network
         JsonArray switchesJson = vnoJson.get("switches").getAsJsonArray();
         for (JsonElement e : switchesJson)
+            // switch type is unknown here, load from json
             network.addSwitch((Switch) ElementFactory.fromJson(
                     null, (JsonObject) e, null, vno));
 
         JsonArray linksJson = vnoJson.get("links").getAsJsonArray();
         for (JsonElement e : linksJson)
         {
-            VirtualLink link = ElementFactory.fromJson(
-                    VirtualLink.class, (JsonObject) e, null, vno);
+            VirtualLink link = (VirtualLink) ElementFactory.fromJson(
+                    "VirtualLink", (JsonObject) e, null, vno);
             network.addLink(link);
         }
         
@@ -64,7 +65,7 @@ public class VirtualNetworkBuilder implements NetworkBuilder
      * @return      a Host object
      */
     private Host buildHost(JsonObject json, VNO vno) 
-                            throws InvalidNetworkConfigurationException 
+                            throws InvalidConfigurationException 
     {
         int              id   = json.get("id").getAsInt();
         String           name = json.get("name").getAsString();
@@ -74,7 +75,7 @@ public class VirtualNetworkBuilder implements NetworkBuilder
         Host host = new Host(id, name, mac, ip);
         
         JsonObject portJson = json.get("port").getAsJsonObject();
-        host.setPort(ElementFactory.fromJson(VirtualPort.class, portJson, null, vno));
+        host.setPort((VirtualPort) ElementFactory.fromJson("VirtualPort", portJson, null, vno));
         
         return host;
     }

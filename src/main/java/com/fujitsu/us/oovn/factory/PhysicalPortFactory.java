@@ -3,12 +3,11 @@ package com.fujitsu.us.oovn.factory;
 import org.neo4j.graphdb.Node;
 
 import com.fujitsu.us.oovn.core.VNO;
-import com.fujitsu.us.oovn.element.NetworkElement;
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
-import com.fujitsu.us.oovn.exception.InvalidNetworkConfigurationException;
+import com.fujitsu.us.oovn.exception.InvalidConfigurationException;
 import com.google.gson.JsonObject;
 
 public class PhysicalPortFactory extends ElementFactory {
@@ -23,11 +22,11 @@ public class PhysicalPortFactory extends ElementFactory {
     
     @Override
     protected PhysicalPort create(JsonObject json, JsonObject parentJson, VNO vno) 
-                                            throws InvalidNetworkConfigurationException
+                                            throws InvalidConfigurationException
     {
         if(json == null)
-            throw new InvalidNetworkConfigurationException(
-                                    "No definition for this PhysicalPort");
+            throw new InvalidConfigurationException(
+                            "No definition for this PhysicalPort. Json: " + json);
         
         DPID dpid = null;
         if(json.has("dpid"))
@@ -35,14 +34,14 @@ public class PhysicalPortFactory extends ElementFactory {
         else
         {
             if(parentJson == null || !parentJson.has("dpid"))
-                throw new InvalidNetworkConfigurationException(
-                                    "No dpid for this PhysicalPort. Json: " + json);
+                throw new InvalidConfigurationException(
+                            "No dpid for this PhysicalPort. Json: " + json);
             dpid = new DPID(parentJson.get("dpid").getAsString());
         }
               
         if(!json.has("number"))
-            throw new InvalidNetworkConfigurationException(
-                                    "No port number for this VirtualPort");
+            throw new InvalidConfigurationException(
+                            "No port number for this VirtualPort. Json: " + json);
         int number = json.get("number").getAsInt();
         
         try {
@@ -52,10 +51,10 @@ public class PhysicalPortFactory extends ElementFactory {
             return new PhysicalPort(number, new MACAddress(mac));
         }
     }
-
+    
     @Override
-    protected Class<? extends NetworkElement> getProductType() {
-        return PhysicalPort.class;
+    protected String getTypeName() {
+        return "PhysicalPort";
     }
 
 }

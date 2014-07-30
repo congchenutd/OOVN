@@ -9,11 +9,10 @@ import java.util.List;
 import org.neo4j.graphdb.Node;
 
 import com.fujitsu.us.oovn.core.VNO;
-import com.fujitsu.us.oovn.element.NetworkElement;
 import com.fujitsu.us.oovn.element.link.PhysicalLink;
 import com.fujitsu.us.oovn.element.link.VirtualLink;
 import com.fujitsu.us.oovn.element.port.VirtualPort;
-import com.fujitsu.us.oovn.exception.InvalidNetworkConfigurationException;
+import com.fujitsu.us.oovn.exception.InvalidConfigurationException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -36,21 +35,21 @@ public class VirtualLinkFactory extends ElementFactory {
 
     @Override
     protected VirtualLink create(JsonObject json, JsonObject parentJson, VNO vno) 
-                            throws InvalidNetworkConfigurationException
+                            throws InvalidConfigurationException
     {
-        if(json == null)
-            throw new InvalidNetworkConfigurationException(
-                                    "No definition for this VirtualLink");
+        if(json == null || json.isJsonNull())
+            throw new InvalidConfigurationException(
+                            "No definition for this VirtualLink. Json: " + json);
         
         if(!json.has("src"))
-            throw new InvalidNetworkConfigurationException("No src port");
+            throw new InvalidConfigurationException("No src port. Json: " + json);
         if(!json.has("dst"))
-            throw new InvalidNetworkConfigurationException("No dst port");
+            throw new InvalidConfigurationException("No dst port. Json: " + json);
         JsonObject vSrcJson = json.get("src").getAsJsonObject();
         JsonObject vDstJson = json.get("dst").getAsJsonObject();
         
-        VirtualPort srcPort = ElementFactory.fromJson(VirtualPort.class, vSrcJson, parentJson, vno);
-        VirtualPort dstPort = ElementFactory.fromJson(VirtualPort.class, vDstJson, parentJson, vno);
+        VirtualPort srcPort = (VirtualPort) ElementFactory.fromJson("VirtualPort", vSrcJson, parentJson, vno);
+        VirtualPort dstPort = (VirtualPort) ElementFactory.fromJson("VirtualPort", vDstJson, parentJson, vno);
         
         // link exists
         VirtualLink link = vno.getNetwork().getLink(srcPort, dstPort);
@@ -61,14 +60,16 @@ public class VirtualLinkFactory extends ElementFactory {
         link = new VirtualLink(vno, json.get("name").getAsString(), srcPort, dstPort);
 
         if(!json.has("path"))
-            throw new InvalidNetworkConfigurationException("No path for the VirtualLink");
+            throw new InvalidConfigurationException(
+                        "No path for the VirtualLink. Json: " + json);
         JsonArray pathJson = json.get("path").getAsJsonArray();
         
         List<PhysicalLink> path = new LinkedList<PhysicalLink>();
         for (JsonElement e : pathJson)
         {
-            PhysicalLink plink = ElementFactory.fromJson(PhysicalLink.class, (JsonObject) e, parentJson, null);
-            path.add(plink);
+            JsonObject linkJson = e.getAsJsonObject();
+            path.add((PhysicalLink) ElementFactory.fromJson(
+                                "PhysicalLink", linkJson, parentJson, null));
         }
         if (!path.isEmpty())
             link.setPath(path);
@@ -77,8 +78,8 @@ public class VirtualLinkFactory extends ElementFactory {
     }
 
     @Override
-    protected Class<? extends NetworkElement> getProductType() {
-        return VirtualLink.class;
+    protected String getTypeName() {
+        return "VirtualLink";
     }
 
 }
