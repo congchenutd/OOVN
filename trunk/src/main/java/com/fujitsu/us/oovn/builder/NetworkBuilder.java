@@ -2,7 +2,7 @@ package com.fujitsu.us.oovn.builder;
 
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.network.Network;
-import com.fujitsu.us.oovn.exception.InvalidNetworkConfigurationException;
+import com.fujitsu.us.oovn.exception.InvalidConfigurationException;
 import com.google.gson.JsonObject;
 
 /**
@@ -21,9 +21,9 @@ public interface NetworkBuilder
      * @param json      A JsonObject describing the network configuration
      * @param network   A network object to be built
      * @param vno       The VNO this network belongs to. Null for physical network
-     * @throws InvalidNetworkConfigurationException
+     * @throws InvalidConfigurationException
      */
     @SuppressWarnings("rawtypes")
     public void build(JsonObject json, Network network, VNO vno) 
-                                    throws InvalidNetworkConfigurationException;
+                                    throws InvalidConfigurationException;
 }

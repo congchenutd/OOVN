@@ -7,7 +7,7 @@ import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
-import com.fujitsu.us.oovn.exception.InvalidNetworkConfigurationException;
+import com.fujitsu.us.oovn.exception.InvalidConfigurationException;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -22,15 +22,15 @@ public class PhysicalSwitchFactory extends ElementFactory {
 
     @Override
     protected PhysicalSwitch create(JsonObject json, JsonObject parentJson, VNO vno) 
-                                    throws InvalidNetworkConfigurationException
+                                    throws InvalidConfigurationException
     {
         if(json == null)
-            throw new InvalidNetworkConfigurationException(
-                                    "No definition for this PhysicalSwitch");
+            throw new InvalidConfigurationException(
+                        "No definition for this PhysicalSwitch. Json: " + json);
         
         if(!json.has("dpid"))
-            throw new InvalidNetworkConfigurationException(
-                                    "No dpid for this PhysicalSwitch");
+            throw new InvalidConfigurationException(
+                        "No dpid for this PhysicalSwitch. Json: " + json);
         
         DPID dpid = new DPID(json.get("dpid").getAsString());
         try {
@@ -41,19 +41,20 @@ public class PhysicalSwitchFactory extends ElementFactory {
         {
             // create a new one
             if(!json.has("name"))
-                throw new InvalidNetworkConfigurationException(
+                throw new InvalidConfigurationException(
                                 "No name for this PhysicalSwitch. Json: " + json);
             String name = json.get("name").getAsString();
             PhysicalSwitch result = new PhysicalSwitch(dpid, name);
             
             // add ports
             if(!json.has("ports"))
-                throw new InvalidNetworkConfigurationException(
+                throw new InvalidConfigurationException(
                                 "No ports for this PhysicalSwitch. Json: " + json);
             for(JsonElement e: json.get("ports").getAsJsonArray())
             {
                 JsonObject jsonObj = e.getAsJsonObject();
-                result.addPort(ElementFactory.fromJson(PhysicalPort.class, jsonObj, json, null));
+                result.addPort((PhysicalPort) ElementFactory.fromJson(
+                                    "PhysicalPort", jsonObj, json));
             }
             
             return result;
@@ -61,8 +62,8 @@ public class PhysicalSwitchFactory extends ElementFactory {
     }
     
     @Override
-    public Class<PhysicalSwitch> getProductType() {
-        return PhysicalSwitch.class;
+    protected String getTypeName() {
+        return "PhysicalSwitch";
     }
 
 }

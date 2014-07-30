@@ -3,14 +3,13 @@ package com.fujitsu.us.oovn.factory;
 import org.neo4j.graphdb.Node;
 
 import com.fujitsu.us.oovn.core.VNO;
-import com.fujitsu.us.oovn.element.NetworkElement;
 import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
 import com.fujitsu.us.oovn.element.datapath.SingleSwitch;
 import com.fujitsu.us.oovn.element.network.PhysicalNetwork;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
 import com.fujitsu.us.oovn.element.port.VirtualPort;
-import com.fujitsu.us.oovn.exception.InvalidNetworkConfigurationException;
+import com.fujitsu.us.oovn.exception.InvalidConfigurationException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -26,15 +25,15 @@ public class SingleSwitchFactory extends ElementFactory {
 
     @Override
     protected SingleSwitch create(JsonObject json, JsonObject parentJson, VNO vno) 
-                                throws InvalidNetworkConfigurationException
+                                throws InvalidConfigurationException
     {
         if(json == null)
-            throw new InvalidNetworkConfigurationException(
-                                    "No definition for this SingleSwitch");
+            throw new InvalidConfigurationException(
+                            "No definition for this SingleSwitch. Json: " + json);
         
         if(!json.has("dpid"))
-            throw new InvalidNetworkConfigurationException(
-                                    "No dpid for this SingleSwitch");
+            throw new InvalidConfigurationException(
+                            "No dpid for this SingleSwitch. Json: " + json);
         
         DPID dpid = new DPID(json.get("dpid").getAsString());
         try {
@@ -45,24 +44,24 @@ public class SingleSwitchFactory extends ElementFactory {
         {
             // find physical switch
             if(!json.has("physical"))
-                throw new InvalidNetworkConfigurationException(
-                                        "No physical switch defined for this SingleSwitch");
+                throw new InvalidConfigurationException(
+                            "No physical switch defined for this SingleSwitch. Json: " + json);
             
             DPID phyID = new DPID(json.get("physical").getAsString());
             PhysicalSwitch psw = PhysicalNetwork.getInstance().getSwitch(phyID);
             
             // create virtual switch
             if(!json.has("name"))
-                throw new InvalidNetworkConfigurationException(
-                                        "No name for this SingleSwitch");
+                throw new InvalidConfigurationException(
+                                "No name for this SingleSwitch. Json: " + json);
             String name = json.get("name").getAsString();
             SingleSwitch vsw = new SingleSwitch(vno, dpid, name);
             vsw.setPhysicalSwitch(psw);
             
-            // add virtual ports
+            // create virtual ports
             if(!json.has("ports"))
-                throw new InvalidNetworkConfigurationException(
-                                        "No ports for this SingleSwitch");
+                throw new InvalidConfigurationException(
+                                "No ports for this SingleSwitch. Json: " + json);
             JsonArray portsJson = json.get("ports").getAsJsonArray();
             
             int index = 0;
@@ -80,10 +79,10 @@ public class SingleSwitchFactory extends ElementFactory {
             return vsw;
         }
     }
-
+    
     @Override
-    protected Class<? extends NetworkElement> getProductType() {
-        return SingleSwitch.class;
+    protected String getTypeName() {
+        return "SingleSwitch";
     }
 
 }

@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 
 import com.fujitsu.us.oovn.builder.VirtualNetworkBuilder;
 import com.fujitsu.us.oovn.element.network.VirtualNetwork;
-import com.fujitsu.us.oovn.exception.InvalidNetworkConfigurationException;
+import com.fujitsu.us.oovn.exception.InvalidConfigurationException;
 import com.fujitsu.us.oovn.exception.InvalidVNOOperationException;
 import com.fujitsu.us.oovn.map.LocalMap;
 import com.fujitsu.us.oovn.verification.VerificationResult;
@@ -71,7 +71,7 @@ public class VNO
         return getConfiguration().isVerified();
     }
     
-    public void build() throws InvalidNetworkConfigurationException
+    public void build() throws InvalidConfigurationException
     {
         _network = new VirtualNetwork(this);
         new VirtualNetworkBuilder().build(this);

@@ -1,12 +1,13 @@
 package com.fujitsu.us.oovn.factory;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.neo4j.graphdb.Node;
 
 import com.fujitsu.us.oovn.core.VNO;
 import com.fujitsu.us.oovn.element.NetworkElement;
-import com.fujitsu.us.oovn.exception.InvalidNetworkConfigurationException;
+import com.fujitsu.us.oovn.exception.InvalidConfigurationException;
 import com.google.gson.JsonObject;
 
 /**
@@ -19,17 +20,17 @@ import com.google.gson.JsonObject;
 public abstract class ElementFactory
 {
     /**
-     * Type.class -> factory
+     * Type name -> factory
      */
-    protected static final HashMap<Class<? extends NetworkElement>, ElementFactory> 
-          _factories = new HashMap<Class<? extends NetworkElement>, ElementFactory>();
+    private static final Map<String, ElementFactory> _factories 
+                                = new HashMap<String, ElementFactory>();
     
     /**
      * Register a concrete factory for a concrete network element
      * @param factory   A concrete factory for the network element type
      */
-    public static void registerFactory(ElementFactory factory) {
-        _factories.put(factory.getProductType(), factory);
+    public static void registerElement(ElementFactory factory) {
+        _factories.put(factory.getTypeName(), factory);
     }
     
     /**
@@ -37,16 +38,16 @@ public abstract class ElementFactory
      */
     static 
     {
-        ElementFactory.registerFactory(new PhysicalSwitchFactory());
-        ElementFactory.registerFactory(new PhysicalLinkFactory());
-        ElementFactory.registerFactory(new PhysicalPortFactory());
-        ElementFactory.registerFactory(new SingleSwitchFactory());
-        ElementFactory.registerFactory(new VirtualLinkFactory());
-        ElementFactory.registerFactory(new VirtualPortFactory());
+        ElementFactory.registerElement(new PhysicalSwitchFactory());
+        ElementFactory.registerElement(new PhysicalLinkFactory());
+        ElementFactory.registerElement(new PhysicalPortFactory());
+        ElementFactory.registerElement(new SingleSwitchFactory());
+        ElementFactory.registerElement(new VirtualLinkFactory());
+        ElementFactory.registerElement(new VirtualPortFactory());
     }
     
     /**
-     * Create a new or fetch an existing network element based on a Neo4j node
+     * Fetch an existing network element based on a Neo4j node
      * Find a concrete factory based on the "type" property of the node,
      * and use the factory to build the element
      * 
@@ -56,15 +57,9 @@ public abstract class ElementFactory
      */
     public static NetworkElement fromNode(Node node, VNO vno)
     {
-        Class<?> type;
-        try {
-            type = Class.forName(node.getProperty("type").toString());
-            return _factories.containsKey(type)
-                    ? _factories.get(type).create(node, vno)
-                    : null;
-        } catch (ClassNotFoundException e) {
-            return null;
-        }
+        String type = node.getProperty("type").toString();
+        return _factories.containsKey(type) ? _factories.get(type).create(node, vno)
+                                            : null;
     }
     
     /**
@@ -73,63 +68,50 @@ public abstract class ElementFactory
     public static NetworkElement fromNode(Node node) {
         return fromNode(node, null);
     }
-    
+
     /**
      * Create a new or fetch an existing network element based on given JsonObject
      * Find a concrete factory based on the "type" property of the json obj,
      * and use the factory to build the element
      * 
+     * 
      * @param json  A json object describing the element
+     * @param parentJson    The json object for the parent element (e.g., switch of a port) 
      * @param vno   The VNO the element belongs to. Null if physical.
      * @return      A network element object
-     * @throws      InvalidNetworkConfigurationException
+     * @throws      InvalidConfigurationException
      */
-    public static NetworkElement fromJson(JsonObject json, JsonObject parentJson, VNO vno) 
-                                    throws InvalidNetworkConfigurationException
+    public static NetworkElement fromJson(String type, JsonObject json,
+                                          JsonObject parentJson, VNO vno)
+                                        throws InvalidConfigurationException
     {
-        if(!json.has("type"))
-            throw new InvalidNetworkConfigurationException(
-                                    "No type for json object: " + json);
-        
-        Class<?> type;
-        try {
-            type = Class.forName(json.get("type").getAsString());
-        } catch (ClassNotFoundException e) {
-            throw new InvalidNetworkConfigurationException(
-                    "The type is not registered. Json: " + json);
+        // if the type is unknown, try to find it in the json object
+        if(type == null || type.isEmpty())
+        {
+            if(!json.has("type"))
+                throw new InvalidConfigurationException(
+                                        "No type defined. Json: " + json);
+            type = json.get("type").getAsString();
         }
         
         if(!_factories.containsKey(type))
-            throw new InvalidNetworkConfigurationException(
-                    "The type is not registered. Json: " + json);
+            throw new InvalidConfigurationException(
+                    "Type not registered. Json: " + json);
         
-        return _factories.get(type).create(json, parentJson, vno);
+        return _factories.get(type).create(json, parentJson, vno); 
     }
     
     /**
-     * Create a new or fetch an existing network element based on given JsonObject
-     * Find a concrete factory based on the type given by caller,
-     * and use the factory to build the element
-     * 
-     * @param type  A XX.class
-     * @param json  A json object describing the element
-     * @param vno   The VNO the element belongs to. Null if physical.
-     * @return      A network element object
-     * @throws      InvalidNetworkConfigurationException
+     * Convenient for physical elements
      */
-    public static <T extends NetworkElement> T fromJson(
-            Class<T> type, JsonObject json, JsonObject parentJson, VNO vno) 
-                    throws InvalidNetworkConfigurationException
-    {
-        if(!_factories.containsKey(type))
-            throw new InvalidNetworkConfigurationException(
-                    "The type is not registered. Json: " + json);
-        
-        return (T) _factories.get(type).create(json, parentJson, vno);
+    public static NetworkElement fromJson(String type, JsonObject json,
+                                          JsonObject parentJson)
+                                    throws InvalidConfigurationException {
+        return fromJson(type, json, parentJson, null);
     }
     
     /**
-     * Fetch an EXISTING network element based on a Neo4j node
+     * Fetch an existing network element based on a Neo4j node
      * @param node  A Neo4j node representing the element
      * @param vno   The VNO the element belongs to. Null if physical
      * @return      A network element object
@@ -139,16 +121,16 @@ public abstract class ElementFactory
     /**
      * Create a new or fetch an existing network element based on given JsonObject
      * @param json  A json object describing the element
+     * @param parentJson    The json object for the parent element (e.g., switch of a port) 
      * @param vno   The VNO the element belongs to. Null if physical.
      * @return      A network element object
-     * @throws      InvalidNetworkConfigurationException
+     * @throws      InvalidConfigurationException
      */
     protected abstract NetworkElement create(JsonObject json, JsonObject parentJson, VNO vno) 
-                                    throws InvalidNetworkConfigurationException;
-    
-    /**
-     * @return  the Class of the product
-     */
-    protected abstract Class<? extends NetworkElement> getProductType();
+                                    throws InvalidConfigurationException;
 
+    /**
+     * @return product class name
+     */
+    protected abstract String getTypeName();
 }

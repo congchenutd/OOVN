@@ -22,6 +22,7 @@ import com.google.gson.JsonObject;
  * @author Cong Chen <Cong.Chen@us.fujitsu.com>
  *
  */
+@SuppressWarnings("rawtypes")
 public abstract class Network<SwitchType extends Switch, 
                               LinkType   extends Link, 
                               PortType   extends Port> implements Jsonable

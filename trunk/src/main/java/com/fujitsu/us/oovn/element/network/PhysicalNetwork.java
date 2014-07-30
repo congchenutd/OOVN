@@ -9,7 +9,7 @@ import com.fujitsu.us.oovn.element.NetworkElement;
 import com.fujitsu.us.oovn.element.datapath.PhysicalSwitch;
 import com.fujitsu.us.oovn.element.link.PhysicalLink;
 import com.fujitsu.us.oovn.element.port.PhysicalPort;
-import com.fujitsu.us.oovn.exception.InvalidNetworkConfigurationException;
+import com.fujitsu.us.oovn.exception.InvalidConfigurationException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -34,7 +34,7 @@ public class PhysicalNetwork extends Network<PhysicalSwitch, PhysicalLink, Physi
             PhysicalNetwork pnw = PhysicalNetwork.getInstance();
             new PhysicalNetworkBuilder().build(json, pnw, null);
         }
-        catch (IOException | InvalidNetworkConfigurationException e) {
+        catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
     }
