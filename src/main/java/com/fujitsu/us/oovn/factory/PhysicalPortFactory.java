@@ -33,6 +33,7 @@ public class PhysicalPortFactory extends ElementFactory {
             dpid = new DPID(json.get("dpid").getAsString());
         else
         {
+            // if json doesn't provide dpid, try to find it in parentJson
             if(parentJson == null || !parentJson.has("dpid"))
                 throw new InvalidConfigurationException(
                             "No dpid for this PhysicalPort. Json: " + json);
@@ -41,15 +42,18 @@ public class PhysicalPortFactory extends ElementFactory {
               
         if(!json.has("number"))
             throw new InvalidConfigurationException(
-                            "No port number for this VirtualPort. Json: " + json);
+                            "No port number for this PhysicalPort. Json: " + json);
         int number = json.get("number").getAsInt();
         
-        try {
-            return PhysicalNetwork.getInstance().getPort(dpid, number);
-        } catch(Exception e) {
-            String mac = json.get("mac").getAsString();
-            return new PhysicalPort(number, new MACAddress(mac));
-        }
+        PhysicalPort port = PhysicalNetwork.getInstance().getPort(dpid, number);
+        if(port != null)
+            return port;
+        
+        if(!json.has("mac"))
+            throw new InvalidConfigurationException(
+                        "No mac address for this PhysicalPort. Json: " + json);
+        return new PhysicalPort(number, 
+                                new MACAddress(json.get("mac").getAsString()));
     }
     
     @Override

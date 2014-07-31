@@ -1,10 +1,12 @@
 package com.fujitsu.us.oovn.element.host;
 
 import com.fujitsu.us.oovn.element.Jsonable;
+import com.fujitsu.us.oovn.element.NetworkElement;
 import com.fujitsu.us.oovn.element.address.IPAddress;
 import com.fujitsu.us.oovn.element.address.MACAddress;
 import com.fujitsu.us.oovn.element.address.VirtualIPAddress;
 import com.fujitsu.us.oovn.element.port.VirtualPort;
+import com.fujitsu.us.oovn.map.MapBase;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -14,7 +16,7 @@ import com.google.gson.JsonObject;
  * @author Cong Chen <Cong.Chen@us.fujitsu.com>
  *
  */
-public class Host implements Jsonable
+public class Host implements Jsonable, NetworkElement
 {
     private final int              _id;
     private final String           _name;
@@ -22,12 +24,14 @@ public class Host implements Jsonable
     private final VirtualIPAddress _ip;
     private       VirtualPort      _port;
     
-    public Host(Integer id, String name, MACAddress mac, VirtualIPAddress ip)
+    public Host(Integer id, String name, MACAddress mac, 
+                VirtualIPAddress ip, VirtualPort port)
     {
         _id   = id;
         _name = name;
         _mac  = mac;
         _ip   = ip;
+        setPort(port);
     }
     
     public int getID() {
@@ -53,7 +57,8 @@ public class Host implements Jsonable
     public void setPort(VirtualPort port)
     {
         _port = port;
-        _port.setHost(this);
+        if(_port != null)
+            _port.setHost(this);
     }
     
     @Override
@@ -93,5 +98,23 @@ public class Host implements Jsonable
         if(getPort() != null)
             result.add("port", getPort().toJson());
         return result;
+    }
+
+    @Override
+    public String toDBVariable() {
+        return null;
+    }
+
+    @Override
+    public String toDBMatch() {
+        return null;
+    }
+
+    @Override
+    public void createInDB(MapBase map) {
+    }
+
+    @Override
+    public void createMapping(MapBase map) {
     }
 }

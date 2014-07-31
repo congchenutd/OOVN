@@ -38,8 +38,10 @@ public class PhysicalLinkFactory extends ElementFactory {
         JsonObject srcJson = json.get("src").getAsJsonObject();
         JsonObject dstJson = json.get("dst").getAsJsonObject();
         
-        PhysicalPort srcPort = (PhysicalPort) ElementFactory.fromJson("PhysicalPort", srcJson, null);
-        PhysicalPort dstPort = (PhysicalPort) ElementFactory.fromJson("PhysicalPort", dstJson, null);
+        PhysicalPort srcPort = (PhysicalPort) ElementFactory.fromJson(
+                                            "PhysicalPort", srcJson, null);
+        PhysicalPort dstPort = (PhysicalPort) ElementFactory.fromJson(
+                                            "PhysicalPort", dstJson, null);
 
         // find an existing link
         PhysicalLink link = PhysicalNetwork.getInstance().getLink(srcPort, dstPort);

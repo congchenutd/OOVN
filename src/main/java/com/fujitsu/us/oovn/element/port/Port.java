@@ -20,7 +20,7 @@ public abstract class Port<SwitchType extends Switch, LinkType extends Link> imp
     private int        _number;
     private MACAddress _mac;
     private SwitchType _switch;
-    private LinkType   _link;   // XXX: a port can connect to either a link or a host
+    private LinkType   _link;   // XXX: a port connects to either a link or a host
     private Host       _host;
 
     public Port(int number, MACAddress mac)
@@ -39,15 +39,6 @@ public abstract class Port<SwitchType extends Switch, LinkType extends Link> imp
     
     public Host getHost() {
         return _host;
-    }
-    
-    public void setHost(Host host)
-    {
-        if(host != null)
-        {
-            _host = host;
-            _link = null;
-        }
     }
     
     public int getNumber() {
@@ -78,8 +69,17 @@ public abstract class Port<SwitchType extends Switch, LinkType extends Link> imp
     {
         if(link != null)
         {
-            _link = link;
+            _link = link;  // host and link are exclusive
             _host = null;
+        }
+    }
+    
+    public void setHost(Host host)
+    {
+        if(host != null)
+        {
+            _host = host;  // host and link are exclusive
+            _link = null;
         }
     }
     

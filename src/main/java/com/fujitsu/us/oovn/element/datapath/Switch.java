@@ -60,8 +60,8 @@ public abstract class Switch<PortType extends Port> implements Jsonable
     public PortType getPort(int id) throws InvalidPortNumberException
     {
         if(!_ports.containsKey(id))
-            throw new InvalidPortNumberException("Switch " + toString() + 
-                                                 " has no port numbered " + id);
+            throw new InvalidPortNumberException("Switch with dpid" + getDPID() + 
+                                                 " has no such a port numbered " + id);
         return _ports.get(id);
     }
     

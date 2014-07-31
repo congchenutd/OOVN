@@ -24,7 +24,7 @@ public class VirtualPortFactory extends ElementFactory {
     {
         if(json == null || json.isJsonNull())
             throw new InvalidConfigurationException(
-                            "No definition for this VirtualPort. Json: " + json);
+                        "No definition for this VirtualPort. Json: " + json);
         
         // dpid
         DPID dpid = null;
