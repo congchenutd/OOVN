@@ -15,7 +15,8 @@ import com.google.gson.JsonObject;
  *
  */
 @SuppressWarnings("rawtypes")
-public abstract class Port<SwitchType extends Switch, LinkType extends Link> implements Jsonable
+public abstract class Port<SwitchType extends Switch, LinkType extends Link> 
+                        implements Jsonable
 {
     private int        _number;
     private MACAddress _mac;
