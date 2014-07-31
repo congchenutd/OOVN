@@ -7,7 +7,6 @@ import com.fujitsu.us.oovn.element.datapath.Switch;
 import com.fujitsu.us.oovn.element.host.*;
 import com.fujitsu.us.oovn.element.link.VirtualLink;
 import com.fujitsu.us.oovn.element.network.*;
-import com.fujitsu.us.oovn.element.port.*;
 import com.fujitsu.us.oovn.exception.*;
 import com.fujitsu.us.oovn.factory.ElementFactory;
 import com.google.gson.*;
@@ -19,6 +18,9 @@ import com.google.gson.*;
  */
 public class VirtualNetworkBuilder implements NetworkBuilder
 {
+    /**
+     * For convenience
+     */
     public void build(VNO vno) throws InvalidConfigurationException {
         build(vno.getConfiguration().toJson(), vno.getNetwork(), vno);
     }
@@ -28,56 +30,52 @@ public class VirtualNetworkBuilder implements NetworkBuilder
     public void build(JsonObject json, Network network, VNO vno) 
                                 throws InvalidConfigurationException
     {
+        if(!json.has("vno"))
+            throw new InvalidConfigurationException("No vno defined");
         JsonObject vnoJson = json.getAsJsonObject("vno");
         
         // global
-        String address = vnoJson.get("address").getAsString();
-        int    mask    = vnoJson.get("mask")   .getAsInt();
         VirtualNetwork vnw = (VirtualNetwork) network;
+        if(!vnoJson.has("address"))
+            throw new InvalidConfigurationException("No address defined");
+        String address = vnoJson.get("address").getAsString();
         vnw.setIP(new IPAddress(address));
+        
+        if(!vnoJson.has("mask"))
+            throw new InvalidConfigurationException("No mask defined");
+        int mask = vnoJson.get("mask").getAsInt();
         vnw.setMask(mask);
         
-        // network
+        // switches
+        if(!vnoJson.has("switches"))
+            throw new InvalidConfigurationException("No switches defined");
+        
         JsonArray switchesJson = vnoJson.get("switches").getAsJsonArray();
         for (JsonElement e : switchesJson)
             // switch type is unknown here, load from json
             network.addSwitch((Switch) ElementFactory.fromJson(
                     null, (JsonObject) e, null, vno));
 
-        JsonArray linksJson = vnoJson.get("links").getAsJsonArray();
-        for (JsonElement e : linksJson)
+        // links
+        if(vnoJson.has("links"))
         {
-            VirtualLink link = (VirtualLink) ElementFactory.fromJson(
-                    "VirtualLink", (JsonObject) e, null, vno);
-            network.addLink(link);
+            JsonArray linksJson = vnoJson.get("links").getAsJsonArray();
+            for (JsonElement e : linksJson)
+            {
+                VirtualLink link = (VirtualLink) ElementFactory.fromJson(
+                        "VirtualLink", (JsonObject) e, null, vno);
+                network.addLink(link);
+            }
         }
         
         // hosts
-        JsonArray hostsJson = vnoJson.getAsJsonArray("hosts");
-        for(JsonElement e: hostsJson)
-            vnw.addHost(buildHost((JsonObject) e, vno));
-    }
-    
-    /**
-     * Build a Host based on the given JsonObject
-     * @param json  the segment of the configuration for the Host
-     * @param vno   the VNO of this port
-     * @return      a Host object
-     */
-    private Host buildHost(JsonObject json, VNO vno) 
-                            throws InvalidConfigurationException 
-    {
-        int              id   = json.get("id").getAsInt();
-        String           name = json.get("name").getAsString();
-        MACAddress       mac  = new MACAddress(json.get("mac").getAsString());
-        VirtualIPAddress ip   = new VirtualIPAddress(vno,
-                                                     json.get("ip").getAsString());
-        Host host = new Host(id, name, mac, ip);
-        
-        JsonObject portJson = json.get("port").getAsJsonObject();
-        host.setPort((VirtualPort) ElementFactory.fromJson("VirtualPort", portJson, null, vno));
-        
-        return host;
+        if(vnoJson.has("hosts"))
+        {
+            JsonArray hostsJson = vnoJson.getAsJsonArray("hosts");
+            for(JsonElement e: hostsJson)
+                vnw.addHost((Host) ElementFactory.fromJson(
+                                        "Host", (JsonObject) e, null, vno));
+        }
     }
     
 }

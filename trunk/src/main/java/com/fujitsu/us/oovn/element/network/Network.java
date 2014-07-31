@@ -11,7 +11,6 @@ import com.fujitsu.us.oovn.element.address.DPID;
 import com.fujitsu.us.oovn.element.datapath.Switch;
 import com.fujitsu.us.oovn.element.link.Link;
 import com.fujitsu.us.oovn.element.port.Port;
-import com.fujitsu.us.oovn.exception.InvalidDPIDException;
 import com.fujitsu.us.oovn.map.MapBase;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -55,18 +54,18 @@ public abstract class Network<SwitchType extends Switch,
         if(link != null)
             _links.remove(link);
     }
-    
+
     /**
      * For convenience
      */
-    public SwitchType getSwitch(String id) throws InvalidDPIDException {
+    public SwitchType getSwitch(String id) {
         return getSwitch(new DPID(id));
     }
     
-    public SwitchType getSwitch(DPID dpid) throws InvalidDPIDException
+    public SwitchType getSwitch(DPID dpid)
     {
         if(dpid == null || !_switches.containsKey(dpid.toInt()))
-            throw new InvalidDPIDException("DPID " + dpid + " doesn't exist");
+            return null;
             
         return _switches.get(dpid.toInt());
     }
@@ -76,16 +75,19 @@ public abstract class Network<SwitchType extends Switch,
     }
     
     @SuppressWarnings("unchecked")
-    public PortType getPort(DPID dpid, int number) {
-        return (PortType) getSwitch(dpid).getPort(number);
+    public PortType getPort(DPID dpid, int number)
+    {
+        SwitchType sw = getSwitch(dpid);
+        return sw == null ? null 
+                          : (PortType) getSwitch(dpid).getPort(number);
     }
     
     /**
      * For convenience
      */
     @SuppressWarnings("unchecked")
-    public LinkType getLink(String srcDPID, int srcNumber, String dstDPID, int dstNumber)
-    {
+    public LinkType getLink(String srcDPID, int srcNumber, 
+                            String dstDPID, int dstNumber) {
         return getLink((PortType) getSwitch(srcDPID).getPort(srcNumber),
                        (PortType) getSwitch(dstDPID).getPort(dstNumber));
     }

@@ -44,6 +44,7 @@ public abstract class ElementFactory
         ElementFactory.registerElement(new SingleSwitchFactory());
         ElementFactory.registerElement(new VirtualLinkFactory());
         ElementFactory.registerElement(new VirtualPortFactory());
+        ElementFactory.registerElement(new HostFactory());
     }
     
     /**

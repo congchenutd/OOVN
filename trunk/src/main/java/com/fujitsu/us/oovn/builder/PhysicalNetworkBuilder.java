@@ -18,11 +18,17 @@ public class PhysicalNetworkBuilder implements NetworkBuilder
     public void build(JsonObject json, Network network, VNO vno)
                                 throws InvalidConfigurationException
     {
+        if(!json.has("switches"))
+            throw new InvalidConfigurationException("No switches defined");
+        
         JsonArray switchesJson = json.get("switches").getAsJsonArray();
         for (JsonElement e : switchesJson)
             network.addSwitch((Switch) ElementFactory.fromJson(
                     "PhysicalSwitch", (JsonObject) e, null));
 
+        // links are optional
+        if(!json.has("links"))
+            return;
         JsonArray linksJson = json.get("links").getAsJsonArray();
         for (JsonElement e : linksJson)
             network.addLink((Link) ElementFactory.fromJson(

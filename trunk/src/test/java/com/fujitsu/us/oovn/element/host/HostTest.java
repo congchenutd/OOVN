@@ -23,9 +23,9 @@ public class HostTest
     {
         _vno   = new VNO(new Tenant("Carl"));
         _host1 = new Host(1, "H1", new MACAddress("0:0:0:0:0:1"), 
-                                   new VirtualIPAddress(_vno, "192.168.1.2"));
+                                   new VirtualIPAddress(_vno, "192.168.1.2"), null);
         _host2 = new Host(1, "H1", new MACAddress("0:0:0:0:0:1"), 
-                                   new VirtualIPAddress(_vno, "192.168.1.2"));
+                                   new VirtualIPAddress(_vno, "192.168.1.2"), null);
     }
 
     @Test
@@ -34,19 +34,23 @@ public class HostTest
         assertThat(_host1, is (_host2));
         
         // diff number
-        assertThat(_host1, not(new Host(2, "H1", new MACAddress("0:0:0:0:0:1"), 
-                                                 new VirtualIPAddress(_vno, "192.168.1.2"))));
+        assertThat(_host1, 
+                   not(new Host(2, "H1", new MACAddress("0:0:0:0:0:1"), 
+                                new VirtualIPAddress(_vno, "192.168.1.2"), null)));
         
         // diff name
-        assertThat(_host1, not(new Host(1, "H2", new MACAddress("0:0:0:0:0:1"), 
-                                                 new VirtualIPAddress(_vno, "192.168.1.2"))));
+        assertThat(_host1, 
+                   not(new Host(1, "H2", new MACAddress("0:0:0:0:0:1"), 
+                                new VirtualIPAddress(_vno, "192.168.1.2"), null)));
         
         // diff MAC
-        assertThat(_host1, not(new Host(1, "H1", new MACAddress("0:0:0:0:0:2"), 
-                                                 new VirtualIPAddress(_vno, "192.168.1.2"))));
+        assertThat(_host1, 
+                   not(new Host(1, "H1", new MACAddress("0:0:0:0:0:2"), 
+                                new VirtualIPAddress(_vno, "192.168.1.2"), null)));
         // diff ip
-        assertThat(_host1, not(new Host(1, "H1", new MACAddress("0:0:0:0:0:1"), 
-                                                 new VirtualIPAddress(_vno, "192.168.1.3"))));
+        assertThat(_host1, 
+                   not(new Host(1, "H1", new MACAddress("0:0:0:0:0:1"), 
+                                new VirtualIPAddress(_vno, "192.168.1.3"), null)));
 
         // diff port
         _host1.setPort(new VirtualPort(1, new MACAddress("0:0:0:0:0:2")));

@@ -33,32 +33,28 @@ public class PhysicalSwitchFactory extends ElementFactory {
                         "No dpid for this PhysicalSwitch. Json: " + json);
         
         DPID dpid = new DPID(json.get("dpid").getAsString());
-        try {
-            // found an existing switch
-            return PhysicalNetwork.getInstance().getSwitch(dpid);
-        }
-        catch(Exception ex)
-        {
-            // create a new one
-            if(!json.has("name"))
-                throw new InvalidConfigurationException(
-                                "No name for this PhysicalSwitch. Json: " + json);
-            String name = json.get("name").getAsString();
-            PhysicalSwitch result = new PhysicalSwitch(dpid, name);
+        
+        // the physical switch already exists
+        PhysicalSwitch psw = PhysicalNetwork.getInstance().getSwitch(dpid);
+        if(psw != null)
+            return psw;
+
+        // create a new one
+        if(!json.has("name"))
+            throw new InvalidConfigurationException(
+                    "No name for this PhysicalSwitch. Json: " + json);
+        String name = json.get("name").getAsString();
+        psw = new PhysicalSwitch(dpid, name);
             
-            // add ports
-            if(!json.has("ports"))
-                throw new InvalidConfigurationException(
-                                "No ports for this PhysicalSwitch. Json: " + json);
-            for(JsonElement e: json.get("ports").getAsJsonArray())
-            {
-                JsonObject jsonObj = e.getAsJsonObject();
-                result.addPort((PhysicalPort) ElementFactory.fromJson(
-                                    "PhysicalPort", jsonObj, json));
-            }
+        // add ports
+        if(!json.has("ports"))
+            throw new InvalidConfigurationException(
+                    "No ports for this PhysicalSwitch. Json: " + json);
+        for(JsonElement e: json.get("ports").getAsJsonArray())
+            psw.addPort((PhysicalPort) ElementFactory.fromJson(
+                    "PhysicalPort", e.getAsJsonObject(), json));
             
-            return result;
-        }
+        return psw;
     }
     
     @Override

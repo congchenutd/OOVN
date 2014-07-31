@@ -74,7 +74,7 @@ public class VNOTest
             vno.stop();
             fail("Expected an InvalidVNOOperationException to be thrown");
         } catch (InvalidVNOOperationException e) {
-            assertThat(e.getMessage(), is("The VNO is not activated yet"));
+            assertThat(e.getMessage(), is("The VNO is not started yet"));
         }
         
         vno.start();
