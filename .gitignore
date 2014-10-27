@@ -2,4 +2,5 @@ doc
 bin
 build
 dist
+lib
 target

@@ -1,16 +1,3 @@
-OpenFlow Java - v1.0.3
+OOVN 0.0
 
-A Java implementation of low-level OpenFlow packet marshalling/unmarshalling
-and IO operations. Implements v1.0 of the OpenFlow specification at
-http://www.openflow.org.
-
-    - David Erickson (daviderickson@cs.stanford.edu)
-    - Rob Sherwood (rob.sherwood@stanford.edu)
-
-Building requires Maven 2.x+ (http://maven.apache.org/).
-
-To build:
-  ./dist.sh
-
-Results will be placed in the dist subfolder.
-
+Object-oriented Virtual Networking (OOVN) is a new network virtualization platform that applies the object-oriented paradigm to enable network virtualization.
